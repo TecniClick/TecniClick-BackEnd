@@ -1,0 +1,60 @@
+import { UserRole } from 'src/enums/UserRole.enum';
+
+export const data = [
+  {
+    name: 'Edu',
+    email: 'edu@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Mati',
+    email: 'mati@mail.com',
+    password: '123456789',
+    phone: '3165278156',
+    address: 'Boulevard Siempre Vivo 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Edu',
+    email: 'edu2@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Edu',
+    email: 'edu3@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Edu',
+    email: 'edu4@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Edu',
+    email: 'edu5@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+  {
+    name: 'Edu',
+    email: 'edu6@mail.com',
+    password: '123456789',
+    phone: '8443323211',
+    address: 'Avenida Siempre Viva 123',
+    role: UserRole.SUPERADMIN,
+  },
+];
