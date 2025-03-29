@@ -73,6 +73,8 @@ export class User {
   })
   imgUrl: string;
 
+
+  
   //El join table va del lado de categorías
   // @ManyToMany(() => Categories, (category) => category.users, {
   //   cascade: true,
