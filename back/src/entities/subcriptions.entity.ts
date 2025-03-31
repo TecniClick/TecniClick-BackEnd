@@ -3,6 +3,7 @@ import { User } from "./user.entity";
 import { ServiceProfile } from "./serviceProfile.entity";
 import { SubcriptionStatus } from "src/enums/subscriptionStatus.enum";
 import { Order } from "./orders.entity";
+import { SubscriptionsType } from "src/enums/Subscriptions.enum";
 
 
 @Entity({
@@ -15,11 +16,11 @@ export class Subscriptions {
     @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.subscription)
     serviceProfile: ServiceProfile;
 
-    @Column({type: 'enum', enum: Subscriptions, default: 'free'})
-    subscriptionType: string
+    @Column({type: 'enum', enum: SubscriptionsType, default: 'free'})
+    subscriptionType: SubscriptionsType
 
     @Column({type: 'enum', enum: SubcriptionStatus, default: 'pending'})
-    status: string
+    status: SubcriptionStatus
 
     @OneToMany(() => Order, (order) => order.subscription)
     orders: Order[]
