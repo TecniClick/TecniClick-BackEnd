@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 import { AppointmentStatus } from "src/enums/AppointmentStatus.enum";
-import { ServiceProviders } from "./serviceProvider.entity";
+import { ServiceProfile } from "./serviceProfile.entity";
 
 @Entity({
     name: 'appointments'
@@ -10,23 +10,20 @@ export class Appointment {
     @PrimaryGeneratedColumn('uuid')
     id: string
 
-    // CREAR ENTIDAD ONE TO MANY EN USER Y PROVIDER
-    // @ManyToOne(() => User, (user) => user.appointmentsAsSeeker)
-    // @JoinColumn({ name: 'seeker_id' })
-    // Buscador: User;
+    @ManyToOne(() => User, (user) => user.appointments)
+    users: User;
 
-    @ManyToOne(() => ServiceProviders, (providers) => providers.appointments)
-    @JoinColumn({ name: 'provider_id' })
-    provider: User;
+    @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.appointments)
+    provider: ServiceProfile;
 
     @Column({ type: 'timestamp', nullable: false })
-    appointmentDate: Date;
+    date: Date;
 
     @Column({ type: 'enum', enum: AppointmentStatus, default: 'Pending' , nullable: false})
-    status: string;
+    appointmentStatus: string;
 
     @Column({ type: 'text', nullable: true })
-    dditionalNotes: string;
+    additionalNotes: string;
 
     
 }
