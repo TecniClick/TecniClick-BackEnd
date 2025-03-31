@@ -2,11 +2,19 @@ import { UserRole } from 'src/enums/UserRole.enum';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   ManyToMany,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { Categories } from './categories.entity';
+import { ServiceProfile } from './serviceProfile.entity';
+import { Appointment } from './appointment.entity';
+import { Review } from './reviews.entity';
 
 @Entity({
   name: 'users',
@@ -22,10 +30,8 @@ export class User {
   })
   name: string;
 
-  @Index()
   @Column({
     type: 'varchar',
-    length: 50,
     unique: true,
     nullable: false,
   })
@@ -40,7 +46,7 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 30,
+    length: 15,
     nullable: false,
   })
   phone: string;
@@ -60,35 +66,34 @@ export class User {
   })
   role: UserRole;
 
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
+  @ManyToMany(() => Categories, (category) => category.users)
+  interests: Categories[]
 
+  @OneToMany(() => Appointment, (appointment) => appointment.users)
+  appointments: Appointment[];
+  
   @Column({
     type: 'text',
     default:
       'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
-  })
-  imgUrl: string;
+    })
+    imgUrl: string;
+    
+    @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
+    serviceProfile: ServiceProfile
+    
+    @OneToMany(() => Review, (review) => review.user)
+    reviews: Review[]
+    
+    @CreateDateColumn({
+      type: 'timestamp',
+      default: () => 'CURRENT_TIMESTAMP',
+    })
+    createdAt: Date;
 
+    @UpdateDateColumn()
+    updatedAt: Date
 
-  
-  //El join table va del lado de categorías
-  // @ManyToMany(() => Categories, (category) => category.users, {
-  //   cascade: true,
-  // })
-  // @JoinTable({
-  //   name: 'user_categories',
-  //   joinColumn: {
-  //     name: 'user_id',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'category_id',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
-  // interests: Categories[];
+    @DeleteDateColumn()
+    deletedAt: Date
 }
