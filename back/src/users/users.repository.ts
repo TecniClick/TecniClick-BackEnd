@@ -41,14 +41,6 @@ export class UsersRepository {
     });
   }
 
-  //Modificar entidad para ver si lleva la propiedad userName y cambiar name por userName
-  // OBTENER USUARIO POR NOMBRE
-  async getUserByNameRepository(name: string): Promise<User> {
-    return await this.usersRepository.findOne({
-      where: { name },
-    });
-  }
-
   // OBTENER USUARIO POR CORREO ELECTRÓNICO
   async getUserByEmailRepository(email: string): Promise<User> {
     return await this.usersRepository.findOneBy({ email });

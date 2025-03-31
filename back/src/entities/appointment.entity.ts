@@ -1,29 +1,47 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
-import { AppointmentStatus } from "src/enums/AppointmentStatus.enum";
-import { ServiceProfile } from "./serviceProfile.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './user.entity';
+import { AppointmentStatus } from 'src/enums/AppointmentStatus.enum';
+import { ServiceProfile } from './serviceProfile.entity';
+import { Review } from './reviews.entity';
 
 @Entity({
-    name: 'appointments'
+  name: 'appointments',
 })
 export class Appointment {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => User, (user) => user.appointments)
-    users: User;
+  @Column({ type: 'timestamp', nullable: false })
+  date: Date;
 
-    @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.appointments)
-    provider: ServiceProfile;
+  @Column({
+    type: 'enum',
+    enum: AppointmentStatus,
+    default: AppointmentStatus.PENDING,
+  })
+  appointmentStatus: AppointmentStatus;
 
-    @Column({ type: 'timestamp', nullable: false })
-    date: Date;
+  @Column({ type: 'text', nullable: true })
+  additionalNotes: string;
 
-    @Column({ type: 'enum', enum: AppointmentStatus, default: 'pending' , nullable: false})
-    appointmentStatus: AppointmentStatus;
+  @OneToOne(() => Review, (review) => review.appointment)
+  review: Review;
 
-    @Column({ type: 'text', nullable: true })
-    additionalNotes: string;
+  @ManyToOne(() => User, (user) => user.appointments)
+  @JoinColumn({ name: 'user_id' })
+  users: User;
 
-    
+  @ManyToOne(
+    () => ServiceProfile,
+    (serviceProfile) => serviceProfile.appointments,
+  )
+  @JoinColumn({ name: 'serviceProfile_id' })
+  provider: ServiceProfile;
 }

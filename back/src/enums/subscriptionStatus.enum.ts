@@ -1,5 +1,5 @@
 export enum SubcriptionStatus {
-    PENDING = 'pending',
-    CANCELLED = 'cancelled',
-    ACTIVE = 'active'
+  PENDING = 'pending',
+  CANCELLED = 'cancelled',
+  ACTIVE = 'active',
 }

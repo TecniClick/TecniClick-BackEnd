@@ -5,6 +5,7 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -35,6 +36,7 @@ export class User {
     unique: true,
     nullable: false,
   })
+  @Index()
   email: string;
 
   @Column({
@@ -46,7 +48,7 @@ export class User {
 
   @Column({
     type: 'varchar',
-    length: 15,
+    length: 30,
     nullable: false,
   })
   phone: string;
@@ -62,38 +64,58 @@ export class User {
     type: 'enum',
     enum: UserRole,
     default: UserRole.CUSTOMER,
-    nullable: false,
   })
   role: UserRole;
 
-  @ManyToMany(() => Categories, (category) => category.users)
-  interests: Categories[]
-
-  @OneToMany(() => Appointment, (appointment) => appointment.users)
-  appointments: Appointment[];
-  
   @Column({
     type: 'text',
     default:
       'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
-    })
-    imgUrl: string;
-    
-    @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
-    serviceProfile: ServiceProfile
-    
-    @OneToMany(() => Review, (review) => review.user)
-    reviews: Review[]
-    
-    @CreateDateColumn({
-      type: 'timestamp',
-      default: () => 'CURRENT_TIMESTAMP',
-    })
-    createdAt: Date;
+  })
+  imgUrl: string;
 
-    @UpdateDateColumn()
-    updatedAt: Date
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-    @DeleteDateColumn()
-    deletedAt: Date
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  deletedAt: Date;
+
+  @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
+  serviceProfile: ServiceProfile;
+
+  @OneToMany(() => Appointment, (appointment) => appointment.users)
+  appointments: Appointment[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
+
+  @ManyToMany(() => Categories, (category) => category.users, {
+    cascade: ['insert', 'update'],
+  })
+  @JoinTable({
+    name: 'users_categories',
+    joinColumn: {
+      name: 'users_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'category_id',
+      referencedColumnName: 'id',
+    },
+  })
+  interests: Categories[];
 }

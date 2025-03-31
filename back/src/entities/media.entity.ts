@@ -1,15 +1,21 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ServiceProfile } from "./serviceProfile.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ServiceProfile } from './serviceProfile.entity';
 
-
-@Entity({name: 'media'})
+@Entity({ name: 'media' })
 export class Media {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.images)
-    serviceProfile: ServiceProfile
+  @Column({ type: 'varchar', nullable: false })
+  imgUrl: string;
 
-    @Column({type: 'varchar'})
-    imgUrl: string
+  @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.images)
+  @JoinColumn({ name: 'serviceProfile_id' })
+  serviceProfile: ServiceProfile;
 }

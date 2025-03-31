@@ -1,30 +1,42 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Appointment } from "./appointment.entity";
-import { User } from "./user.entity";
-import { ServiceProfile } from "./serviceProfile.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Appointment } from './appointment.entity';
+import { User } from './user.entity';
+import { ServiceProfile } from './serviceProfile.entity';
 
-
-@Entity({name: 'reviews'})
+@Entity({ name: 'reviews' })
 export class Review {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @OneToOne(() => Appointment)
-    @JoinColumn({name: 'appointment_id'})
-    appointment: Appointment
+  @Column({ type: 'int', nullable: false })
+  rating: number;
 
-    @ManyToOne(() => User, (user) => user.reviews)
-    user: User
+  @Column({ type: 'text', nullable: false })
+  comment: string;
 
-    @ManyToOne(() => ServiceProfile, (ServiceProfile) => ServiceProfile.appointments)
-    serviceProfile: ServiceProfile
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-    @Column({type: 'int', nullable: false})
-    rating: number
-    
-    @Column({type: 'int', nullable: false})
-    comment: string
+  @OneToOne(() => Appointment, (appointment) => appointment.review)
+  @JoinColumn({ name: 'appointment_id' })
+  appointment: Appointment;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @ManyToOne(() => User, (user) => user.reviews)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
+
+  @ManyToOne(() => ServiceProfile, (ServiceProfile) => ServiceProfile.reviews)
+  @JoinColumn({ name: 'serviceProfile_id' })
+  serviceProfile: ServiceProfile;
 }

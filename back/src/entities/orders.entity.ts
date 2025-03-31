@@ -1,25 +1,36 @@
-import { ServiceProfile } from "./serviceProfile.entity";
-import { Subscriptions } from "./subcriptions.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ServiceProfile } from './serviceProfile.entity';
+import { Subscriptions } from './subcriptions.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
-
-@Entity({name: 'orders'})
+@Entity({ name: 'orders' })
 export class Order {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @ManyToOne(() => Subscriptions, (subscription) => subscription.orders)
-    subscription: Subscriptions
+  @Column({ type: 'decimal', nullable: true })
+  price: number;
 
-    @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.orders)
-    serviceProfile: ServiceProfile;
+  @Column({ type: 'int', unique: true, generated: 'increment' })
+  invoice: number;
 
-    @Column({ type: 'decimal' })
-    price: number;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @ManyToOne(() => Subscriptions, (subscription) => subscription.orders)
+  @JoinColumn({ name: 'suscription_id' })
+  subscription: Subscriptions;
 
-    @Column({ type: 'int', unique: true, generated: 'increment' })
-    invoice: number;
+  @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.orders)
+  @JoinColumn({ name: 'serviceProfile_id' })
+  serviceProfile: ServiceProfile;
 }

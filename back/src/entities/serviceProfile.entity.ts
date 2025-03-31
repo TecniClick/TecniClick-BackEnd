@@ -1,62 +1,85 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { Categories } from "./categories.entity";
-import { User } from "./user.entity";
-import { Appointment } from "./appointment.entity";
-import { Media } from "./media.entity";
-import { Review } from "./reviews.entity";
-import { Subscriptions } from "./subcriptions.entity";
-import { Order } from "./orders.entity";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Categories } from './categories.entity';
+import { User } from './user.entity';
+import { Appointment } from './appointment.entity';
+import { Media } from './media.entity';
+import { Review } from './reviews.entity';
+import { Subscriptions } from './subcriptions.entity';
+import { Order } from './orders.entity';
 
 @Entity({
-    name: 'service_profiles'
+  name: 'service_profiles',
 })
 export class ServiceProfile {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @OneToOne(() => User, (user) => user.serviceProfile)
-    @JoinColumn({name: 'user_id'})
-    user: User
+  @Column({ type: 'varchar', length: 50, nullable: false })
+  name: string;
 
-    @OneToMany(() => Appointment, (Appointment) => Appointment.provider)
-    appointments: Appointment
+  @Column({ type: 'varchar', length: 50, nullable: false })
+  address: string;
 
-    @Column({type: 'varchar', length: 100})
-    name: string
+  @Column({ type: 'float', default: 1, nullable: false })
+  rating: number;
 
-    @OneToMany(() => Review, (review) => review.serviceProfile)
-    reviews: Review[]
+  @Column({ type: 'text', nullable: true })
+  description: string;
 
-    @Column({type: 'varchar', nullable: true})
-    address: string
+  @Column({ type: 'decimal', nullable: false })
+  priceForConsult: number;
 
-    @Column({ type: 'float', default: 1, nullable: false })
-    rating: number;
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-    @ManyToOne(() => Categories, (category) => category.serviceProfile)
-    category: Categories;
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
 
-    @Column({ type: 'text', nullable: true })
-    description: string;
+  @DeleteDateColumn({
+    type: 'timestamp',
+    nullable: true,
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  deletedAt: Date;
 
-    @Column({ type: 'decimal', nullable: true })
-    priceForConsult: number;
+  @OneToOne(() => User, (user) => user.serviceProfile)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
-    @OneToMany(() => Media, (media) => media.serviceProfile)
-    images: Media[];
+  @OneToOne(() => Subscriptions, (subscription) => subscription.serviceProfile)
+  subscription: Subscriptions;
 
-    @OneToOne(() => Subscriptions, (subscription) => subscription.serviceProfile)
-    subscription: Subscriptions;
+  @OneToMany(() => Appointment, (Appointment) => Appointment.provider)
+  appointments: Appointment;
 
-    @OneToMany(() => Order, (order) => order.serviceProfile)
-    orders: Order[];
+  @OneToMany(() => Review, (review) => review.serviceProfile)
+  reviews: Review[];
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @OneToMany(() => Media, (media) => media.serviceProfile)
+  images: Media[];
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @OneToMany(() => Order, (order) => order.serviceProfile)
+  orders: Order[];
 
-    @DeleteDateColumn()
-    deletedAt: Date;
+  @ManyToOne(() => Categories, (category) => category.serviceProfile)
+  @JoinColumn({ name: 'category_id' })
+  category: Categories;
 }
