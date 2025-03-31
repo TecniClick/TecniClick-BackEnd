@@ -19,8 +19,8 @@ export class Appointment {
     @Column({ type: 'timestamp', nullable: false })
     date: Date;
 
-    @Column({ type: 'enum', enum: AppointmentStatus, default: 'Pending' , nullable: false})
-    appointmentStatus: string;
+    @Column({ type: 'enum', enum: AppointmentStatus, default: 'pending' , nullable: false})
+    appointmentStatus: AppointmentStatus;
 
     @Column({ type: 'text', nullable: true })
     additionalNotes: string;
