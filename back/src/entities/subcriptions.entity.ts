@@ -1,36 +1,57 @@
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./user.entity";
-import { ServiceProfile } from "./serviceProfile.entity";
-import { SubcriptionStatus } from "src/enums/subscriptionStatus.enum";
-import { Order } from "./orders.entity";
-import { SubscriptionsType } from "src/enums/Subscriptions.enum";
-
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ServiceProfile } from './serviceProfile.entity';
+import { SubcriptionStatus } from 'src/enums/subscriptionStatus.enum';
+import { Order } from './orders.entity';
+import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 
 @Entity({
-    name: 'subscriptions'
+  name: 'subscriptions',
 })
 export class Subscriptions {
-    @PrimaryGeneratedColumn('uuid')
-    id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.subscription)
-    serviceProfile: ServiceProfile;
+  @Column({
+    type: 'enum',
+    enum: SubscriptionsType,
+    default: SubscriptionsType.FREE,
+  })
+  subscriptionType: SubscriptionsType;
 
-    @Column({type: 'enum', enum: SubscriptionsType, default: 'free'})
-    subscriptionType: SubscriptionsType
+  @Column({
+    type: 'enum',
+    enum: SubcriptionStatus,
+    default: SubcriptionStatus.PENDING,
+  })
+  status: SubcriptionStatus;
 
-    @Column({type: 'enum', enum: SubcriptionStatus, default: 'pending'})
-    status: SubcriptionStatus
+  @Column({ type: 'timestamp' })
+  startDate: Date;
 
-    @OneToMany(() => Order, (order) => order.subscription)
-    orders: Order[]
+  @Column({ type: 'timestamp' })
+  expirationDate: Date;
 
-    @CreateDateColumn()
-    createdAt: Date
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  createdAt: Date;
 
-    @Column({type: 'timestamp', nullable: true})
-    startDate: Date
+  @OneToOne(
+    () => ServiceProfile,
+    (serviceProfile) => serviceProfile.subscription,
+  )
+  @JoinColumn({ name: 'suscription_id' })
+  serviceProfile: ServiceProfile;
 
-    @Column({type: 'timestamp', nullable: true})
-    expirationDate: Date
+  @OneToMany(() => Order, (order) => order.subscription)
+  orders: Order[];
 }
