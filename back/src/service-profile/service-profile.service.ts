@@ -16,33 +16,35 @@ export class ServiceProfileService {
 
   // OBTENER LISTA DE PERFILES POR CATEGORÍA
   async getAllServiceProfilesByCategoryService(
-    category: string,
+    categoryName: string,
     page: number,
     limit: number,
   ) {
     // Validación de la categoría
-    if (!category || category.trim() === '') {
+    if (!categoryName || categoryName.trim() === '') {
       throw new BadRequestException('La categoría no puede estar vacía.');
     }
 
-    console.log('Categoría recibida:', category); // 🔍 Verifica qué llega aquí
+    console.log('Categoría recibida:', categoryName);
+
+    const category = await this.categoriesRepository.getCategoryByNameRepository(categoryName)
+    if (!category) throw new NotFoundException(`No se encontró la categoría '${categoryName}'`);
+    console.log('Categoría encontrada:', category);
 
     const skip: number = (page - 1) * limit;
-
-    // Consultar usuarios con esa categoría
+    
     const serviceProfiles =
       await this.serviceProfileRepository.getAllServiceProfilesByCategoryRepository(
-        category,
+        category.id,
         skip,
         limit,
       );
 
     console.log('Perfiles encontrados:', serviceProfiles);
 
-    // Validar si no hay resultados
     if (serviceProfiles.length === 0) {
       throw new NotFoundException(
-        `No se encontraron usuarios en la categoría '${category}'.`,
+        `No se encontraron usuarios en la categoría '${categoryName}'.`,
       );
     }
 

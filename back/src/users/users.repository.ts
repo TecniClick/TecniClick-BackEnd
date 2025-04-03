@@ -29,7 +29,7 @@ export class UsersRepository {
 
   // OBTENER USUARIO POR CORREO ELECTRÓNICO
   async getUserByEmailRepository(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email });
+    return await this.usersRepository.findOneBy({ email: email });
   }
 
   //CREATE USER

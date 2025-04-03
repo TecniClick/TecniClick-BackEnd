@@ -60,13 +60,6 @@ export class ServiceProfile {
   })
   updatedAt: Date;
 
-  @DeleteDateColumn({
-    type: 'timestamp',
-    nullable: true,
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  deletedAt: Date;
-
   @OneToOne(() => User, (user) => user.serviceProfile)
   @JoinColumn({ name: 'user_id' })
   user: User;
@@ -86,7 +79,7 @@ export class ServiceProfile {
   @OneToMany(() => Order, (order) => order.serviceProfile)
   orders: Order[];
 
-  @ManyToOne(() => Categories, (category) => category.serviceProfile)
+  @ManyToOne(() => Categories, (category) => category.serviceProfile, {eager: true})
   @JoinColumn({ name: 'category_id' })
   category: Categories;
 }

@@ -87,13 +87,6 @@ export class User {
   })
   updatedAt: Date;
 
-  @DeleteDateColumn({
-    type: 'timestamp',
-    nullable: true,
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  deletedAt: Date;
-
   @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
   serviceProfile: ServiceProfile;
 
