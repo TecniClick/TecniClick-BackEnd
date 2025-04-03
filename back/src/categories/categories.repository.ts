@@ -18,13 +18,13 @@ export class CategoriesRepository {
   // OBTENER UNA CATEGORÍA POR NOMBRE
   async getCategoryByNameRepository(name: string): Promise<Categories> {
     return await this.categoriesRepository.findOne({
-      where: { name },
+      where: { name: name },
     });
   }
 
   async getCategoryByIdRepository(id) {
     return await this.categoriesRepository.findOne({
-      where: { id },
+      where: { id: id },
     });
   }
 }

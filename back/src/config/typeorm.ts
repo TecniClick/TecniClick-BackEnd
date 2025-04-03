@@ -13,6 +13,7 @@ const config = {
   username: process.env.DB_USERNAME,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
+  logging: true,
   autoLoadEntities: true,
   synchronize: true,
   dropSchema: true,
