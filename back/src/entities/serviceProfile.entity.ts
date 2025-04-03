@@ -38,7 +38,14 @@ export class ServiceProfile {
   description: string;
 
   @Column({ type: 'decimal', nullable: false })
-  priceForConsult: number;
+  appointmentPrice: number;
+
+  @Column({
+    type: 'varchar',
+    length: 30,
+    nullable: false,
+  })
+  phone: string;
 
   @CreateDateColumn({
     type: 'timestamp',

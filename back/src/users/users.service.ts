@@ -40,36 +40,6 @@ export class UsersService {
     return 'Los Administradores fueron agregados con éxito';
   }
 
-  // OBTENER LISTA DE USUARIOS POR CATEGORÍA
-  async getUsersByCategoryService(
-    category: string,
-    page: number,
-    limit: number,
-  ) {
-    // Validación de la categoría
-    if (!category || category.trim() === '') {
-      throw new BadRequestException('La categoría no puede estar vacía.');
-    }
-
-    const skip: number = (page - 1) * limit;
-
-    // Consultar usuarios con esa categoría
-    const users = await this.usersRepository.getUsersByCategoryRepository(
-      category,
-      skip,
-      limit,
-    );
-
-    // Validar si no hay resultados
-    if (users.length === 0) {
-      throw new NotFoundException(
-        `No se encontraron usuarios en la categoría '${category}'.`,
-      );
-    }
-
-    return users;
-  }
-
   // OBTENER USUARIO POR ID
   async getUserByIdService(id: string) {
     const user: User = await this.usersRepository.getUserByIdRepository(id);
