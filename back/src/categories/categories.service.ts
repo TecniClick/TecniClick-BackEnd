@@ -14,4 +14,8 @@ export class CategoriesService {
   async getCategoryByNameService(name: string) {
     return await this.categoriesRepository.getCategoryByNameRepository(name);
   }
+
+  async getCategoryByIdService(id: string){
+    return await this.categoriesRepository.getCategoryByIdRepository(id)
+  }
 }
