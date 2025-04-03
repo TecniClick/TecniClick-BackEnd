@@ -20,20 +20,6 @@ export class UsersRepository {
       .execute();
   }
 
-  //Actualizar cuando tengas la entidad de categorías (name por category)
-  // OBTENER LISTA DE USUARIOS POR CATEGORÍA
-  async getUsersByCategoryRepository(
-    name: string,
-    skip: number,
-    limit: number,
-  ): Promise<User[]> {
-    return await this.usersRepository.find({
-      where: { name },
-      take: limit,
-      skip: skip,
-    });
-  }
-
   // OBTENER USUARIO POR ID
   async getUserByIdRepository(id: string): Promise<User> {
     return await this.usersRepository.findOne({

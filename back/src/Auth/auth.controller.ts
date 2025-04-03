@@ -9,14 +9,14 @@ export class AuthController {
 
   // Inicio de Sesión
   @Post('signIn')
-  async signIn(@Body() credentials: LoginUserDto){
-    const {email, password} = credentials;
-    return this.authService.signIn(email, password)
+  async signInController(@Body() credentials: LoginUserDto) {
+    const { email, password }: LoginUserDto = credentials;
+    return await this.authService.signInService(email, password);
   }
 
   // Creacion de usuario
   @Post('signUp')
-  async signUp(@Body() user: CreateUserDto){
-    return this.authService.signUp(user)
+  async signUpController(@Body() user: CreateUserDto) {
+    return await this.authService.signUpService(user);
   }
 }
