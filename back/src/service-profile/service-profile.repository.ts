@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CategoriesRepository } from 'src/categories/categories.repository';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { Repository } from 'typeorm';
 
@@ -8,22 +9,18 @@ export class ServiceProfileRepository {
   constructor(
     @InjectRepository(ServiceProfile)
     private serviceProfileRepository: Repository<ServiceProfile>,
+    private readonly categoriesRepository: CategoriesRepository
   ) {}
 
   //Actualizar cuando tengas la entidad de categorías (name por category)
   // OBTENER LISTA DE USUARIOS POR CATEGORÍA
-  async getAllServiceProfilesByCategoryRepository(
-    category: string,
-    skip: number,
-    limit: number,
-  ): Promise<ServiceProfile[]> {
-    return this.serviceProfileRepository
-      .createQueryBuilder('sp')
-      .innerJoinAndSelect('sp.category', 'c')
-      .where('c.name = :category', { category })
-      .take(limit)
-      .skip(skip)
-      .getMany();
+  async getAllServiceProfilesByCategoryRepository(categoryId: string, skip: number, limit: number,): Promise<ServiceProfile[]> {
+    return this.serviceProfileRepository.find({
+      where: {category: {id: categoryId}},
+      relations: ['category'],
+      take: limit,
+      skip: skip
+    })
   }
 
   // OBTENER PERFIL POR ID
