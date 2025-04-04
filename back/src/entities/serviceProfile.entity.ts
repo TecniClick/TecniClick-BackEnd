@@ -79,7 +79,9 @@ export class ServiceProfile {
   @OneToMany(() => Order, (order) => order.serviceProfile)
   orders: Order[];
 
-  @ManyToOne(() => Categories, (category) => category.serviceProfile, {eager: true})
+  @ManyToOne(() => Categories, (category) => category.serviceProfile, {
+    eager: true,
+  })
   @JoinColumn({ name: 'category_id' })
   category: Categories;
 }

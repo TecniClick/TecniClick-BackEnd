@@ -32,17 +32,17 @@ export class ServiceProfileController {
     );
   }
 
-  // OBTENER PERFIL POR ID
-  @Get(':id')
-  getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.serviceProfileService.getServiceProfileByIdService(id);
-  }
-
   // CREAR UN PERFIL
   @Post('create')
   createServiceProfileController(@Body() serviceProfile) {
     return this.serviceProfileService.createServiceProfileService(
       serviceProfile,
     );
+  }
+
+  // OBTENER PERFIL POR ID
+  @Get(':id')
+  getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.serviceProfileService.getServiceProfileByIdService(id);
   }
 }

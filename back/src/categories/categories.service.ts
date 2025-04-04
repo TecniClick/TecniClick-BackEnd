@@ -15,7 +15,8 @@ export class CategoriesService {
     return await this.categoriesRepository.getCategoryByNameRepository(name);
   }
 
-  async getCategoryByIdService(id: string){
-    return await this.categoriesRepository.getCategoryByIdRepository(id)
+  // OBTENER UNA CATEGORÍA POR ID
+  async getCategoryByIdService(id: string) {
+    return await this.categoriesRepository.getCategoryByIdRepository(id);
   }
 }
