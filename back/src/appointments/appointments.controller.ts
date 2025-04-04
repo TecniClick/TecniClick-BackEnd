@@ -8,7 +8,9 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Endpoints de appointments')
 @Controller('appointments')
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
