@@ -9,6 +9,11 @@ import { AuthModule } from './Auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ServiceProfileModule } from './service-profile/service-profile.module';
 import { CategoriesModule } from './categories/categories.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { ReviewsModule } from './reviews/reviews.module';
+import { OrdersModule } from './orders/orders.module';
+import { MediaModule } from './media/media.module';
+import { AppointmentsModule } from './appointments/appointments.module';
 
 @Module({
   imports: [
@@ -29,6 +34,11 @@ import { CategoriesModule } from './categories/categories.module';
     AuthModule,
     ServiceProfileModule,
     CategoriesModule,
+    SubscriptionsModule,
+    ReviewsModule,
+    OrdersModule,
+    MediaModule,
+    AppointmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

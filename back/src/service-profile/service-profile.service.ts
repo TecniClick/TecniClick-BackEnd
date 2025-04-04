@@ -27,12 +27,16 @@ export class ServiceProfileService {
 
     console.log('Categoría recibida:', categoryName);
 
-    const category = await this.categoriesRepository.getCategoryByNameRepository(categoryName)
-    if (!category) throw new NotFoundException(`No se encontró la categoría '${categoryName}'`);
+    const category =
+      await this.categoriesRepository.getCategoryByNameRepository(categoryName);
+    if (!category)
+      throw new NotFoundException(
+        `No se encontró la categoría '${categoryName}'`,
+      );
     console.log('Categoría encontrada:', category);
 
     const skip: number = (page - 1) * limit;
-    
+
     const serviceProfiles =
       await this.serviceProfileRepository.getAllServiceProfilesByCategoryRepository(
         category.id,

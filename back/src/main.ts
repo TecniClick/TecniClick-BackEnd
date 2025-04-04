@@ -7,16 +7,16 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(new loggerGlobal().use);
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(new ValidationPipe());
   const swaggerConfig = new DocumentBuilder()
-                          .setTitle('PF TECNICLICK')
-                          .setDescription('Documentación API para proyecto final Henry, TECNICLICK')
-                          .setVersion('1.0.0')
-                          .addBearerAuth()
-                          .build()
-                          
-  const document = SwaggerModule.createDocument(app, swaggerConfig)
-  SwaggerModule.setup('api', app, document)
+    .setTitle('PF TECNICLICK')
+    .setDescription('Documentación API para proyecto final Henry, TECNICLICK')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document);
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

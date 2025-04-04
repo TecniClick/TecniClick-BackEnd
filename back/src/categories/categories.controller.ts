@@ -17,8 +17,9 @@ export class CategoriesController {
     return this.categoriesService.getCategoryByNameService(name);
   }
 
+  // OBTENER CATEGORÍA POR ID
   @Get('/:id')
-  getCategoryByIdController(@Param('id') id: string){
-    return this.categoriesService.getCategoryByIdService(id)
+  getCategoryByIdController(@Param('id') id: string) {
+    return this.categoriesService.getCategoryByIdService(id);
   }
 }
