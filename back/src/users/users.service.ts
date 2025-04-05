@@ -11,6 +11,11 @@ import { User } from 'src/entities/user.entity';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
+  //Get All Users
+  async getAllUsersService(){
+    return this.usersRepository.getAllUsersRepository()
+  }
+
   //CARGA DE ADMINISTRADORES
   async addAdminsService() {
     //Verificar duplicados dentro de la data a cargar.
@@ -48,5 +53,9 @@ export class UsersService {
       throw new NotFoundException(`User with id ${id} was not found`);
     }
     return user;
+  }
+
+  async softDeleteService(id: string){
+    return this.usersRepository.softDeleteRepository(id)
   }
 }
