@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from 'src/DTO/userDtos/CreateUser.dto';
 import { User } from 'src/entities/user.entity';
 import { InsertResult, Repository } from 'typeorm';
 
@@ -10,9 +11,9 @@ export class UsersRepository {
   ) {}
 
   //Get All Users
-  async getAllUsersRepository(){
-    const users = await this.usersRepository.find()
-    return users.map(({password, role, ...user}) => user)
+  async getAllUsersRepository() {
+    const users = await this.usersRepository.find();
+    return users.map(({ password, role, ...user }) => user);
   }
 
   //CARGA DE ADMINISTRADORES
@@ -35,21 +36,22 @@ export class UsersRepository {
 
   // OBTENER USUARIO POR CORREO ELECTRÓNICO
   async getUserByEmailRepository(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email: email });
+    return await this.usersRepository.findOneBy({ email });
   }
 
   //CREATE USER
-  async createUserRepository(user: Partial<User>): Promise<Partial<User>> {
+  async createUserRepository(user: CreateUserDto): Promise<User> {
     return await this.usersRepository.save(user);
   }
 
-  async softDeleteRepository(id: string){
-    const entity = await this.usersRepository.findOneBy({id: id})
-    if(!entity) throw new NotFoundException(`Usuario con id ${id} no se pudo encontrar`)
-    entity.deletedAt = new Date()
+  async softDeleteRepository(id: string) {
+    const entity = await this.usersRepository.findOneBy({ id: id });
+    if (!entity)
+      throw new NotFoundException(`Usuario con id ${id} no se pudo encontrar`);
+    entity.deletedAt = new Date();
     return {
       message: `Usuario con ${id} eliminado lógicamente`,
-      user: this.usersRepository.save(entity)
-    }
+      user: this.usersRepository.save(entity),
+    };
   }
 }

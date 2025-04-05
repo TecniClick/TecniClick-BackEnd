@@ -91,7 +91,7 @@ export class ServiceProfileService {
     );
   }
 
-  async softDeleteService(id: string){
-    return this.serviceProfileRepository.softDeleteRepository(id)
+  async softDeleteService(id: string) {
+    return this.serviceProfileRepository.softDeleteRepository(id);
   }
 }
