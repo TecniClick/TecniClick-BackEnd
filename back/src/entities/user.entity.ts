@@ -47,11 +47,10 @@ export class User {
   password: string;
 
   @Column({
-    type: 'varchar',
-    length: 30,
+    type: 'bigint',
     nullable: false,
   })
-  phone: string;
+  phone: number;
 
   @Column({
     type: 'varchar',
@@ -86,6 +85,9 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
+
+  @Column({type: 'timestamp', nullable: true, default: null})
+  deletedAt: Date | null
 
   @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
   serviceProfile: ServiceProfile;

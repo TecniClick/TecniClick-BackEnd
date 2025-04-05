@@ -60,6 +60,9 @@ export class ServiceProfile {
   })
   updatedAt: Date;
 
+  @Column({type: 'timestamp', nullable: true, default: null})
+  deletedAt: Date | null
+
   @OneToOne(() => User, (user) => user.serviceProfile)
   @JoinColumn({ name: 'user_id' })
   user: User;
