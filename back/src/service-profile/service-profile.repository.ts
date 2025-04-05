@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from 'src/categories/categories.repository';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
@@ -19,12 +19,14 @@ export class ServiceProfileRepository {
     skip: number,
     limit: number,
   ): Promise<ServiceProfile[]> {
-    return this.serviceProfileRepository.find({
-      where: { category: { id: categoryId } },
-      relations: ['category'],
-      take: limit,
-      skip: skip,
-    });
+    return this.serviceProfileRepository
+    .createQueryBuilder('serviceProfile')
+    .leftJoinAndSelect('serviceProfile.category', 'category')
+    .where('category.id = :categoryId', { categoryId })
+    .andWhere('serviceProfile.deletedAt IS NULL')
+    .skip(skip)
+    .take(limit)
+    .getMany();
   }
 
   // OBTENER PERFIL POR ID
@@ -37,5 +39,15 @@ export class ServiceProfileRepository {
   //CREAR UN USUARIO
   async createServiceProfileRepository(serviceProfile) {
     return await this.serviceProfileRepository.save(serviceProfile);
+  }
+
+  async softDeleteRepository(id: string){
+    const entity = await this.serviceProfileRepository.findOneBy({id: id})
+    if(!entity) throw new NotFoundException(`Usuario con Id ${id} no fue encontrado`)
+    entity.deletedAt = new Date()
+    return {
+      message: `Usuario con Id ${id} fue borrado lógicamente`,
+      serviceProfile: this.serviceProfileRepository.save(entity)
+    }
   }
 }

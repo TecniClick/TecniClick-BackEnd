@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -8,7 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ServiceProfileService } from './service-profile.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Endpoints de perfiles de Servicio')
 @Controller('service-profile')
 export class ServiceProfileController {
   constructor(private readonly serviceProfileService: ServiceProfileService) {}
@@ -44,5 +47,10 @@ export class ServiceProfileController {
   @Get(':id')
   getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.serviceProfileService.getServiceProfileByIdService(id);
+  }
+
+  @Delete('softDelete/:id')
+  softDeleteController(@Param('id') id: string){
+    return this.serviceProfileService.softDeleteService(id)
   }
 }
