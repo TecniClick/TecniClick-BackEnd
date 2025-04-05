@@ -1,7 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto } from 'src/DTO/CreateUser.dto';
+import { CreateUserDto } from 'src/DTO/userDtos/CreateUser.dto';
 
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
@@ -16,7 +16,7 @@ export class UsersController {
 
   // OBTENER USUARIO POR ID
   @Get(':id')
-  @ApiBody({type: CreateUserDto})
+  @ApiBody({ type: CreateUserDto })
   getUserByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.getUserByIdService(id);
   }
