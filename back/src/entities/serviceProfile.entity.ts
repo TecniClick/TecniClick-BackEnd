@@ -25,8 +25,11 @@ export class ServiceProfile {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'varchar', length: 100, nullable: false })
+  serviceTitle: string;
+
   @Column({ type: 'varchar', length: 50, nullable: false })
-  name: string;
+  userName: string;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   address: string;
@@ -60,8 +63,8 @@ export class ServiceProfile {
   })
   updatedAt: Date;
 
-  @Column({type: 'timestamp', nullable: true, default: null})
-  deletedAt: Date | null
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  deletedAt: Date | null;
 
   @OneToOne(() => User, (user) => user.serviceProfile)
   @JoinColumn({ name: 'user_id' })

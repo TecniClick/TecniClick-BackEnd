@@ -50,7 +50,7 @@ export class ServiceProfileController {
   }
 
   @Delete('softDelete/:id')
-  softDeleteController(@Param('id') id: string){
-    return this.serviceProfileService.softDeleteService(id)
+  softDeleteController(@Param('id') id: string) {
+    return this.serviceProfileService.softDeleteService(id);
   }
 }
