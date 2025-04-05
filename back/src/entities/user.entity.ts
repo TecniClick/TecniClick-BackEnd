@@ -86,8 +86,8 @@ export class User {
   })
   updatedAt: Date;
 
-  @Column({type: 'timestamp', nullable: true, default: null})
-  deletedAt: Date | null
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  deletedAt: Date | null;
 
   @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
   serviceProfile: ServiceProfile;

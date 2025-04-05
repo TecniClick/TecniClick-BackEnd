@@ -20,13 +20,13 @@ export class ServiceProfileRepository {
     limit: number,
   ): Promise<ServiceProfile[]> {
     return this.serviceProfileRepository
-    .createQueryBuilder('serviceProfile')
-    .leftJoinAndSelect('serviceProfile.category', 'category')
-    .where('category.id = :categoryId', { categoryId })
-    .andWhere('serviceProfile.deletedAt IS NULL')
-    .skip(skip)
-    .take(limit)
-    .getMany();
+      .createQueryBuilder('serviceProfile')
+      .leftJoinAndSelect('serviceProfile.category', 'category')
+      .where('category.id = :categoryId', { categoryId })
+      .andWhere('serviceProfile.deletedAt IS NULL')
+      .skip(skip)
+      .take(limit)
+      .getMany();
   }
 
   // OBTENER PERFIL POR ID
@@ -41,13 +41,14 @@ export class ServiceProfileRepository {
     return await this.serviceProfileRepository.save(serviceProfile);
   }
 
-  async softDeleteRepository(id: string){
-    const entity = await this.serviceProfileRepository.findOneBy({id: id})
-    if(!entity) throw new NotFoundException(`Usuario con Id ${id} no fue encontrado`)
-    entity.deletedAt = new Date()
+  async softDeleteRepository(id: string) {
+    const entity = await this.serviceProfileRepository.findOneBy({ id: id });
+    if (!entity)
+      throw new NotFoundException(`Usuario con Id ${id} no fue encontrado`);
+    entity.deletedAt = new Date();
     return {
       message: `Usuario con Id ${id} fue borrado lógicamente`,
-      serviceProfile: this.serviceProfileRepository.save(entity)
-    }
+      serviceProfile: this.serviceProfileRepository.save(entity),
+    };
   }
 }

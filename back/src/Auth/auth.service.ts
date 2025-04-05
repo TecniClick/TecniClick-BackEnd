@@ -21,9 +21,17 @@ export class AuthService {
   ): Promise<SignInResponseDto> {
     const user: User =
       await this.usersRepository.getUserByEmailRepository(email);
-    const matchPassword: string = bcrypt.compare(password, user.password);
-    if (!matchPassword || !user)
-      throw new BadRequestException('Las credenciales no son validas');
+
+    if (!user) throw new BadRequestException('Las credenciales no son válidas');
+
+    const matchPassword: boolean = await bcrypt.compare(
+      password,
+      user.password,
+    );
+
+    if (!matchPassword)
+      throw new BadRequestException('Las credenciales no son válidas');
+
     const userPayload: IJwtPayload = {
       id: user.id,
       email: user.email,
@@ -48,6 +56,7 @@ export class AuthService {
         'La contraseña y su confirmación no coinciden',
       );
     const hashedPassword: string = await bcrypt.hash(user.password, 10);
+
     if (!hashedPassword)
       throw new BadRequestException('La contraseña no se pudo hashear');
     const createdUser: User = await this.usersRepository.createUserRepository({

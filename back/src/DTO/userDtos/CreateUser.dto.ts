@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
   IsNotEmpty,
+  IsNumber,
   IsString,
   IsStrongPassword,
   MaxLength,
@@ -57,8 +58,8 @@ export class CreateUserDto {
     example: '123456789',
   })
   @IsNotEmpty()
-  @IsString()
-  phone: string;
+  @IsNumber()
+  phone: number;
 
   @ApiProperty({
     required: true,

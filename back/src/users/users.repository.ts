@@ -11,9 +11,9 @@ export class UsersRepository {
   ) {}
 
   //Get All Users
-  async getAllUsersRepository(){
-    const users = await this.usersRepository.find()
-    return users.map(({password, role, ...user}) => user)
+  async getAllUsersRepository() {
+    const users = await this.usersRepository.find();
+    return users.map(({ password, role, ...user }) => user);
   }
 
   //CARGA DE ADMINISTRADORES
@@ -44,13 +44,14 @@ export class UsersRepository {
     return await this.usersRepository.save(user);
   }
 
-  async softDeleteRepository(id: string){
-    const entity = await this.usersRepository.findOneBy({id: id})
-    if(!entity) throw new NotFoundException(`Usuario con id ${id} no se pudo encontrar`)
-    entity.deletedAt = new Date()
+  async softDeleteRepository(id: string) {
+    const entity = await this.usersRepository.findOneBy({ id: id });
+    if (!entity)
+      throw new NotFoundException(`Usuario con id ${id} no se pudo encontrar`);
+    entity.deletedAt = new Date();
     return {
       message: `Usuario con ${id} eliminado lógicamente`,
-      user: this.usersRepository.save(entity)
-    }
+      user: this.usersRepository.save(entity),
+    };
   }
 }

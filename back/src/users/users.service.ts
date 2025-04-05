@@ -12,8 +12,8 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
   //Get All Users
-  async getAllUsersService(){
-    return this.usersRepository.getAllUsersRepository()
+  async getAllUsersService() {
+    return this.usersRepository.getAllUsersRepository();
   }
 
   //CARGA DE ADMINISTRADORES
@@ -55,7 +55,7 @@ export class UsersService {
     return user;
   }
 
-  async softDeleteService(id: string){
-    return this.usersRepository.softDeleteRepository(id)
+  async softDeleteService(id: string) {
+    return this.usersRepository.softDeleteRepository(id);
   }
 }
