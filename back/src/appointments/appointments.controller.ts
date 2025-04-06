@@ -9,34 +9,36 @@ import {
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateAppointmentDto } from 'src/DTO/apptDtos/CreateAppointment.dto';
+import { UpdateAppointmentDto } from 'src/DTO/apptDtos/updateAppointment.dto';
 
 @ApiTags('Endpoints de appointments')
 @Controller('appointments')
 export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
-  @Post()
-  create(@Body() createAppointment) {
-    return this.appointmentsService.create(createAppointment);
+  @Post('createAppointment')
+  createAppointmentController(@Body() createAppointment: CreateAppointmentDto) {
+    return this.appointmentsService.createAppointmentService(createAppointment);
   }
 
   @Get()
-  findAll() {
-    return this.appointmentsService.findAll();
+  getAllAppointmentsController() {
+    return this.appointmentsService.getAllAppointmentsService();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.appointmentsService.findOne(+id);
+  getAppointmentByIdController(@Param('id') id: string) {
+    return this.appointmentsService.getAppointmentByIdService(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAppointment) {
-    return this.appointmentsService.update(+id, updateAppointment);
+  updateAppointmentController(@Param('id') id: string, @Body() updateAppointment: UpdateAppointmentDto) {
+    return this.appointmentsService.updateAppointmentByIdService(id, updateAppointment);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.appointmentsService.remove(+id);
+  deleteAppointmentController(@Param('id') id: string) {
+    return this.appointmentsService.deleteAppointmentService(id);
   }
 }
