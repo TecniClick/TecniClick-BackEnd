@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginUserDto } from 'src/DTO/userDtos/LoginUser.dto';
-import { CreateUserDto } from 'src/DTO/userDtos/CreateUser.dto';
+import { LoginUserDto } from 'src/DTO/authDtos/LoginUser.dto';
+import { CreateUserDto } from 'src/DTO/authDtos/CreateUser.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
