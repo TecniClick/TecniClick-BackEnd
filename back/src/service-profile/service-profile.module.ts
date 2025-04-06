@@ -15,5 +15,6 @@ import { CategoriesRepository } from 'src/categories/categories.repository';
     ServiceProfileRepository,
     CategoriesRepository,
   ],
+  exports: [ServiceProfileRepository]
 })
 export class ServiceProfileModule {}
