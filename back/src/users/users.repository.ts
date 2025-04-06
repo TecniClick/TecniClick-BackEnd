@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto } from 'src/DTO/userDtos/CreateUser.dto';
+import { CreateUserDto } from 'src/DTO/authDtos/CreateUser.dto';
+import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { User } from 'src/entities/user.entity';
 import { InsertResult, Repository } from 'typeorm';
 
@@ -11,9 +12,8 @@ export class UsersRepository {
   ) {}
 
   //Get All Users
-  async getAllUsersRepository() {
-    const users = await this.usersRepository.find();
-    return users.map(({ password, role, ...user }) => user);
+  async getAllUsersRepository(): Promise<UsersResponseDto[]> {
+    return await this.usersRepository.find();
   }
 
   //CARGA DE ADMINISTRADORES
@@ -40,7 +40,7 @@ export class UsersRepository {
   }
 
   //CREATE USER
-  async createUserRepository(user: CreateUserDto): Promise<User> {
+  async createUserRepository(user): Promise<User> {
     return await this.usersRepository.save(user);
   }
 
