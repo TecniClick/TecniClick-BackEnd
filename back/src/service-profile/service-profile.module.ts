@@ -6,15 +6,18 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { ServiceProfileRepository } from './service-profile.repository';
 import { Categories } from 'src/entities/categories.entity';
 import { CategoriesRepository } from 'src/categories/categories.repository';
+import { UsersRepository } from 'src/users/users.repository';
+import { User } from 'src/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ServiceProfile, Categories])],
+  imports: [TypeOrmModule.forFeature([ServiceProfile, Categories, User])],
   controllers: [ServiceProfileController],
   providers: [
     ServiceProfileService,
     ServiceProfileRepository,
     CategoriesRepository,
+    UsersRepository,
   ],
-  exports: [ServiceProfileRepository]
+  exports: [ServiceProfileRepository],
 })
 export class ServiceProfileModule {}

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersRepository } from 'src/users/users.repository';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +11,7 @@ import { User } from 'src/entities/user.entity';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
+import { IsNull } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +28,9 @@ export class AuthService {
       await this.usersRepository.getUserByEmailRepository(email);
 
     if (!user) throw new BadRequestException('Las credenciales no son válidas');
+
+    if (user.deletedAt !== null)
+      throw new BadRequestException('Ese usuario fue eliminado anteriormente');
 
     const matchPassword: boolean = await bcrypt.compare(
       password,
@@ -48,7 +56,7 @@ export class AuthService {
     const userExists: User =
       await this.usersRepository.getUserByEmailRepository(user.email);
     if (userExists)
-      throw new BadRequestException(
+      throw new ConflictException(
         'El correo electrónico ya se encuentra registrado',
       );
     if (user.password !== user.confirmPassword)
@@ -59,7 +67,7 @@ export class AuthService {
 
     if (!hashedPassword)
       throw new BadRequestException('La contraseña no se pudo hashear');
-    const createdUser: User = await this.usersRepository.createUserRepository({
+    const createdUser: User = await this.usersRepository.saveAUserRepository({
       ...user,
       password: hashedPassword,
     });

@@ -8,7 +8,11 @@ import { UsersModule } from 'src/users/users.module';
 import { ServiceProfileModule } from 'src/service-profile/service-profile.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Appointment]), UsersModule, ServiceProfileModule],
+  imports: [
+    TypeOrmModule.forFeature([Appointment]),
+    UsersModule,
+    ServiceProfileModule,
+  ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService, AppointmentsRepository],
 })
