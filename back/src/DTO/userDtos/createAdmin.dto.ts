@@ -1,16 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
-  IsEmpty,
+  IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsStrongPassword,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { UserRole } from 'src/enums/UserRole.enum';
 
-export class CreateUserDto {
+export class CreateAdminDto {
   @ApiProperty({
     required: true,
     example: 'Juan Perez',
@@ -47,14 +49,6 @@ export class CreateUserDto {
 
   @ApiProperty({
     required: true,
-    description: 'Confirmación de la contraseña',
-    example: 'SecurePass123!',
-  })
-  @IsNotEmpty()
-  confirmPassword: string;
-
-  @ApiProperty({
-    required: true,
     description: 'Número de teléfono del usuario',
     example: '123456789',
   })
@@ -73,6 +67,12 @@ export class CreateUserDto {
   @MaxLength(80)
   address: string;
 
-  @IsEmpty()
-  deletedAt: null;
+  @ApiProperty({
+    description:
+      'Accesos para el usuario administrador de acuerdo al role otorgado',
+    example: 'admin',
+    required: false,
+  })
+  @IsEnum(UserRole)
+  role: UserRole;
 }

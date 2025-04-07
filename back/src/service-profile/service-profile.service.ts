@@ -6,12 +6,14 @@ import {
 import { ServiceProfileRepository } from './service-profile.repository';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { CategoriesRepository } from 'src/categories/categories.repository';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class ServiceProfileService {
   constructor(
     private readonly serviceProfileRepository: ServiceProfileRepository,
     private readonly categoriesRepository: CategoriesRepository,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   // OBTENER LISTA DE PERFILES POR CATEGORÍA
@@ -86,9 +88,14 @@ export class ServiceProfileService {
 
     serviceProfile.category = foundCategory;
 
-    return await this.serviceProfileRepository.createServiceProfileRepository(
-      serviceProfile,
-    );
+    const createdProfile =
+      await this.serviceProfileRepository.createServiceProfileRepository(
+        serviceProfile,
+      );
+
+    // Cambiar el role del usuario
+
+    return createdProfile;
   }
 
   async softDeleteService(id: string) {

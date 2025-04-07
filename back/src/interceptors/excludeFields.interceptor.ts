@@ -14,12 +14,16 @@ export function ExcludeFieldsInterceptor(excludedFields: string[]) {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
       return next.handle().pipe(
         map((data) => {
-          if (data.createdUser && typeof data.createdUser === 'object') {
+          if (
+            (data.createdUser && typeof data.createdUser === 'object') ||
+            (data.admin && typeof data.admin === 'object')
+          ) {
+            const key = data.createdUser ? 'createdUser' : 'admin';
             return {
               ...data,
-              createdUser: Object.fromEntries(
-                Object.entries(data.createdUser).filter(
-                  ([key]) => !excludedFields.includes(key),
+              [key]: Object.fromEntries(
+                Object.entries(data[key]).filter(
+                  ([k]) => !excludedFields.includes(k),
                 ),
               ),
             };

@@ -33,8 +33,14 @@ export class AppointmentsController {
   }
 
   @Patch(':id')
-  updateAppointmentController(@Param('id') id: string, @Body() updateAppointment: UpdateAppointmentDto) {
-    return this.appointmentsService.updateAppointmentByIdService(id, updateAppointment);
+  updateAppointmentController(
+    @Param('id') id: string,
+    @Body() updateAppointment: UpdateAppointmentDto,
+  ) {
+    return this.appointmentsService.updateAppointmentByIdService(
+      id,
+      updateAppointment,
+    );
   }
 
   @Delete(':id')
