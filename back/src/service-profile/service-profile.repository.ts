@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoriesRepository } from 'src/categories/categories.repository';
+import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { Repository } from 'typeorm';
 
@@ -36,8 +37,17 @@ export class ServiceProfileRepository {
     });
   }
 
-  //CREAR UN USUARIO
-  async createServiceProfileRepository(serviceProfile) {
+  //CREAR UN PERFIL PARA POSTERIOREMENTE GUARDAR EN LA BASE DE DATOS
+  createServiceProfileRepository(
+    serviceProfile: ServiceProfileToSaveDto,
+  ): ServiceProfile {
+    return this.serviceProfileRepository.create(serviceProfile);
+  }
+
+  //GUARDAR UN PERFIL EN LA BASE DE DATOS
+  async saveServiceProfileRepository(
+    serviceProfile: ServiceProfileToSaveDto,
+  ): Promise<ServiceProfile> {
     return await this.serviceProfileRepository.save(serviceProfile);
   }
 

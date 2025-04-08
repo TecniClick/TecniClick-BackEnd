@@ -8,6 +8,11 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { CategoriesRepository } from 'src/categories/categories.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
+import { CreateServiceProfileDto } from 'src/DTO/serviceProfileDtos/createServiceProfile.dto';
+import { Categories } from 'src/entities/categories.entity';
+import { User } from 'src/entities/user.entity';
+import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
+import { UserRole } from 'src/enums/UserRole.enum';
 
 @Injectable()
 export class ServiceProfileService {
@@ -70,13 +75,16 @@ export class ServiceProfileService {
   }
 
   // CREAR UN PERFIL
-  async createServiceProfileService(serviceProfile, userOfToken: IJwtPayload) {
-    const category = serviceProfile.category;
+  async createServiceProfileService(
+    serviceProfile: CreateServiceProfileDto,
+    userOfToken: IJwtPayload,
+  ): Promise<ServiceProfile> {
+    const category: string = serviceProfile.category;
     if (!category) {
       throw new BadRequestException(`La categoría debe ser añadida`);
     }
 
-    let foundCategory =
+    const foundCategory: Categories =
       await this.categoriesRepository.getCategoryByNameRepository(category);
 
     if (!foundCategory) {
@@ -87,16 +95,29 @@ export class ServiceProfileService {
 
     //Checar si se crea la categoría al momento de querer asignar una nueva (checar con front)
 
-    serviceProfile.category = foundCategory;
+    let user: User = await this.usersRepository.getUserByIdRepository(
+      userOfToken.id,
+    );
 
-    const createdProfile =
-      await this.serviceProfileRepository.createServiceProfileRepository(
-        serviceProfile,
-      );
+    if (user.role === UserRole.CUSTOMER) {
+      user.role = UserRole.PROVIDER;
+      user = await this.usersRepository.updateUserRepository(user.id, {
+        role: user.role,
+      });
+    }
+
+    const createdProfile: ServiceProfileToSaveDto =
+      this.serviceProfileRepository.createServiceProfileRepository({
+        ...serviceProfile,
+        category: foundCategory,
+        user: user,
+      });
 
     // Cambiar el role del usuario
 
-    return createdProfile;
+    return await this.serviceProfileRepository.saveServiceProfileRepository(
+      createdProfile,
+    );
   }
 
   async softDeleteService(id: string) {

@@ -15,17 +15,28 @@ export function ExcludeFieldsInterceptor(excludedFields: string[]) {
       return next.handle().pipe(
         map((data) => {
           if (
+            (data.user && typeof data.user === 'object') ||
             (data.createdUser && typeof data.createdUser === 'object') ||
             (data.admin && typeof data.admin === 'object')
           ) {
-            const key = data.createdUser ? 'createdUser' : 'admin';
+            let key: string;
+            if (data.createdUser) {
+              key = 'createdUser';
+            } else if (data.admin) {
+              key = 'admin';
+            } else if (data.user) {
+              key = 'user';
+            }
+
+            const filteredMain = Object.fromEntries(
+              Object.entries(data[key]).filter(
+                ([k]) => !excludedFields.includes(k),
+              ),
+            );
+
             return {
               ...data,
-              [key]: Object.fromEntries(
-                Object.entries(data[key]).filter(
-                  ([k]) => !excludedFields.includes(k),
-                ),
-              ),
+              [key]: filteredMain,
             };
           } else if (
             data &&
