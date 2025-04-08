@@ -8,12 +8,16 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ServiceProfileService } from './service-profile.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { GetUser } from 'src/decorators/getUser.decorator';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
+import { CreateServiceProfileDto } from 'src/DTO/serviceProfileDtos/createServiceProfile.dto';
+import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
+import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 
 @ApiTags('Endpoints de perfiles de Servicio')
 @Controller('service-profile')
@@ -40,12 +44,14 @@ export class ServiceProfileController {
   }
 
   // CREAR UN PERFIL
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   @Post('create')
   createServiceProfileController(
-    @Body() serviceProfile,
+    @Body() serviceProfile: CreateServiceProfileDto,
     @GetUser() userOfToken: IJwtPayload,
-  ) {
+  ): Promise<ServiceProfile> {
     return this.serviceProfileService.createServiceProfileService(
       serviceProfile,
       userOfToken,

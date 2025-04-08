@@ -12,4 +12,6 @@ export class CreateServiceProfileDto {
   appointmentPrice: number;
 
   phone: string;
+
+  category: string;
 }
