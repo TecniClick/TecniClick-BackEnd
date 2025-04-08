@@ -7,6 +7,7 @@ import { ServiceProfileRepository } from './service-profile.repository';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { CategoriesRepository } from 'src/categories/categories.repository';
 import { UsersRepository } from 'src/users/users.repository';
+import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 
 @Injectable()
 export class ServiceProfileService {
@@ -69,7 +70,7 @@ export class ServiceProfileService {
   }
 
   // CREAR UN PERFIL
-  async createServiceProfileService(serviceProfile) {
+  async createServiceProfileService(serviceProfile, userOfToken: IJwtPayload) {
     const category = serviceProfile.category;
     if (!category) {
       throw new BadRequestException(`La categoría debe ser añadida`);

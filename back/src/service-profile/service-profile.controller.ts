@@ -7,9 +7,13 @@ import {
   ParseUUIDPipe,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ServiceProfileService } from './service-profile.service';
 import { ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/Auth/guards/auth.guard';
+import { GetUser } from 'src/decorators/getUser.decorator';
+import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 
 @ApiTags('Endpoints de perfiles de Servicio')
 @Controller('service-profile')
@@ -36,10 +40,15 @@ export class ServiceProfileController {
   }
 
   // CREAR UN PERFIL
+  @UseGuards(AuthGuard)
   @Post('create')
-  createServiceProfileController(@Body() serviceProfile) {
+  createServiceProfileController(
+    @Body() serviceProfile,
+    @GetUser() userOfToken: IJwtPayload,
+  ) {
     return this.serviceProfileService.createServiceProfileService(
       serviceProfile,
+      userOfToken,
     );
   }
 
