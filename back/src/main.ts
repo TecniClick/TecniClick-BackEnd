@@ -8,6 +8,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(new loggerGlobal().use);
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true
+  })
   const swaggerConfig = new DocumentBuilder()
     .setTitle('PF TECNICLICK')
     .setDescription('Documentación API para proyecto final Henry, TECNICLICK')
