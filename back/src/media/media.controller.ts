@@ -22,7 +22,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-
   @Post('upload/:serviceProfileId')
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file'))
@@ -34,24 +33,28 @@ export class MediaController {
       properties: {
         file: {
           type: 'string',
-          format: 'binary'
-        }
-      }
-    }
+          format: 'binary',
+        },
+      },
+    },
   })
-  uploadMediaController(@Param('serviceProfileId') id: string, @UploadedFile(
-    new ParseFilePipe({
-      validators: [
-        new MaxFileSizeValidator({
-          maxSize: 5000000,
-          message: 'El archivo es demasiado pesado'
-        }),
-        new FileTypeValidator({
-          fileType: /\.(jpg|jpeg|png|webp|mp4|mov|avi)$/i
-        })
-      ]
-    })
-  ) file: Express.Multer.File) {
+  uploadMediaController(
+    @Param('serviceProfileId') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 5000000,
+            message: 'El archivo es demasiado pesado',
+          }),
+          new FileTypeValidator({
+            fileType: /\.(jpg|jpeg|png|webp|mp4|mov|avi)$/i,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     return this.mediaService.uploadMediaService(id, file);
   }
 
@@ -66,24 +69,28 @@ export class MediaController {
       properties: {
         file: {
           type: 'string',
-          format: 'binary'
-        }
-      }
-    }
+          format: 'binary',
+        },
+      },
+    },
   })
-  updateUserProfilePController(@Param('userId') id: string, @UploadedFile(
-    new ParseFilePipe({
-      validators: [
-        new MaxFileSizeValidator({
-          maxSize: 200000,
-          message: 'La imagen es demasiado pesada'
-        }),
-        new FileTypeValidator({
-          fileType: /(jpg|jpeg|png|webp)$/
-        })
-      ]
-    })
-  ) file: Express.Multer.File ) {
+  updateUserProfilePController(
+    @Param('userId') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 200000,
+            message: 'La imagen es demasiado pesada',
+          }),
+          new FileTypeValidator({
+            fileType: /(jpg|jpeg|png|webp)$/,
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     return this.mediaService.updateUserProfileService(id, file);
   }
 

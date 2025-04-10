@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CategoriesRepository } from 'src/categories/categories.repository';
 import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { Repository } from 'typeorm';
@@ -10,8 +9,23 @@ export class ServiceProfileRepository {
   constructor(
     @InjectRepository(ServiceProfile)
     private serviceProfileRepository: Repository<ServiceProfile>,
-    private readonly categoriesRepository: CategoriesRepository,
   ) {}
+
+  // OBTENER TODOS LOS PERFILES EXISTENTES
+  async getAllServiceProfileRepository(): Promise<ServiceProfile[]> {
+    return await this.serviceProfileRepository.find();
+  }
+
+  // OBTENER PERFILES PENDIENTES (solo admin)
+  async getPendingServiceProfilesRepository(): Promise<ServiceProfile[]> {
+    return this.serviceProfileRepository
+      .createQueryBuilder('serviceProfile')
+      .leftJoinAndSelect('serviceProfile.user', 'user')
+      .leftJoinAndSelect('serviceProfile.category', 'category')
+      .where('serviceProfile.status = :status', { status: 'pending' })
+      .andWhere('serviceProfile.deletedAt IS NULL')
+      .getMany();
+  }
 
   //Actualizar cuando tengas la entidad de categorías (name por category)
   // OBTENER LISTA DE USUARIOS POR CATEGORÍA
@@ -49,16 +63,5 @@ export class ServiceProfileRepository {
     serviceProfile: ServiceProfileToSaveDto,
   ): Promise<ServiceProfile> {
     return await this.serviceProfileRepository.save(serviceProfile);
-  }
-
-  async softDeleteRepository(id: string) {
-    const entity = await this.serviceProfileRepository.findOneBy({ id: id });
-    if (!entity)
-      throw new NotFoundException(`Usuario con Id ${id} no fue encontrado`);
-    entity.deletedAt = new Date();
-    return {
-      message: `Usuario con Id ${id} fue borrado lógicamente`,
-      serviceProfile: this.serviceProfileRepository.save(entity),
-    };
   }
 }

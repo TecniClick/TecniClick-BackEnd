@@ -17,6 +17,7 @@ import { Media } from './media.entity';
 import { Review } from './reviews.entity';
 import { Subscriptions } from './subcriptions.entity';
 import { Order } from './orders.entity';
+import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 
 @Entity({
   name: 'service_profiles',
@@ -49,6 +50,13 @@ export class ServiceProfile {
     nullable: false,
   })
   phone: string;
+
+  @Column({
+    type: 'enum',
+    enum: ServiceProfileStatus,
+    default: ServiceProfileStatus.PENDING,
+  })
+  status: ServiceProfileStatus;
 
   @CreateDateColumn({
     type: 'timestamp',
