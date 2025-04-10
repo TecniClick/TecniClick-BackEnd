@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -18,11 +19,33 @@ import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { CreateServiceProfileDto } from 'src/DTO/serviceProfileDtos/createServiceProfile.dto';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/UserRole.enum';
+import { RolesGuard } from 'src/Auth/guards/roles.guard';
 
 @ApiTags('Endpoints de perfiles de Servicio')
 @Controller('service-profile')
 export class ServiceProfileController {
   constructor(private readonly serviceProfileService: ServiceProfileService) {}
+
+  // OBTENER TODOS LOS PERFILES EXISTENTES
+  @Get()
+  // @ApiBearerAuth()
+  // @Roles(UserRole.ADMIN)
+  // @UseGuards(AuthGuard, RolesGuard)
+  getAllServiceProfileController() {
+    return this.serviceProfileService.getAllServiceProfileService();
+  }
+
+  // OBTENER PERFILES PENDIENTES (solo admin)
+  @Get('pending')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  getPendingServiceProfilesController(): Promise<ServiceProfile[]> {
+    return this.serviceProfileService.getPendingServiceProfilesService();
+  }
 
   // OBTENER LISTA DE PERFILES POR CATEGORÍA
   @Get('by-category')
@@ -44,10 +67,10 @@ export class ServiceProfileController {
   }
 
   // CREAR UN PERFIL
+  @Post('create')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
-  @Post('create')
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   createServiceProfileController(
     @Body() serviceProfile: CreateServiceProfileDto,
     @GetUser() userOfToken: IJwtPayload,
@@ -64,8 +87,18 @@ export class ServiceProfileController {
     return this.serviceProfileService.getServiceProfileByIdService(id);
   }
 
+  // BORRADO LÓGICO DE UN PERFIL POR ID
   @Delete('softDelete/:id')
   softDeleteController(@Param('id') id: string) {
     return this.serviceProfileService.softDeleteService(id);
+  }
+
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID
+  @Patch(':id/status')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async updateServiceProfileStatusController(@Param('id') id: string) {
+    return this.serviceProfileService.updateServiceProfileStatusService(id);
   }
 }

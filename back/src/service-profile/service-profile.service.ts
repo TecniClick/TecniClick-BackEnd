@@ -13,6 +13,7 @@ import { Categories } from 'src/entities/categories.entity';
 import { User } from 'src/entities/user.entity';
 import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
 import { UserRole } from 'src/enums/UserRole.enum';
+import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 
 @Injectable()
 export class ServiceProfileService {
@@ -21,6 +22,16 @@ export class ServiceProfileService {
     private readonly categoriesRepository: CategoriesRepository,
     private readonly usersRepository: UsersRepository,
   ) {}
+
+  // OBTENER TODOS LOS PERFILES EXISTENTES
+  async getAllServiceProfileService() {
+    return await this.serviceProfileRepository.getAllServiceProfileRepository();
+  }
+
+  // OBTENER PERFILES PENDIENTES (solo admin)
+  async getPendingServiceProfilesService(): Promise<ServiceProfile[]> {
+    return await this.serviceProfileRepository.getPendingServiceProfilesRepository();
+  }
 
   // OBTENER LISTA DE PERFILES POR CATEGORÍA
   async getAllServiceProfilesByCategoryService(
@@ -33,15 +44,12 @@ export class ServiceProfileService {
       throw new BadRequestException('La categoría no puede estar vacía.');
     }
 
-    console.log('Categoría recibida:', categoryName);
-
     const category =
       await this.categoriesRepository.getCategoryByNameRepository(categoryName);
     if (!category)
       throw new NotFoundException(
         `No se encontró la categoría '${categoryName}'`,
       );
-    console.log('Categoría encontrada:', category);
 
     const skip: number = (page - 1) * limit;
 
@@ -51,8 +59,6 @@ export class ServiceProfileService {
         skip,
         limit,
       );
-
-    console.log('Perfiles encontrados:', serviceProfiles);
 
     if (serviceProfiles.length === 0) {
       throw new NotFoundException(
@@ -120,7 +126,45 @@ export class ServiceProfileService {
     );
   }
 
+  // BORRADO LÓGICO DE UN PERFIL POR ID
   async softDeleteService(id: string) {
-    return this.serviceProfileRepository.softDeleteRepository(id);
+    const entity: ServiceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(id);
+    if (!entity)
+      throw new NotFoundException(`Usuario con Id ${id} no fue encontrado`);
+    entity.deletedAt = new Date();
+
+    const newProfile =
+      await this.serviceProfileRepository.saveServiceProfileRepository(entity);
+
+    return {
+      message: `Usuario con Id ${id} fue borrado lógicamente`,
+      serviceProfile: newProfile,
+    };
+  }
+
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID
+  async updateServiceProfileStatusService(id: string) {
+    const serviceProfile: ServiceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(id);
+
+    if (!serviceProfile) {
+      throw new NotFoundException(
+        `El perfil de servicio con id ${id} no fue encontrado`,
+      );
+    }
+
+    // Validamos que el status actual es "pendiente" antes de actualizarlo
+    if (serviceProfile.status !== ServiceProfileStatus.PENDING) {
+      throw new BadRequestException(
+        'Solo perfiles pendientes pueden ser activados',
+      );
+    }
+
+    serviceProfile.status = ServiceProfileStatus.ACTIVE;
+
+    return this.serviceProfileRepository.saveServiceProfileRepository(
+      serviceProfile,
+    );
   }
 }

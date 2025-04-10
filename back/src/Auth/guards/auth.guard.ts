@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
 
       // Aquí puedes transformar el payload si lo necesitas
       request.user = {
-        id: payload.sub,
+        id: payload.id,
         email: payload.email,
         role: payload.role, // Este debe existir en el payload JWT
       };

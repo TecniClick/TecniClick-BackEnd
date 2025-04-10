@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
+import { Categories } from 'src/entities/categories.entity';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('categories')
 export class CategoriesController {
@@ -7,7 +9,8 @@ export class CategoriesController {
 
   // CREAR UNA CATEGORÍA
   @Post('create')
-  createCategoriesController(@Body() category) {
+  @ApiBody({ type: Categories })
+  createCategoriesController(@Body() category: Categories) {
     return this.categoriesService.createCategoriesService(category);
   }
 
