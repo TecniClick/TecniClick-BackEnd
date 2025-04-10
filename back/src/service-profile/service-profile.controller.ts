@@ -12,7 +12,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ServiceProfileService } from './service-profile.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { GetUser } from 'src/decorators/getUser.decorator';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
@@ -71,6 +71,7 @@ export class ServiceProfileController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  @ApiBody({type: CreateServiceProfileDto})
   createServiceProfileController(
     @Body() serviceProfile: CreateServiceProfileDto,
     @GetUser() userOfToken: IJwtPayload,
