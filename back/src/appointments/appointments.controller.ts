@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateAppointmentDto } from 'src/DTO/apptDtos/CreateAppointment.dto';
 import { UpdateAppointmentDto } from 'src/DTO/apptDtos/updateAppointment.dto';
 import { RolesGuard } from 'src/Auth/guards/roles.guard';
+import { AuthGuard } from 'src/Auth/guards/auth.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/UserRole.enum';
 
 @ApiTags('Endpoints de appointments')
 @Controller('appointments')
@@ -21,9 +25,11 @@ export class AppointmentsController {
 
   @Post('createAppointment')
   @ApiBearerAuth()
-  @UseGuards(RolesGuard)
-  createAppointmentController(@Body() createAppointment: CreateAppointmentDto) {
-    return this.appointmentsService.createAppointmentService(createAppointment);
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.CUSTOMER)
+  createAppointmentController(@Body() createAppointment: CreateAppointmentDto, @Request() req) {
+    const userId = req.user.id
+    return this.appointmentsService.createAppointmentService({...createAppointment, userId});
   }
 
   @Get()
