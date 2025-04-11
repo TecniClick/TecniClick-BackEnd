@@ -27,9 +27,15 @@ export class AppointmentsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.CUSTOMER)
-  createAppointmentController(@Body() createAppointment: CreateAppointmentDto, @Request() req) {
-    const userId = req.user.id
-    return this.appointmentsService.createAppointmentService({...createAppointment, userId});
+  createAppointmentController(
+    @Body() createAppointment: CreateAppointmentDto,
+    @Request() req,
+  ) {
+    const userId = req.user.id;
+    return this.appointmentsService.createAppointmentService({
+      ...createAppointment,
+      userId,
+    });
   }
 
   @Get()
