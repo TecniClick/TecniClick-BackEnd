@@ -24,6 +24,7 @@ export class ServiceProfileRepository {
       .leftJoinAndSelect('serviceProfile.category', 'category')
       .where('serviceProfile.status = :status', { status: 'pending' })
       .andWhere('serviceProfile.deletedAt IS NULL')
+      .orderBy('serviceProfile.createdAt', 'ASC') // ordena del más viejo al más nuevo ('DESC' para orden inverso)
       .getMany();
   }
 

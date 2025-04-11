@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -32,8 +31,17 @@ export class ServiceProfile {
   @Column({ type: 'varchar', length: 50, nullable: false })
   userName: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
-  address: string;
+  @Column('jsonb', { nullable: false })
+  address: {
+    extNumber: string;
+    intNumber?: string;
+    street: string;
+    neighborhood?: string;
+    zipCode: string;
+    city: string;
+    state: string;
+    country: string;
+  };
 
   @Column({ type: 'float', default: 1, nullable: false })
   rating: number;

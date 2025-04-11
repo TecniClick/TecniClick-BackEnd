@@ -22,6 +22,7 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/UserRole.enum';
 import { RolesGuard } from 'src/Auth/guards/roles.guard';
+import { UpdateServiceProfileDto } from 'src/DTO/serviceProfileDtos/updateServiceProfile.dto';
 
 @ApiTags('Endpoints de perfiles de Servicio')
 @Controller('service-profile')
@@ -82,10 +83,26 @@ export class ServiceProfileController {
     );
   }
 
-  // OBTENER PERFIL POR ID
-  @Get(':id')
-  getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.serviceProfileService.getServiceProfileByIdService(id);
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO
+  @Patch('status-active/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async updateServiceProfileStatusActiveController(@Param('id') id: string) {
+    return this.serviceProfileService.updateServiceProfileStatusActiveService(
+      id,
+    );
+  }
+
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A RECHAZADO
+  @Patch('status-rejected/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async updateServiceProfileStatusRejectedController(@Param('id') id: string) {
+    return this.serviceProfileService.updateServiceProfileStatusRejectedService(
+      id,
+    );
   }
 
   // BORRADO LÓGICO DE UN PERFIL POR ID
@@ -94,12 +111,25 @@ export class ServiceProfileController {
     return this.serviceProfileService.softDeleteService(id);
   }
 
-  // MODIFICAR EL ESTADO DE UN PERFIL POR ID
-  @Patch(':id/status')
+  //  MODIFICAR PERFIL POR ID (ID De Perfil)
+  @Patch('udate/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async updateServiceProfileStatusController(@Param('id') id: string) {
-    return this.serviceProfileService.updateServiceProfileStatusService(id);
+  @Roles(UserRole.PROVIDER)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  updateServiceProfileController(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updatedData: UpdateServiceProfileDto,
+  ) {
+    return this.serviceProfileService.updateServiceProfileService(
+      id,
+      updatedData,
+    );
+  }
+
+  // OBTENER PERFIL POR ID
+  @Get(':id')
+  getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.serviceProfileService.getServiceProfileByIdService(id);
   }
 }
