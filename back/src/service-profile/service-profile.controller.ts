@@ -71,7 +71,7 @@ export class ServiceProfileController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
-  @ApiBody({type: CreateServiceProfileDto})
+  @ApiBody({ type: CreateServiceProfileDto })
   createServiceProfileController(
     @Body() serviceProfile: CreateServiceProfileDto,
     @GetUser() userOfToken: IJwtPayload,
