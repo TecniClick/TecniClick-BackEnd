@@ -5,6 +5,11 @@ import { CategoriesRepository } from './categories.repository';
 export class CategoriesService {
   constructor(private readonly categoriesRepository: CategoriesRepository) {}
 
+  //OBTENER TODAS LAS CATEGORÍAS
+  async getAllCategoriesService() {
+    return await this.categoriesRepository.getAllCategoriesRepository();
+  }
+
   // CREAR UNA CATEGORÍA
   async createCategoriesService(category) {
     return await this.categoriesRepository.createCategoriesRepository(category);

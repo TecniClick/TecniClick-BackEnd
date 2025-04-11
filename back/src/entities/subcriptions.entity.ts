@@ -23,9 +23,9 @@ export class Subscriptions {
   id: string;
 
   @ApiProperty({
-      description: 'Tipo de suscripción',
-      example: 'free',
-    })
+    description: 'Tipo de suscripción',
+    example: 'free',
+  })
   @Column({
     type: 'enum',
     enum: SubscriptionsType,

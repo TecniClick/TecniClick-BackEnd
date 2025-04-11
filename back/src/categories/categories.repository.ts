@@ -10,6 +10,11 @@ export class CategoriesRepository {
     private readonly categoriesRepository: Repository<Categories>,
   ) {}
 
+  //OBTENER TODAS LAS CATEGORÍAS
+  async getAllCategoriesRepository(): Promise<Categories[]> {
+    return await this.categoriesRepository.find();
+  }
+
   //CREAR UNA CATEGORÍA
   async createCategoriesRepository(category) {
     return await this.categoriesRepository.save(category);

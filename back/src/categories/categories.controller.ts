@@ -8,6 +8,11 @@ import { CreateCategoryDto } from 'src/DTO/categoriesDtos/createCategory.dto';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  //OBTENER TODAS LAS CATEGORÍAS
+  @Get()
+  getAllCategoriesController() {
+    return this.categoriesService.getAllCategoriesService();
+  }
   // CREAR UNA CATEGORÍA
   @Post('create')
   @ApiBody({ type: CreateCategoryDto })
