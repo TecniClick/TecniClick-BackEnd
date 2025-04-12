@@ -99,6 +99,7 @@ export class ServiceProfileService {
       userOfToken.id,
     );
 
+    // Cambiar el role del usuario
     if (user.role === UserRole.CUSTOMER) {
       user.role = UserRole.PROVIDER;
       user = await this.usersRepository.updateUserRepository(user.id, {
@@ -112,8 +113,6 @@ export class ServiceProfileService {
         category: foundCategory,
         user: user,
       });
-
-    // Cambiar el role del usuario
 
     return await this.serviceProfileRepository.saveServiceProfileRepository(
       createdProfile,

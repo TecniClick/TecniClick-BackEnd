@@ -34,7 +34,8 @@ export class AppointmentsRepository {
 
   async getAppointmentByIdRepository(id: string) {
     const foundAppointment = await this.appointmentsRepository.findOne({
-      where: { id: id },
+      where: { id },
+      relations: ['users', 'provider', 'review'],
     });
     if (!foundAppointment)
       throw new NotFoundException(
@@ -43,14 +44,8 @@ export class AppointmentsRepository {
     return foundAppointment;
   }
 
-  async updateAppointmentRepository(id, updateAppointment) {
-    const appointment = await this.appointmentsRepository.findOne({
-      where: { id: id },
-    });
-    if (!appointment)
-      throw new NotFoundException(`Appointment con Id ${id} no fue encontrado`);
-    const updated = Object.assign(appointment, updateAppointment);
-    return this.appointmentsRepository.save(updated);
+  async updateAppointmentRepository(appointment) {
+    return await this.appointmentsRepository.save(appointment);
   }
 
   async deleteAppointmentRepository(id: string) {

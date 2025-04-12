@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
@@ -49,6 +49,7 @@ export class ServiceProfileRepository {
   async getServiceProfileByIdRepository(id: string): Promise<ServiceProfile> {
     return await this.serviceProfileRepository.findOne({
       where: { id },
+      relations: ['user', 'reviews'],
     });
   }
 

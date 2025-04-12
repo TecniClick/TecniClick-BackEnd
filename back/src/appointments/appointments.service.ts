@@ -1,7 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { AppointmentsRepository } from './appointments.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
+import { AppointmentStatus } from 'src/enums/AppointmentStatus.enum';
+import { Appointment } from 'src/entities/appointment.entity';
 
 @Injectable()
 export class AppointmentsService {
@@ -36,11 +42,32 @@ export class AppointmentsService {
     return this.appointmentsRepository.getAppointmentByIdRepository(id);
   }
 
-  updateAppointmentByIdService(id: string, updateAppointment) {
-    return this.appointmentsRepository.updateAppointmentRepository(
-      id,
-      updateAppointment,
-    );
+  async updateAppointmentByIdService(id: string, updateAppointment) {
+    const appointment =
+      await this.appointmentsRepository.getAppointmentByIdRepository(id);
+    if (!appointment)
+      throw new NotFoundException(`Appointment con Id ${id} no fue encontrado`);
+    const updated = Object.assign(appointment, updateAppointment);
+    return this.appointmentsRepository.updateAppointmentRepository(appointment);
+  }
+
+  // CAMBIAR A CONFIRMADO
+  async confirmAppointmentService(id: string): Promise<Appointment> {
+    const appointment =
+      await this.appointmentsRepository.getAppointmentByIdRepository(id);
+
+    if (!appointment) {
+      throw new NotFoundException(`La cita con ID ${id} no fue encontrada`);
+    }
+
+    if (appointment.appointmentStatus !== AppointmentStatus.PENDING) {
+      throw new BadRequestException(
+        `Solo se pueden confirmar citas que estén en estado "pending"`,
+      );
+    }
+
+    appointment.appointmentStatus = AppointmentStatus.CONFIRMED;
+    return this.appointmentsRepository.updateAppointmentRepository(appointment);
   }
 
   deleteAppointmentService(id: string) {
