@@ -15,5 +15,6 @@ import { ServiceProfileModule } from 'src/service-profile/service-profile.module
   ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService, AppointmentsRepository],
+  exports: [AppointmentsRepository],
 })
 export class AppointmentsModule {}

@@ -43,8 +43,8 @@ export class ServiceProfile {
     country: string;
   };
 
-  @Column({ type: 'float', default: 1, nullable: false })
-  rating: number;
+  @Column({ type: 'float', default: null, nullable: true })
+  rating: number | null;
 
   @Column({ type: 'text', nullable: true })
   description: string;

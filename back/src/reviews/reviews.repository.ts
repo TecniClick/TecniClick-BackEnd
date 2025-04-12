@@ -9,4 +9,12 @@ export class ReviewsRepository {
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
   ) {}
+
+  async createAReviewRepository(createdReview) {
+    return await this.reviewRepository.save(createdReview);
+  }
+
+  async getAReviewByIdRepository(id: string): Promise<Review> {
+    return await this.reviewRepository.findOneBy({ id });
+  }
 }

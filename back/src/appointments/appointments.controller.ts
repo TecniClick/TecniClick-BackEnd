@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -57,6 +58,15 @@ export class AppointmentsController {
       id,
       updateAppointment,
     );
+  }
+
+  // CAMBIAR EL ESTADO A CONFIRMADO
+  @Patch('confirm/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.PROVIDER)
+  confirmAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.confirmAppointmentService(id);
   }
 
   @Delete(':id')

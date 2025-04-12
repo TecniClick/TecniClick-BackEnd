@@ -25,16 +25,6 @@ export class CreateServiceProfileDto {
   address: AddressDto;
 
   @ApiProperty({
-    example: 4.8,
-    description: 'Calificación promedio del servicio',
-    minimum: 0,
-    maximum: 5,
-    default: 1,
-  })
-  @IsEmpty()
-  rating: number;
-
-  @ApiProperty({
     example:
       'Servicio de instalaciones eléctricas residenciales y comerciales.',
     description: 'Descripción del servicio',

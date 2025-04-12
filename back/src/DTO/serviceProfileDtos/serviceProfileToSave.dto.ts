@@ -18,8 +18,6 @@ export class ServiceProfileToSaveDto {
   @Type(() => AddressDto)
   address: AddressDto;
 
-  rating: number;
-
   description: string;
 
   appointmentPrice: number;
