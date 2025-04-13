@@ -11,6 +11,7 @@ import { AppointmentsRepository } from 'src/appointments/appointments.repository
 import { AppointmentStatus } from 'src/enums/AppointmentStatus.enum';
 import { ReviewToCreateDto } from 'src/DTO/reviewDtos/reviewToCreate.dto';
 import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
+import { Review } from 'src/entities/reviews.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -86,19 +87,53 @@ export class ReviewsService {
     return savedReview;
   }
 
-  // findAll() {
-  //   return `This action returns all reviews`;
-  // }
+  async getReviewsByServiceProfileService(serviceProfileId: string) {
+    const reviews =
+      await this.reviewsRepository.getReviewsByServiceProfileRepository(
+        serviceProfileId,
+      );
 
-  // findAll() {
-  //   return `This action returns all reviews`;
-  // }
+    if (!reviews || reviews.length === 0) {
+      throw new NotFoundException(
+        'No hay reviews para este perfil de servicio',
+      );
+    }
+
+    return reviews;
+  }
+
+  async getReviewsByUserService(userOfToken: IJwtPayload) {
+    const reviews = await this.reviewsRepository.getReviewsByUserRepository(
+      userOfToken.id,
+    );
+
+    if (!reviews || reviews.length === 0) {
+      throw new NotFoundException('Este usuario no ha realizado reviews');
+    }
+
+    return reviews;
+  }
 
   getAReviewByIdService(id: string) {
     return this.reviewsRepository.getAReviewByIdRepository(id);
   }
 
-  // update(id: number, updateReview) {
-  //   return `This action updates a #${id} review`;
-  // }
+  // ELIMINAR LÓGICAMENTE A UN USUARIO POR ID
+  async softDeleteService(id: string) {
+    const entity: Review =
+      await this.reviewsRepository.getAReviewByIdRepository(id);
+
+    if (!entity)
+      throw new NotFoundException(`Review con id ${id} no se pudo encontrar`);
+
+    entity.deletedAt = new Date();
+
+    const softDeletedReview: Review =
+      await this.reviewsRepository.createAReviewRepository(entity);
+
+    return {
+      message: `Review con ${id} eliminado lógicamente`,
+      review: softDeletedReview,
+    };
+  }
 }

@@ -51,8 +51,23 @@ export class AppointmentsService {
     return this.appointmentsRepository.updateAppointmentRepository(appointment);
   }
 
-  // CAMBIAR A CONFIRMADO
-  async confirmAppointmentService(id: string): Promise<Appointment> {
+  // // CAMBIAR A CONFIRMADO
+  // async confirmAppointmentService(id: string): Promise<Appointment> {
+  //   const appointment =
+  //     await this.appointmentsRepository.getAppointmentByIdRepository(id);
+
+  //   if (!appointment) {
+  //     throw new NotFoundException(`La cita con ID ${id} no fue encontrada`);
+  //   }
+
+  //   if (appointment.appointmentStatus !== AppointmentStatus.PENDING) {
+  //     throw new BadRequestException(
+  //       `Solo se pueden confirmar citas que estén en estado "pending"`,
+  //     );
+  //   }
+
+  // CAMBIAR A COMPLETADO
+  async completeAppointmentService(id: string): Promise<Appointment> {
     const appointment =
       await this.appointmentsRepository.getAppointmentByIdRepository(id);
 
@@ -60,13 +75,32 @@ export class AppointmentsService {
       throw new NotFoundException(`La cita con ID ${id} no fue encontrada`);
     }
 
-    if (appointment.appointmentStatus !== AppointmentStatus.PENDING) {
+    if (appointment.appointmentStatus !== AppointmentStatus.CONFIRMED) {
       throw new BadRequestException(
-        `Solo se pueden confirmar citas que estén en estado "pending"`,
+        `Solo se pueden declarar completadas citas que estén en estado "confirmed"`,
       );
     }
 
-    appointment.appointmentStatus = AppointmentStatus.CONFIRMED;
+    appointment.appointmentStatus = AppointmentStatus.COMPLETED;
+    return this.appointmentsRepository.updateAppointmentRepository(appointment);
+  }
+
+  // CAMBIAR A CANCELADO
+  async cancelAppointmentService(id: string): Promise<Appointment> {
+    const appointment =
+      await this.appointmentsRepository.getAppointmentByIdRepository(id);
+
+    if (!appointment) {
+      throw new NotFoundException(`La cita con ID ${id} no fue encontrada`);
+    }
+
+    if (appointment.appointmentStatus !== AppointmentStatus.CONFIRMED) {
+      throw new BadRequestException(
+        `Solo se pueden cancelar citas que estén en estado "confirmed"`,
+      );
+    }
+
+    appointment.appointmentStatus = AppointmentStatus.CANCELLED;
     return this.appointmentsRepository.updateAppointmentRepository(appointment);
   }
 

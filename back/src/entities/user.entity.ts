@@ -149,11 +149,10 @@ export class User {
   @IsEmpty()
   updatedAt: Date;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Fecha de borrado lógico del usuario',
   })
   @Column({ type: 'timestamp', nullable: true, default: null })
-  @IsOptional()
   deletedAt: Date | null;
 
   @OneToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.user)
