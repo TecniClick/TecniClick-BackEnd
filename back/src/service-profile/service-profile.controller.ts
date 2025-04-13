@@ -106,7 +106,7 @@ export class ServiceProfileController {
   }
 
   // BORRADO LÓGICO DE UN PERFIL POR ID
-  @Delete('softDelete/:id')
+  @Patch('softDelete/:id')
   softDeleteController(@Param('id') id: string) {
     return this.serviceProfileService.softDeleteService(id);
   }

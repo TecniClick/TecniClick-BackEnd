@@ -60,13 +60,31 @@ export class AppointmentsController {
     );
   }
 
-  // CAMBIAR EL ESTADO A CONFIRMADO
-  @Patch('confirm/:id')
+  // // CAMBIAR EL ESTADO A CONFIRMADO
+  // @Patch('confirm/:id')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles(UserRole.PROVIDER)
+  // confirmAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+  //   return this.appointmentsService.confirmAppointmentService(id);
+  // }
+
+  // CAMBIAR EL ESTADO A COMPLETADO
+  @Patch('complete/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.PROVIDER)
-  confirmAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
-    return this.appointmentsService.confirmAppointmentService(id);
+  completeAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.completeAppointmentService(id);
+  }
+
+  // CAMBIAR EL ESTADO A CANCELADO
+  @Patch('cancel/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.PROVIDER)
+  cancelAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.cancelAppointmentService(id);
   }
 
   @Delete(':id')

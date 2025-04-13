@@ -41,23 +41,32 @@ export class ReviewsController {
     );
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.reviewsService.findAll();
-  // }
+  // Traer reviews por serviceProfileId
+  @Get('/service-profile/:serviceProfileId')
+  getReviewsByServiceProfileController(
+    @Param('serviceProfileId', ParseUUIDPipe) serviceProfileId: string,
+  ) {
+    return this.reviewsService.getReviewsByServiceProfileService(
+      serviceProfileId,
+    );
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.reviewsService.findAll();
-  // }
+  // Traer reviews por userId
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @Get('/user')
+  getReviewsByUserController(@GetUser() userOfToken: IJwtPayload) {
+    return this.reviewsService.getReviewsByUserService(userOfToken);
+  }
 
   @Get(':id')
   getAReviewByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.reviewsService.getAReviewByIdService(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateReview) {
-  //   return this.reviewsService.update(+id, updateReview);
-  // }
+  // ELIMINAR LÓGICAMENTE A UN REVIEW POR ID
+  @Patch('softDelete/:id')
+  softDeleteController(@Param('id') id: string) {
+    return this.reviewsService.softDeleteService(id);
+  }
 }
