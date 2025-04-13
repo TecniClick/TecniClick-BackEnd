@@ -6,11 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AppointmentsService } from './appointments.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateAppointmentDto } from 'src/DTO/apptDtos/CreateAppointment.dto';
 import { UpdateAppointmentDto } from 'src/DTO/apptDtos/updateAppointment.dto';
+import { RolesGuard } from 'src/Auth/guards/roles.guard';
+import { AuthGuard } from 'src/Auth/guards/auth.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRole } from 'src/enums/UserRole.enum';
 
 @ApiTags('Endpoints de appointments')
 @Controller('appointments')
@@ -18,8 +25,18 @@ export class AppointmentsController {
   constructor(private readonly appointmentsService: AppointmentsService) {}
 
   @Post('createAppointment')
-  createAppointmentController(@Body() createAppointment: CreateAppointmentDto) {
-    return this.appointmentsService.createAppointmentService(createAppointment);
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.CUSTOMER)
+  createAppointmentController(
+    @Body() createAppointment: CreateAppointmentDto,
+    @Request() req,
+  ) {
+    const userId = req.user.id;
+    return this.appointmentsService.createAppointmentService({
+      ...createAppointment,
+      userId,
+    });
   }
 
   @Get()
@@ -41,6 +58,33 @@ export class AppointmentsController {
       id,
       updateAppointment,
     );
+  }
+
+  // // CAMBIAR EL ESTADO A CONFIRMADO
+  // @Patch('confirm/:id')
+  // @ApiBearerAuth()
+  // @UseGuards(AuthGuard, RolesGuard)
+  // @Roles(UserRole.PROVIDER)
+  // confirmAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+  //   return this.appointmentsService.confirmAppointmentService(id);
+  // }
+
+  // CAMBIAR EL ESTADO A COMPLETADO
+  @Patch('complete/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.PROVIDER)
+  completeAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.completeAppointmentService(id);
+  }
+
+  // CAMBIAR EL ESTADO A CANCELADO
+  @Patch('cancel/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.PROVIDER)
+  cancelAppointmentController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.appointmentsService.cancelAppointmentService(id);
   }
 
   @Delete(':id')

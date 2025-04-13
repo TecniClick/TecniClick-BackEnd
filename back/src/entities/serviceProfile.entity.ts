@@ -1,7 +1,6 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -17,6 +16,7 @@ import { Media } from './media.entity';
 import { Review } from './reviews.entity';
 import { Subscriptions } from './subcriptions.entity';
 import { Order } from './orders.entity';
+import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 
 @Entity({
   name: 'service_profiles',
@@ -31,11 +31,20 @@ export class ServiceProfile {
   @Column({ type: 'varchar', length: 50, nullable: false })
   userName: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: false })
-  address: string;
+  @Column('jsonb', { nullable: false })
+  address: {
+    extNumber: string;
+    intNumber?: string;
+    street: string;
+    neighborhood?: string;
+    zipCode: string;
+    city: string;
+    state: string;
+    country: string;
+  };
 
-  @Column({ type: 'float', default: 1, nullable: false })
-  rating: number;
+  @Column({ type: 'float', default: null, nullable: true })
+  rating: number | null;
 
   @Column({ type: 'text', nullable: true })
   description: string;
@@ -49,6 +58,13 @@ export class ServiceProfile {
     nullable: false,
   })
   phone: string;
+
+  @Column({
+    type: 'enum',
+    enum: ServiceProfileStatus,
+    default: ServiceProfileStatus.PENDING,
+  })
+  status: ServiceProfileStatus;
 
   @CreateDateColumn({
     type: 'timestamp',

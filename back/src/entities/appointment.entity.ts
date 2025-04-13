@@ -24,7 +24,7 @@ export class Appointment {
   @Column({
     type: 'enum',
     enum: AppointmentStatus,
-    default: AppointmentStatus.PENDING,
+    default: AppointmentStatus.CONFIRMED,
   })
   appointmentStatus: AppointmentStatus;
 

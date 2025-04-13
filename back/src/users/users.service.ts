@@ -22,7 +22,7 @@ export class UsersService {
 
   // Get ALL Type of Users
   async getAllUsersService(): Promise<UsersResponseDto[]> {
-    return this.usersRepository.getAllUsersRepository();
+    return await this.usersRepository.getAllUsersRepository();
   }
 
   //Get All Active Users

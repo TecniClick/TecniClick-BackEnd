@@ -124,7 +124,7 @@ export class UsersRepository {
   }
 
   // MODIFICAR USUARIO POR ID
-  async updateUserRepository(id: string, user: UpdateUserDto): Promise<User> {
+  async updateUserRepository(id: string, user: Partial<User>): Promise<User> {
     await this.usersRepository.update(id, user);
     return await this.usersRepository.findOneBy({ id });
   }

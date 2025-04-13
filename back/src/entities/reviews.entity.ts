@@ -10,6 +10,8 @@ import {
 import { Appointment } from './appointment.entity';
 import { User } from './user.entity';
 import { ServiceProfile } from './serviceProfile.entity';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsEmpty } from 'class-validator';
 
 @Entity({ name: 'reviews' })
 export class Review {
@@ -27,6 +29,12 @@ export class Review {
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
+
+  @ApiProperty({
+    description: 'Fecha de borrado lógico del review',
+  })
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  deletedAt: Date | null;
 
   @OneToOne(() => Appointment, (appointment) => appointment.review)
   @JoinColumn({ name: 'appointment_id' })

@@ -11,7 +11,6 @@ import { User } from 'src/entities/user.entity';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
-import { IsNull } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -45,10 +44,12 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
+
     const token: string = this.jwtService.sign(userPayload);
     return {
       token,
       message: 'Usuario logeado con éxito.',
+      userId: user.id,
     };
   }
 
