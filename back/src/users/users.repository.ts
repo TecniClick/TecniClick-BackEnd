@@ -110,7 +110,10 @@ export class UsersRepository {
 
   // OBTENER USUARIO POR ID
   async getUserByIdRepository(id: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ id });
+    return await this.usersRepository.findOne({
+      where: {id},
+      relations: ['serviceProfile']
+     });
   }
 
   // OBTENER USUARIO POR CORREO ELECTRÓNICO
