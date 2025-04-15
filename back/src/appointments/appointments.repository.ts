@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AppointmentToSaveDto } from 'src/DTO/apptDtos/appointmentToCreate.dto';
 import { CreateAppointmentDto } from 'src/DTO/apptDtos/CreateAppointment.dto';
 import { Appointment } from 'src/entities/appointment.entity';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class AppointmentsRepository {
@@ -13,47 +14,35 @@ export class AppointmentsRepository {
     private appointmentsRepository: Repository<Appointment>,
   ) {}
 
-  async createAppointmentRepository(
-    createAppointment: CreateAppointmentDto,
-    user: User,
-    provider: ServiceProfile,
+  // CREAR UNA CITA
+  createAppointmentRepository(
+    appointmentToCreate: AppointmentToSaveDto,
+  ): Appointment {
+    return this.appointmentsRepository.create(appointmentToCreate);
+  }
+
+  // GUARDAR UNA CITA
+  async saveAppointmentRepository(
+    appointment: Appointment,
   ): Promise<Appointment> {
-    const newAppointment = this.appointmentsRepository.create({
-      date: new Date(createAppointment.date),
-      additionalNotes: createAppointment.additionalNotes,
-      users: user,
-      provider: provider,
-    });
-    return this.appointmentsRepository.save(newAppointment);
-  }
-
-  async getAllAppointmentsRepository() {
-    const appointments = await this.appointmentsRepository.find();
-    return appointments;
-  }
-
-  async getAppointmentByIdRepository(id: string) {
-    const foundAppointment = await this.appointmentsRepository.findOne({
-      where: { id },
-      relations: ['users', 'provider', 'review'],
-    });
-    if (!foundAppointment)
-      throw new NotFoundException(
-        `No se pudo encontrar el appointment con Id ${id}`,
-      );
-    return foundAppointment;
-  }
-
-  async updateAppointmentRepository(appointment) {
     return await this.appointmentsRepository.save(appointment);
   }
 
-  async deleteAppointmentRepository(id: string) {
-    const foundAppointment = await this.appointmentsRepository.findOne({
-      where: { id: id },
+  // OBTENER TODAS LAS CITAS
+  async getAllAppointmentsRepository(): Promise<Appointment[]> {
+    return await this.appointmentsRepository.find();
+  }
+
+  // OBTENER UNA CITA BY ID
+  async getAppointmentByIdRepository(id: string): Promise<Appointment> {
+    return await this.appointmentsRepository.findOne({
+      where: { id },
+      relations: ['users', 'provider', 'review'],
     });
-    if (!foundAppointment)
-      throw new NotFoundException(`Appointmend con Id ${id} no fue encontrado`);
-    return await this.appointmentsRepository.delete(foundAppointment);
+  }
+
+  // ELIMINAR UNA CITA EN LA BASE DE DATOS
+  async deleteAppointmentRepository(id: string): Promise<DeleteResult> {
+    return await this.appointmentsRepository.delete({ id });
   }
 }
