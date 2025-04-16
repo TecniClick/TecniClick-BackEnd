@@ -43,6 +43,11 @@ export class AppointmentsService {
       provider: provider,
     };
 
+    if (user.id === provider.user.id)
+      throw new BadRequestException(
+        `No se puede crear una cita con el perfil de servicio del mismo usuario`,
+      );
+
     const savedAppointment: Appointment =
       this.appointmentsRepository.createAppointmentRepository(
         appointmentToCreate,

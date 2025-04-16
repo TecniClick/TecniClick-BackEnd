@@ -75,6 +75,22 @@ export class ServiceProfileService {
     serviceProfile: CreateServiceProfileDto,
     userOfToken: IJwtPayload,
   ): Promise<ServiceProfile> {
+    const existingProfile =
+      await this.serviceProfileRepository.getServiceProfileByUserIdRepository(
+        userOfToken.id,
+      );
+    if (existingProfile) {
+      throw new BadRequestException(
+        'Este usuario ya tiene un perfil de servicio.',
+      );
+    }
+
+    if (userOfToken.role === UserRole.PROVIDER) {
+      throw new BadRequestException(
+        `El usuario ya cuenta con un perfil de servicio`,
+      );
+    }
+
     const category: string = serviceProfile.category;
     if (!category) {
       throw new BadRequestException(`La categoría debe ser añadida`);
@@ -86,12 +102,6 @@ export class ServiceProfileService {
     if (!foundCategory) {
       throw new NotFoundException(
         `La categoría ${category} no ha sido asignada`,
-      );
-    }
-
-    if (userOfToken.role === UserRole.PROVIDER) {
-      throw new BadRequestException(
-        `El usuario ya cuenta con un perfil de servicio`,
       );
     }
 
