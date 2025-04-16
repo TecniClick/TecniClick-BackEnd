@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Categories } from 'src/entities/categories.entity';
-import { Repository } from 'typeorm';
+import { InsertResult, Repository } from 'typeorm';
 
 @Injectable()
 export class CategoriesRepository {
@@ -25,6 +25,19 @@ export class CategoriesRepository {
     return await this.categoriesRepository.findOne({
       where: { name },
     });
+  }
+
+  //CARGA DE SUPERADMINISTRADORES
+  async addCategoriesRepository(
+    category: Partial<Categories>,
+  ): Promise<InsertResult> {
+    return await this.categoriesRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Categories)
+      .values(category)
+      .orIgnore()
+      .execute();
   }
 
   // OBTENER UNA CATEGORÍA POR ID

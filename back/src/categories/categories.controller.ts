@@ -26,6 +26,12 @@ export class CategoriesController {
     return this.categoriesService.getCategoryByNameService(name);
   }
 
+  //CARGA DE CATEGORÍAS
+  @Get('seeder')
+  addCategoriesAController(): Promise<string> {
+    return this.categoriesService.addCategoriesService();
+  }
+
   // OBTENER CATEGORÍA POR ID
   @Get('/:id')
   getCategoryByIdController(@Param('id') id: string) {
