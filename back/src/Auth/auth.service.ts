@@ -11,6 +11,7 @@ import { User } from 'src/entities/user.entity';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
+import { UserRole } from 'src/enums/UserRole.enum';
 
 @Injectable()
 export class AuthService {
@@ -89,4 +90,42 @@ export class AuthService {
       token,
     };
   }
+
+  async validateOAuthLogin(user: User): Promise<{ 
+    token: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      imgUrl: string;
+      role: UserRole;
+      hasServiceProfile: boolean;
+    };
+  }> {
+    // Verificar si tiene ServiceProfile (con tu relación existente)
+    const fullUser = await this.usersRepository.getUserByIdRepository(user.id);
+    const hasServiceProfile = !!fullUser?.serviceProfile;
+  
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      hasServiceProfile,
+    };
+  
+    return {
+      token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        imgUrl: user.imgUrl,
+        role: user.role,
+        hasServiceProfile,
+      },
+    };
+  }
+  
 }
+
+
