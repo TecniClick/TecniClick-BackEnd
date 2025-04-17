@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/entities/user.entity';
 
-export class DeletedUserResponseDto {
+export class ResponseOfUserDto {
   @ApiProperty({
     description:
       'Mensaje indicando que el usuario ha sido eliminado exitosamente.',

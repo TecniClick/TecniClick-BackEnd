@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class CreateCategoryDto {
   @ApiProperty({
@@ -8,6 +8,7 @@ export class CreateCategoryDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'El nombre de la categoría no puede estar vacío' })
+  @Length(3, 100)
   name: string;
 
   @ApiProperty({

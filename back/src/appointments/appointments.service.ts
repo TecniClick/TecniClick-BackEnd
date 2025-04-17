@@ -14,6 +14,7 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { AppointmentToSaveDto } from 'src/DTO/apptDtos/appointmentToCreate.dto';
 import { UpdateAppointmentDto } from 'src/DTO/apptDtos/updateAppointment.dto';
 import { DeleteResult } from 'typeorm';
+import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 
 @Injectable()
 export class AppointmentsService {
@@ -35,6 +36,11 @@ export class AppointmentsService {
         createAppointment.providerId,
       );
     if (!provider) throw new NotFoundException(`Proveedor no encontrado`);
+
+    if (provider.status === ServiceProfileStatus.PENDING)
+      throw new BadRequestException(
+        `No se puede crear una cita con un perfil de servicio no activado`,
+      );
 
     const appointmentToCreate: AppointmentToSaveDto = {
       date: new Date(createAppointment.date),

@@ -9,12 +9,12 @@ import { data } from '../utils/listOfAdmins';
 import { User } from 'src/entities/user.entity';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { CreateAdminDto } from 'src/DTO/userDtos/createAdmin.dto';
-import { DeletedUserResponseDto } from 'src/DTO/userDtos/deletedUserResponse.dto';
 import * as bcrypt from 'bcrypt';
 import { ResonseAdminDto } from 'src/DTO/userDtos/responseAdmin.dto';
 import { UpdateUserDto } from 'src/DTO/userDtos/updateUser.dto';
 import { UserRole } from 'src/enums/UserRole.enum';
 import { UpdatePasswordDto } from 'src/DTO/userDtos/updatePassword.dto';
+import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 
 @Injectable()
 export class UsersService {
@@ -173,7 +173,7 @@ export class UsersService {
   async updatePasswordService(
     id: string,
     updatedData: UpdatePasswordDto,
-  ): Promise<UsersResponseDto> {
+  ): Promise<ResponseOfUserDto> {
     const user: User = await this.usersRepository.getUserByIdRepository(id);
     if (!user) {
       throw new NotFoundException(`Usuario con id ${id} no fue encontrado`);
@@ -200,13 +200,18 @@ export class UsersService {
 
     const hashedPassword: string = await bcrypt.hash(updatedData.password, 10);
 
-    user.password = hashedPassword;
+    const modifiedUser = await this.usersRepository.updateUserRepository(id, {
+      password: hashedPassword,
+    });
 
-    return await this.usersRepository.updateUserRepository(id, user);
+    return {
+      message: `La contraseña del usuario con id ${id} ha sido cambiada`,
+      user: modifiedUser,
+    };
   }
 
   // ELIMINAR LÓGICAMENTE A UN USUARIO POR ID
-  async softDeleteService(id: string): Promise<DeletedUserResponseDto> {
+  async softDeleteService(id: string): Promise<ResponseOfUserDto> {
     const entity: User = await this.usersRepository.getUserByIdRepository(id);
 
     if (!entity)
@@ -224,7 +229,7 @@ export class UsersService {
   }
 
   // Eliminar un usuario de la base de datos
-  async deleteUserService(id: string): Promise<DeletedUserResponseDto> {
+  async deleteUserService(id: string): Promise<ResponseOfUserDto> {
     const userToDelete: User =
       await this.usersRepository.getUserByIdRepository(id);
 
@@ -235,7 +240,7 @@ export class UsersService {
     await this.usersRepository.deleteUserRepository(userToDelete.id);
 
     return {
-      message: `Usuario con ${id} eliminado de la base de datos`,
+      message: `Usuario con id ${id} eliminado de la base de datos`,
       user: userToDelete,
     };
   }

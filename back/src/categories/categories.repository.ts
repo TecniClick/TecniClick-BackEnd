@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateCategoryDto } from 'src/DTO/categoriesDtos/createCategory.dto';
 import { Categories } from 'src/entities/categories.entity';
 import { InsertResult, Repository } from 'typeorm';
 
@@ -16,7 +17,9 @@ export class CategoriesRepository {
   }
 
   //CREAR UNA CATEGORÍA
-  async createCategoriesRepository(category) {
+  async createCategoriesRepository(
+    category: CreateCategoryDto,
+  ): Promise<Categories> {
     return await this.categoriesRepository.save(category);
   }
 
@@ -27,7 +30,7 @@ export class CategoriesRepository {
     });
   }
 
-  //CARGA DE SUPERADMINISTRADORES
+  //CARGA DE CATEGORÍAS
   async addCategoriesRepository(
     category: Partial<Categories>,
   ): Promise<InsertResult> {
@@ -41,7 +44,7 @@ export class CategoriesRepository {
   }
 
   // OBTENER UNA CATEGORÍA POR ID
-  async getCategoryByIdRepository(id) {
+  async getCategoryByIdRepository(id: string): Promise<Categories> {
     return await this.categoriesRepository.findOne({
       where: { id },
     });
