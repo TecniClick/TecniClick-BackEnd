@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateUserDto } from 'src/DTO/userDtos/updateUser.dto';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { User } from 'src/entities/user.entity';
 import { UserRole } from 'src/enums/UserRole.enum';
@@ -127,8 +126,8 @@ export class UsersRepository {
   }
 
   // MODIFICAR USUARIO POR ID
-  async updateUserRepository(id: string, user: Partial<User>): Promise<User> {
-    await this.usersRepository.update(id, user);
+  async updateUserRepository(id: string, data: Partial<User>): Promise<User> {
+    await this.usersRepository.update(id, data);
     return await this.usersRepository.findOneBy({ id });
   }
 
