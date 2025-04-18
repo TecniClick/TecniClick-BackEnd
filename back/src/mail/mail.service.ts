@@ -1,3 +1,4 @@
+// src/mail/mail.service.ts
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as handlebars from 'handlebars';
@@ -10,35 +11,32 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
+      host: process.env.MAIL_HOST, 
       port: parseInt(process.env.MAIL_PORT),
-      secure: false, 
       auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASSWORD,
+        user: process.env.MAIL_USER, 
+        pass: process.env.MAIL_PASSWORD, 
       },
     });
   }
 
-  async sendEmail(
-    to: string,
-    subject: string,
-    templateName: string,
-    context: Record<string, any>,
-  ) {
+  async sendWelcomeEmail(to: string, name: string) {
+    // Ruta compatible con desarrollo y producción
     const templatePath = path.join(
-      __dirname,
+      process.cwd(), // Raíz del proyecto
+      'src', // Entra a src/
+      'mail', 
       'templates',
-      `${templateName}.hbs`,
+      'welcome.hbs'
     );
-    const templateContent = fs.readFileSync(templatePath, 'utf8');
-    const template = handlebars.compile(templateContent);
-    const html = template(context);
+
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({ name });
 
     await this.transporter.sendMail({
-      from: `"Tu App" <${process.env.MAIL_FROM}>`,
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to,
-      subject,
+      subject: '¡Bienvenido a TecniClick!',
       html,
     });
   }
