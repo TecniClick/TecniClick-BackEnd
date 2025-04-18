@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
+import { CreateSubscriptionDto } from 'src/DTO/subscriptionsDtos/createSuscription.dto';
+import { CreatePaymentDto } from 'src/DTO/subscriptionsDtos/createPayment.dto';
 
 @Injectable()
 export class SubscriptionsService {
@@ -7,23 +9,27 @@ export class SubscriptionsService {
     private readonly subscriptionsRepository: SubscriptionsRepository,
   ) {}
 
-  create(createSubscription) {
-    return 'This action adds a new subscription';
+  async createSubscriptionService(subscriptionData: CreateSubscriptionDto) {
+    const paymentDate = new Date();
+
+    const expirationDate = new Date();
+    expirationDate.setMonth(expirationDate.getMonth() + 1);
+
+    const subscriptionToCreate = {
+      ...subscriptionData,
+      paymentDate,
+      expirationDate: expirationDate,
+      status: 'pending',
+    };
+
+    return await this.subscriptionsRepository.createSubscriptionRepository(
+      subscriptionToCreate,
+    );
   }
 
-  findAll() {
-    return `This action returns all subscriptions`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} subscription`;
-  }
-
-  update(id: number, updateSubscription) {
-    return `This action updates a #${id} subscription`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} subscription`;
+  async createPaymentIntentService(suscriptionData: CreatePaymentDto) {
+    return await this.subscriptionsRepository.createPaymentIntentRepository(
+      suscriptionData,
+    );
   }
 }

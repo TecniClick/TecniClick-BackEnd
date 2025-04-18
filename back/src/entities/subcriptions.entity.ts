@@ -12,7 +12,7 @@ import { SubcriptionStatus } from 'src/enums/subscriptionStatus.enum';
 import { Order } from './orders.entity';
 import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 @Entity({
   name: 'subscriptions',
@@ -35,6 +35,13 @@ export class Subscriptions {
   @IsOptional()
   subscriptionType: SubscriptionsType;
 
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  @IsString()
+  description: string;
+
   @ApiProperty({
     description: 'Estado de la suscripción',
     example: 'pending',
@@ -49,10 +56,10 @@ export class Subscriptions {
   status: SubcriptionStatus;
 
   @ApiProperty({
-    description: 'Fecha de creación del usuario',
+    description: 'Fecha de creación de la suscripción',
   })
   @Column({ type: 'timestamp' })
-  startDate: Date;
+  paymentDate: Date;
 
   @Column({ type: 'timestamp' })
   expirationDate: Date;

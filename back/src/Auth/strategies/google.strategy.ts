@@ -22,20 +22,24 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<any> {
     const { name, emails, photos } = profile;
-    
+
     const userData = {
       email: emails[0].value,
       name: name.givenName + (name.familyName ? ` ${name.familyName}` : ''),
       phone: 0, // Valor temporal, el usuario deberá actualizarlo
       address: 'Dirección no especificada', // Valor temporal
       password: '', // No necesaria para OAuth
-      imgUrl: photos?.[0]?.value || 'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
+      imgUrl:
+        photos?.[0]?.value ||
+        'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
       role: UserRole.CUSTOMER, // Rol por defecto
     };
 
     try {
-      let user = await this.usersRepository.getUserByEmailRepository(userData.email);
-      
+      let user = await this.usersRepository.getUserByEmailRepository(
+        userData.email,
+      );
+
       if (!user) {
         // Crear nuevo usuario
         user = await this.usersRepository.saveAUserRepository(userData);
@@ -47,7 +51,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         // Actualizar imagen si es necesario
         if (!user.imgUrl && userData.imgUrl) {
           user.imgUrl = userData.imgUrl;
-          user = await this.usersRepository.updateUserRepository(user.id, { imgUrl: user.imgUrl });
+          user = await this.usersRepository.updateUserRepository(user.id, {
+            imgUrl: user.imgUrl,
+          });
         }
       }
 
