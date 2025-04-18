@@ -91,7 +91,7 @@ export class AuthService {
     };
   }
 
-  async validateOAuthLogin(user: User): Promise<{ 
+  async validateOAuthLogin(user: User): Promise<{
     token: string;
     user: {
       id: string;
@@ -105,14 +105,14 @@ export class AuthService {
     // Verificar si tiene ServiceProfile (con tu relación existente)
     const fullUser = await this.usersRepository.getUserByIdRepository(user.id);
     const hasServiceProfile = !!fullUser?.serviceProfile;
-  
+
     const payload = {
       id: user.id,
       email: user.email,
       role: user.role,
       hasServiceProfile,
     };
-  
+
     return {
       token: this.jwtService.sign(payload),
       user: {
@@ -125,7 +125,4 @@ export class AuthService {
       },
     };
   }
-  
 }
-
-

@@ -1,4 +1,13 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/DTO/authDtos/LoginUser.dto';
 import { CreateUserDto } from 'src/DTO/authDtos/CreateUser.dto';
@@ -7,7 +16,6 @@ import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interce
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
 import { AuthGuard } from '@nestjs/passport';
-
 
 @ApiTags('Endpoints de Autenticación')
 @Controller('auth')
@@ -44,7 +52,7 @@ export class AuthController {
     }
 
     const result = await this.authService.validateOAuthLogin(req.user);
-    
+
     return {
       message: 'Autenticación con Google exitosa',
       token: result.token,
@@ -54,8 +62,5 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-  }
+  async googleAuth() {}
 }
-
-
