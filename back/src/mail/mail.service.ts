@@ -11,11 +11,11 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST, 
+      host: process.env.MAIL_HOST,
       port: parseInt(process.env.MAIL_PORT),
       auth: {
-        user: process.env.MAIL_USER, 
-        pass: process.env.MAIL_PASSWORD, 
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASSWORD,
       },
     });
   }
@@ -25,9 +25,9 @@ export class MailService {
     const templatePath = path.join(
       process.cwd(), // Raíz del proyecto
       'src', // Entra a src/
-      'mail', 
+      'mail',
       'templates',
-      'welcome.hbs'
+      'welcome.hbs',
     );
 
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
