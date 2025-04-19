@@ -1,42 +1,22 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { CreatePaymentDto } from 'src/DTO/ordersDtos/createPayment.dto';
 
 @ApiTags('Endpoints de Ordenes')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
-  create(@Body() createOrder) {
-    return this.ordersService.create(createOrder);
-  }
-
-  @Get()
-  findAll() {
-    return this.ordersService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrder) {
-    return this.ordersService.update(+id, updateOrder);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+  @Post('create-intent')
+  @ApiBody({ type: CreatePaymentDto })
+  async createPaymentIntentController(
+    @Body() suscriptionData: CreatePaymentDto,
+  ) {
+    const paymentIntent =
+      await this.ordersService.createPaymentIntentService(suscriptionData);
+    return {
+      clientSecret: paymentIntent.client_secret,
+    };
   }
 }

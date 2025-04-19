@@ -55,8 +55,9 @@ export class AuthController {
     const result = await this.authService.validateOAuthLogin(req.user);
 
     const encodedUser = encodeURIComponent(JSON.stringify(result.user));
-    res.redirect(`http://localhost:3001/auth-success?token=${result.token}&user=${encodedUser}`);
-
+    res.redirect(
+      `http://localhost:3001/auth-success?token=${result.token}&user=${encodedUser}`,
+    );
 
     return {
       message: 'Autenticación con Google exitosa',

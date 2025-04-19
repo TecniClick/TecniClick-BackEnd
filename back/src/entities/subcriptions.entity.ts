@@ -1,6 +1,5 @@
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToMany,
@@ -8,11 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServiceProfile } from './serviceProfile.entity';
-import { SubcriptionStatus } from 'src/enums/subscriptionStatus.enum';
+import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
 import { Order } from './orders.entity';
 import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 @Entity({
   name: 'subscriptions',
@@ -35,40 +34,36 @@ export class Subscriptions {
   @IsOptional()
   subscriptionType: SubscriptionsType;
 
-  @Column({
-    type: 'text',
-    nullable: false,
-  })
-  @IsString()
-  description: string;
-
   @ApiProperty({
     description: 'Estado de la suscripción',
     example: 'pending',
   })
   @Column({
     type: 'enum',
-    enum: SubcriptionStatus,
-    default: SubcriptionStatus.PENDING,
+    enum: SubscriptionStatus,
+    default: SubscriptionStatus.PENDING,
   })
-  @IsEnum(SubcriptionStatus)
+  @IsEnum(SubscriptionStatus)
   @IsOptional()
-  status: SubcriptionStatus;
+  status: SubscriptionStatus;
 
   @ApiProperty({
-    description: 'Fecha de creación de la suscripción',
+    description: 'Fecha de pago de la suscripción Premium',
   })
-  @Column({ type: 'timestamp' })
-  paymentDate: Date;
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  paymentDate: Date | null;
 
-  @Column({ type: 'timestamp' })
-  expirationDate: Date;
-
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+  @ApiProperty({
+    description: 'Fecha de expiración del pago de suscripción Premium',
   })
-  createdAt: Date;
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  expirationDate: Date | null;
+
+  @ApiProperty({
+    description: 'Fecha de inicio de suscripción Premium',
+  })
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  createdPremiumAt: Date | null;
 
   @OneToOne(
     () => ServiceProfile,

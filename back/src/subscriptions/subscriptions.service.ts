@@ -1,35 +1,61 @@
 import { Injectable } from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
 import { CreateSubscriptionDto } from 'src/DTO/subscriptionsDtos/createSuscription.dto';
-import { CreatePaymentDto } from 'src/DTO/subscriptionsDtos/createPayment.dto';
+import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
+import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
+import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     private readonly subscriptionsRepository: SubscriptionsRepository,
+    private readonly serviceProfileRepository: ServiceProfileRepository,
   ) {}
 
-  async createSubscriptionService(subscriptionData: CreateSubscriptionDto) {
-    const paymentDate = new Date();
-
-    const expirationDate = new Date();
-    expirationDate.setMonth(expirationDate.getMonth() + 1);
+  async createSubscriptionService(serviceProfileId: string) {
+    const subscriptionType = SubscriptionsType.FREE;
+    const status = SubscriptionStatus.PENDING;
+    const paymentDate = null;
+    const expirationDate = null;
+    const createdPremiumAt = null;
+    const serviceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(
+        serviceProfileId,
+      );
 
     const subscriptionToCreate = {
-      ...subscriptionData,
+      subscriptionType,
+      status,
       paymentDate,
-      expirationDate: expirationDate,
-      status: 'pending',
+      expirationDate,
+      createdPremiumAt,
+      serviceProfile,
     };
 
-    return await this.subscriptionsRepository.createSubscriptionRepository(
-      subscriptionToCreate,
+    const newSubscription =
+      this.subscriptionsRepository.createSubscriptionRepository(
+        subscriptionToCreate,
+      );
+    return await this.subscriptionsRepository.saveSubscriptionRepository(
+      newSubscription,
     );
   }
 
-  async createPaymentIntentService(suscriptionData: CreatePaymentDto) {
-    return await this.subscriptionsRepository.createPaymentIntentRepository(
-      suscriptionData,
-    );
-  }
+  // async createSubscriptionService(subscriptionData: CreateSubscriptionDto) {
+  //   const paymentDate = new Date();
+
+  //   const expirationDate = new Date();
+  //   expirationDate.setMonth(expirationDate.getMonth() + 1);
+
+  //   const subscriptionToCreate = {
+  //     ...subscriptionData,
+  //     paymentDate,
+  //     expirationDate: expirationDate,
+  //     status: 'pending',
+  //   };
+
+  //   return await this.subscriptionsRepository.createSubscriptionRepository(
+  //     subscriptionToCreate,
+  //   );
+  // }
 }

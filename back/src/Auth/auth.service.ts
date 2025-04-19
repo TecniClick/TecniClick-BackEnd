@@ -77,7 +77,10 @@ export class AuthService {
     });
 
     //Enviamos email de bienvenida
-    await this.mailService.sendWelcomeEmail(createdUser.email, createdUser.name)
+    await this.mailService.sendWelcomeEmail(
+      createdUser.email,
+      createdUser.name,
+    );
 
     //Generamos el token para mejorar la experiencia de usuario:
     const payload: IJwtPayload = {
