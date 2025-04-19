@@ -12,12 +12,14 @@ import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
 import { UserRole } from 'src/enums/UserRole.enum';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async signInService(
@@ -74,8 +76,10 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    //Generamos el token para mejorar la experiencia de usuario:
+    //Enviamos email de bienvenida
+    await this.mailService.sendWelcomeEmail(createdUser.email, createdUser.name)
 
+    //Generamos el token para mejorar la experiencia de usuario:
     const payload: IJwtPayload = {
       id: createdUser.id,
       email: createdUser.email,
