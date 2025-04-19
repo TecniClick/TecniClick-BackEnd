@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -46,12 +47,16 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
+  async googleAuthRedirect(@Req() req, @Res() res) {
     if (!req.user) {
       throw new BadRequestException('No se pudo autenticar con Google');
     }
 
     const result = await this.authService.validateOAuthLogin(req.user);
+
+    const encodedUser = encodeURIComponent(JSON.stringify(result.user));
+    res.redirect(`http://localhost:3001/auth-success?token=${result.token}&user=${encodedUser}`);
+
 
     return {
       message: 'Autenticación con Google exitosa',
