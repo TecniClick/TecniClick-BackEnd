@@ -36,7 +36,7 @@ export class SubscriptionsRepository {
       currency,
       payment_method_types: ['card'],
       // description:
-      // payment_method: subscriptionData.id,
+      payment_method: subscriptionData.id,
       // confirm: true,
     });
   }
