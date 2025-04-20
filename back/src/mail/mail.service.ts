@@ -43,16 +43,16 @@ export class MailService {
   async sendProviderPendingEmail(
     email: string,
     name: string,
-    category: string
+    category: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'provider-pending.hbs'
+      'provider-pending.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       name,
@@ -60,10 +60,10 @@ export class MailService {
       requestDate: new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
-      })
+        day: 'numeric',
+      }),
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: email,
@@ -72,15 +72,19 @@ export class MailService {
     });
   }
 
-  async sendProviderApprovedEmail(email: string, name: string, category: string) {
+  async sendProviderApprovedEmail(
+    email: string,
+    name: string,
+    category: string,
+  ) {
     const html = this.compileTemplate('provider-approved.hbs', {
       name,
       category,
       approvalDate: new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
-      })
+        day: 'numeric',
+      }),
     });
 
     await this.transporter.sendMail({
@@ -91,15 +95,19 @@ export class MailService {
     });
   }
 
-  async sendProviderRejectedEmail(email: string, name: string, category: string) {
+  async sendProviderRejectedEmail(
+    email: string,
+    name: string,
+    category: string,
+  ) {
     const html = this.compileTemplate('provider-rejected.hbs', {
       name,
       category,
       rejectionDate: new Date().toLocaleDateString('es-ES', {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
-      })
+        day: 'numeric',
+      }),
     });
 
     await this.transporter.sendMail({
@@ -115,5 +123,4 @@ export class MailService {
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     return template(context);
   }
-  
 }

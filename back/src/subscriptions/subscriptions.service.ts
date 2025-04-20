@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
-import { CreateSubscriptionDto } from 'src/DTO/subscriptionsDtos/createSuscription.dto';
 import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
 import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
+import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 
 @Injectable()
 export class SubscriptionsService {
@@ -13,15 +13,20 @@ export class SubscriptionsService {
   ) {}
 
   async createSubscriptionService(serviceProfileId: string) {
+    const savedServiceProfile: ServiceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(
+        serviceProfileId,
+      );
+
+    return this.createFreeSubscriptionService(savedServiceProfile);
+  }
+
+  async createFreeSubscriptionService(serviceProfile: ServiceProfile) {
     const subscriptionType = SubscriptionsType.FREE;
     const status = SubscriptionStatus.PENDING;
     const paymentDate = null;
     const expirationDate = null;
     const createdPremiumAt = null;
-    const serviceProfile =
-      await this.serviceProfileRepository.getServiceProfileByIdRepository(
-        serviceProfileId,
-      );
 
     const subscriptionToCreate = {
       subscriptionType,

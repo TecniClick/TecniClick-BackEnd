@@ -1,9 +1,9 @@
 import { Controller, Post, Param, ParseUUIDPipe } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
-import { ApiTags, ApiBody } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('Pagos')
-@Controller('payments')
+@ApiTags('Subscripciones')
+@Controller('subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
