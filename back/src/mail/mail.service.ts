@@ -21,7 +21,6 @@ export class MailService {
   }
 
   async sendWelcomeEmail(to: string, name: string) {
-    // Ruta compatible con desarrollo y producción
     const templatePath = path.join(
       process.cwd(), // Raíz del proyecto
       'src', // Entra a src/
@@ -40,4 +39,81 @@ export class MailService {
       html,
     });
   }
+
+  async sendProviderPendingEmail(
+    email: string,
+    name: string,
+    category: string
+  ) {
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'mail',
+      'templates',
+      'provider-pending.hbs'
+    );
+  
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({
+      name,
+      category,
+      requestDate: new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    });
+  
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: email,
+      subject: 'Tu solicitud de proveedor está en revisión',
+      html,
+    });
+  }
+
+  async sendProviderApprovedEmail(email: string, name: string, category: string) {
+    const html = this.compileTemplate('provider-approved.hbs', {
+      name,
+      category,
+      approvalDate: new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    });
+
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: email,
+      subject: '¡Felicidades! Tu perfil de proveedor ha sido aprobado',
+      html,
+    });
+  }
+
+  async sendProviderRejectedEmail(email: string, name: string, category: string) {
+    const html = this.compileTemplate('provider-rejected.hbs', {
+      name,
+      category,
+      rejectionDate: new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    });
+
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: email,
+      subject: 'Resultado de tu solicitud de proveedor',
+      html,
+    });
+  }
+
+  private compileTemplate(templateName: string, context: object): string {
+    const templatePath = path.join(__dirname, 'templates', templateName);
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    return template(context);
+  }
+  
 }

@@ -15,6 +15,7 @@ import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfi
 import { UserRole } from 'src/enums/UserRole.enum';
 import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 import { UpdateServiceProfileDto } from 'src/DTO/serviceProfileDtos/updateServiceProfile.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class ServiceProfileService {
@@ -22,6 +23,7 @@ export class ServiceProfileService {
     private readonly serviceProfileRepository: ServiceProfileRepository,
     private readonly categoriesRepository: CategoriesRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly mailService: MailService
   ) {}
 
   // OBTENER TODOS LOS PERFILES EXISTENTES
@@ -124,6 +126,12 @@ export class ServiceProfileService {
         user: user,
       });
 
+      await this.mailService.sendProviderPendingEmail(
+        user.email,
+        user.name,
+        category
+      );
+
     return await this.serviceProfileRepository.saveServiceProfileRepository(
       createdProfile,
     );
@@ -149,6 +157,12 @@ export class ServiceProfileService {
 
     serviceProfile.status = ServiceProfileStatus.ACTIVE;
 
+    await this.mailService.sendProviderApprovedEmail(
+      serviceProfile.user.email,
+      serviceProfile.user.name,
+      serviceProfile.category.name
+    );
+
     return this.serviceProfileRepository.saveServiceProfileRepository(
       serviceProfile,
     );
@@ -173,6 +187,12 @@ export class ServiceProfileService {
     }
 
     serviceProfile.status = ServiceProfileStatus.REJECTED;
+
+    await this.mailService.sendProviderRejectedEmail(
+      serviceProfile.user.email,
+      serviceProfile.user.name,
+      serviceProfile.category.name,
+    );
 
     return this.serviceProfileRepository.saveServiceProfileRepository(
       serviceProfile,
