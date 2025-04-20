@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { ServiceProfileRepository } from './service-profile.repository';
@@ -16,6 +17,7 @@ import { UserRole } from 'src/enums/UserRole.enum';
 import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 import { UpdateServiceProfileDto } from 'src/DTO/serviceProfileDtos/updateServiceProfile.dto';
 import { MailService } from 'src/mail/mail.service';
+import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
 
 @Injectable()
 export class ServiceProfileService {
@@ -23,7 +25,8 @@ export class ServiceProfileService {
     private readonly serviceProfileRepository: ServiceProfileRepository,
     private readonly categoriesRepository: CategoriesRepository,
     private readonly usersRepository: UsersRepository,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   // OBTENER TODOS LOS PERFILES EXISTENTES
@@ -74,7 +77,7 @@ export class ServiceProfileService {
 
   // CREAR UN PERFIL
   async createServiceProfileService(
-    serviceProfile: CreateServiceProfileDto,
+    serviceProfileData: CreateServiceProfileDto,
     userOfToken: IJwtPayload,
   ): Promise<ServiceProfile> {
     const existingProfile =
@@ -93,7 +96,7 @@ export class ServiceProfileService {
       );
     }
 
-    const category: string = serviceProfile.category;
+    const category: string = serviceProfileData.category;
     if (!category) {
       throw new BadRequestException(`La categoría debe ser añadida`);
     }
@@ -121,20 +124,35 @@ export class ServiceProfileService {
 
     const createdProfile: ServiceProfileToSaveDto =
       this.serviceProfileRepository.createServiceProfileRepository({
-        ...serviceProfile,
+        ...serviceProfileData,
         category: foundCategory,
         user: user,
       });
 
-      await this.mailService.sendProviderPendingEmail(
-        user.email,
-        user.name,
-        category
+    await this.mailService.sendProviderPendingEmail(
+      user.email,
+      user.name,
+      category,
+    );
+
+    const savedServiceProfile: ServiceProfile =
+      await this.serviceProfileRepository.saveServiceProfileRepository(
+        createdProfile,
       );
 
-    return await this.serviceProfileRepository.saveServiceProfileRepository(
-      createdProfile,
-    );
+    // Crear la suscripción para el servicio
+
+    const createdSubsucription =
+      await this.subscriptionsService.createFreeSubscriptionService(
+        savedServiceProfile,
+      );
+
+    if (!createdSubsucription)
+      throw new InternalServerErrorException(
+        `La suscripción no pudo ser creada`,
+      );
+
+    return savedServiceProfile;
   }
 
   // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO
@@ -160,7 +178,7 @@ export class ServiceProfileService {
     await this.mailService.sendProviderApprovedEmail(
       serviceProfile.user.email,
       serviceProfile.user.name,
-      serviceProfile.category.name
+      serviceProfile.category.name,
     );
 
     return this.serviceProfileRepository.saveServiceProfileRepository(

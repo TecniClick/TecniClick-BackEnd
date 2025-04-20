@@ -9,9 +9,15 @@ import { CategoriesRepository } from 'src/categories/categories.repository';
 import { UsersRepository } from 'src/users/users.repository';
 import { User } from 'src/entities/user.entity';
 import { MailModule } from 'src/mail/mail.module';
+import { Subscriptions } from 'src/entities/subcriptions.entity';
+import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 
 @Module({
-  imports: [MailModule, TypeOrmModule.forFeature([ServiceProfile, Categories, User])],
+  imports: [
+    MailModule,
+    SubscriptionsModule,
+    TypeOrmModule.forFeature([ServiceProfile, Categories, User, Subscriptions]),
+  ],
   controllers: [ServiceProfileController],
   providers: [
     ServiceProfileService,

@@ -26,6 +26,7 @@ export class Order {
   })
   createdAt: Date;
 
+  //Checar si se requiere que suscripción tenga una relación con orders
   @ManyToOne(() => Subscriptions, (subscription) => subscription.orders)
   @JoinColumn({ name: 'suscription_id' })
   subscription: Subscriptions;
