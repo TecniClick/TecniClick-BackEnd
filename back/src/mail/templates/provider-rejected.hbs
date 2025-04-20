@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f44336; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .notice { background: #fff3f3; border-left: 4px solid #f44336; padding: 10px; margin: 15px 0; }
+        .footer { text-align: center; padding: 10px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Solicitud Rechazada</h1>
+    </div>
+    <div class="content">
+        <p>Hola {{name}},</p>
+        <p>Lamentamos informarte que tu solicitud como proveedor de <strong>{{category}}</strong> no pudo ser aprobada.</p>
+        
+        <div class="notice">
+            <p>La solicitud fue rechazada por inconsistencias en la información.</p>
+            <p>Para más información contacta a nuestro equipo de soporte.</p>
+        </div>
+        
+        <p>Fecha de revisión: <strong>{{rejectionDate}}</strong></p>
+    </div>
+    <div class="footer">
+        <p>© 2025 TecniClick - soporte@tecniclick.com</p>
+    </div>
+</body>
+</html>
