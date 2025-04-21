@@ -123,8 +123,6 @@ export class MailService {
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     return template(context);
   }
-<<<<<<< Updated upstream
-=======
 
   async sendAppointmentConfirmation(
     userEmail: string,
@@ -208,5 +206,4 @@ export class MailService {
     });
   }
   
->>>>>>> Stashed changes
 }
