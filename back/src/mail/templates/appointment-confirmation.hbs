@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación de Cita</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #2563eb; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { padding: 20px; background: #f9f9f9; }
+        .details { margin: 15px 0; padding: 15px; background: #fff; border-left: 4px solid #2563eb; }
+        .footer { text-align: center; padding: 10px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>¡Cita Confirmada!</h1>
+    </div>
+    <div class="content">
+        <p>Hola {{userName}},</p>
+        <p>Tu cita con <strong>{{providerName}}</strong> para el servicio de <strong>{{providerService}}</strong> ha sido agendada exitosamente.</p>
+        
+        <div class="details">
+            <h3>Detalles de la cita:</h3>
+            <p><strong>Fecha y hora:</strong> {{appointmentDate}}</p>
+            <p><strong>Notas adicionales:</strong> {{additionalNotes}}</p>
+        </div>
+        
+        <p>Recibirás un recordatorio un día antes de tu cita.</p>
+    </div>
+    <div class="footer">
+        <p>© 2025 TecniClick - soporte@tecniclick.com</p>
+    </div>
+</body>
+</html>
