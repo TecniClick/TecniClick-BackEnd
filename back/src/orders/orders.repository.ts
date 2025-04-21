@@ -34,40 +34,29 @@ export class OrdersRepository {
     });
   }
 
-  constructStripeEvent(
-    payload: Buffer,
-    signature: string,
-    endpointSecret: string,
-  ): Stripe.Event {
-    return this.stripe.webhooks.constructEvent(
-      payload,
-      signature,
-      endpointSecret,
-    );
-  }
+  // constructStripeEvent(
+  //   payload: Buffer,
+  //   signature: string,
+  //   endpointSecret: string,
+  // ): Stripe.Event {
+  //   return this.stripe.webhooks.constructEvent(
+  //     payload,
+  //     signature,
+  //     endpointSecret,
+  //   );
+  // }
 
-  async handlePaymentSucceeded(paymentIntent: Stripe.PaymentIntent) {
-    const amount = paymentIntent.amount;
-    const paymentIntentId = paymentIntent.id;
+  // async handlePaymentSucceeded(orderData: Partial<Order>) {
+  //   await this.ordersRepository.save(orderData);
+  // }
 
-    await this.ordersRepository.save({
-      amount: amount,
-      paymentIntentId: paymentIntentId,
-      status: OrderStatus.SUCCEEDED,
-      // otras propiedades que quieras: se debe crear el invoice y pasar suscripción.
-    });
+  // async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
+  //   const paymentIntentId = paymentIntent.id;
 
-    // 2. Actualizar la Subscription de este usuario a tipo "premium"
-    // await this.subscriptionRepository.upgradeToPremium(userId);
-  }
+  //   // ⚡ Opcional:
+  //   // Puedes guardar un registro de que el intento de pago falló,
+  //   // o enviarle una notificación al usuario si quieres.
 
-  async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
-    const paymentIntentId = paymentIntent.id;
-
-    // ⚡ Opcional:
-    // Puedes guardar un registro de que el intento de pago falló,
-    // o enviarle una notificación al usuario si quieres.
-
-    console.warn(`PaymentIntent ${paymentIntentId} failed.`);
-  }
+  //   console.warn(`PaymentIntent ${paymentIntentId} failed.`);
+  // }
 }
