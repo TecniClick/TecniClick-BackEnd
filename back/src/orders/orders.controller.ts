@@ -28,12 +28,12 @@ export class OrdersController {
     };
   }
 
-  @Post('webhook')
-  async handleStripeWebhookController(
-    @Req() request: Request,
-    @Headers('stripe-signature') signature: string,
-  ) {
-    const body = (request as RawBodyRequest<Request>).rawBody;
-    return await this.ordersService.handleStripeWebhookService(body, signature);
-  }
+  // @Post('webhook')
+  // async handleStripeWebhookController(
+  //   @Req() request: Request,
+  //   @Headers('stripe-signature') signature: string,
+  // ) {
+  //   const body = (request as RawBodyRequest<Request>).rawBody;
+  //   return await this.ordersService.handleStripeWebhookService(body, signature);
+  // }
 }
