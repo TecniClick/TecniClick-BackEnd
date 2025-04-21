@@ -123,4 +123,90 @@ export class MailService {
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     return template(context);
   }
+<<<<<<< Updated upstream
+=======
+
+  async sendAppointmentConfirmation(
+    userEmail: string,
+    userName: string,
+    providerName: string,
+    providerService: string,
+    appointmentDate: Date,
+    additionalNotes?: string
+  ) {
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'mail',
+      'templates',
+      'appointment-confirmation.hbs'
+    );
+  
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({
+      userName,
+      providerName,
+      providerService,
+      appointmentDate: appointmentDate.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      additionalNotes: additionalNotes || 'Ninguna'
+    });
+  
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: userEmail,
+      subject: 'Confirmación de tu cita',
+      html,
+    });
+  }
+  
+  async sendAppointmentNotificationToProvider(
+    providerEmail: string,
+    providerName: string,
+    userName: string,
+    userPhone: string,
+    serviceTitle: string,
+    appointmentDate: Date,
+    additionalNotes?: string
+  ) {
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'mail',
+      'templates',
+      'appointment-provider-notification.hbs'
+    );
+  
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({
+      providerName,
+      userName,
+      userPhone,
+      serviceTitle,
+      appointmentDate: appointmentDate.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      additionalNotes: additionalNotes || 'Ninguna'
+    });
+  
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: providerEmail,
+      subject: 'Nueva cita agendada',
+      html,
+    });
+  }
+  
+>>>>>>> Stashed changes
 }
