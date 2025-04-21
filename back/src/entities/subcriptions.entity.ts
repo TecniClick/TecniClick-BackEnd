@@ -69,7 +69,7 @@ export class Subscriptions {
     () => ServiceProfile,
     (serviceProfile) => serviceProfile.subscription,
   )
-  @JoinColumn({ name: 'suscription_id' })
+  @JoinColumn({ name: 'serviceProfile_id' })
   serviceProfile: ServiceProfile;
 
   @OneToMany(() => Order, (order) => order.subscription)

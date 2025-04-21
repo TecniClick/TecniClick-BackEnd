@@ -1,4 +1,4 @@
-import { ServiceProfile } from './serviceProfile.entity';
+import { OrderStatus } from 'src/enums/orderStatus.enum';
 import { Subscriptions } from './subcriptions.entity';
 import {
   Column,
@@ -7,6 +7,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'orders' })
@@ -15,7 +16,17 @@ export class Order {
   id: string;
 
   @Column({ type: 'decimal', nullable: true })
-  price: number;
+  amount: number;
+
+  @Column({ type: 'varchar', nullable: false })
+  paymentIntentId: string;
+
+  @Column({
+    type: 'enum',
+    enum: OrderStatus,
+    default: OrderStatus.SUCCEEDED,
+  })
+  status: OrderStatus;
 
   @Column({ type: 'int', unique: true, generated: 'increment' })
   invoice: number;
@@ -26,12 +37,16 @@ export class Order {
   })
   createdAt: Date;
 
-  //Checar si se requiere que suscripción tenga una relación con orders
-  @ManyToOne(() => Subscriptions, (subscription) => subscription.orders)
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
+  updatedAt: Date;
+
+  @ManyToOne(() => Subscriptions, (subscription) => subscription.orders, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'suscription_id' })
   subscription: Subscriptions;
-
-  @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.orders)
-  @JoinColumn({ name: 'serviceProfile_id' })
-  serviceProfile: ServiceProfile;
 }

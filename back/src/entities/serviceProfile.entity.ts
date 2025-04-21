@@ -98,9 +98,6 @@ export class ServiceProfile {
   @OneToMany(() => Media, (media) => media.serviceProfile)
   images: Media[];
 
-  @OneToMany(() => Order, (order) => order.serviceProfile)
-  orders: Order[];
-
   @ManyToOne(() => Categories, (category) => category.serviceProfile, {
     eager: true,
   })
