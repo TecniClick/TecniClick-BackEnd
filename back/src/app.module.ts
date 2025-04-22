@@ -14,6 +14,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { OrdersModule } from './orders/orders.module';
 import { MediaModule } from './media/media.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
     OrdersModule,
     MediaModule,
     AppointmentsModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

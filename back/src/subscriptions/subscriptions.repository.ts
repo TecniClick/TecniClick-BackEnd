@@ -9,4 +9,12 @@ export class SubscriptionsRepository {
     @InjectRepository(Subscriptions)
     private subscriptionsRepository: Repository<Subscriptions>,
   ) {}
+
+  createSubscriptionRepository(subscriptionData: Partial<Subscriptions>) {
+    return this.subscriptionsRepository.create(subscriptionData);
+  }
+
+  async saveSubscriptionRepository(newSubscription: Subscriptions) {
+    return await this.subscriptionsRepository.save(newSubscription);
+  }
 }

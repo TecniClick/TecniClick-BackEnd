@@ -53,6 +53,15 @@ export class ServiceProfileRepository {
     });
   }
 
+  // OBTENER PERFIL POR ID DE USUARIO
+  async getServiceProfileByUserIdRepository(
+    userId: string,
+  ): Promise<ServiceProfile> {
+    return await this.serviceProfileRepository.findOne({
+      where: { user: { id: userId } },
+    });
+  }
+
   //CREAR UN PERFIL PARA POSTERIOREMENTE GUARDAR EN LA BASE DE DATOS
   createServiceProfileRepository(
     serviceProfile: ServiceProfileToSaveDto,

@@ -11,12 +11,15 @@ import { User } from 'src/entities/user.entity';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
+import { UserRole } from 'src/enums/UserRole.enum';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersRepository: UsersRepository,
     private jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async signInService(
@@ -73,8 +76,13 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    //Generamos el token para mejorar la experiencia de usuario:
+    //Enviamos email de bienvenida
+    await this.mailService.sendWelcomeEmail(
+      createdUser.email,
+      createdUser.name,
+    );
 
+    //Generamos el token para mejorar la experiencia de usuario:
     const payload: IJwtPayload = {
       id: createdUser.id,
       email: createdUser.email,
@@ -87,6 +95,41 @@ export class AuthService {
       message: 'Usuario registrado con éxito.',
       createdUser,
       token,
+    };
+  }
+
+  async validateOAuthLogin(user: User): Promise<{
+    token: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      imgUrl: string;
+      role: UserRole;
+      hasServiceProfile: boolean;
+    };
+  }> {
+    // Verificar si tiene ServiceProfile (con tu relación existente)
+    const fullUser = await this.usersRepository.getUserByIdRepository(user.id);
+    const hasServiceProfile = !!fullUser?.serviceProfile;
+
+    const payload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      hasServiceProfile,
+    };
+
+    return {
+      token: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        imgUrl: user.imgUrl,
+        role: user.role,
+        hasServiceProfile,
+      },
     };
   }
 }

@@ -1,15 +1,13 @@
-import { IsOptional, IsString, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsDate } from 'class-validator';
 
 export class UpdateAppointmentDto {
   @IsOptional()
-  @IsDateString()
-  date?: string;
+  @IsDate()
+  @Type(() => Date) // 👈 esto convierte el string a Date automáticamente
+  date?: Date;
 
   @IsOptional()
   @IsString()
-  notes?: string;
-
-  @IsOptional()
-  @IsString()
-  status?: string;
+  additionalNotes?: string;
 }

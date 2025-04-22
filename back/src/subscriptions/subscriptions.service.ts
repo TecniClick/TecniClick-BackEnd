@@ -1,29 +1,66 @@
 import { Injectable } from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
+import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
+import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
+import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
+import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     private readonly subscriptionsRepository: SubscriptionsRepository,
+    private readonly serviceProfileRepository: ServiceProfileRepository,
   ) {}
 
-  create(createSubscription) {
-    return 'This action adds a new subscription';
+  async createSubscriptionService(serviceProfileId: string) {
+    const savedServiceProfile: ServiceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(
+        serviceProfileId,
+      );
+
+    return this.createFreeSubscriptionService(savedServiceProfile);
   }
 
-  findAll() {
-    return `This action returns all subscriptions`;
+  async createFreeSubscriptionService(serviceProfile: ServiceProfile) {
+    const subscriptionType = SubscriptionsType.FREE;
+    const status = SubscriptionStatus.PENDING;
+    const paymentDate = null;
+    const expirationDate = null;
+    const createdPremiumAt = null;
+
+    const subscriptionToCreate = {
+      subscriptionType,
+      status,
+      paymentDate,
+      expirationDate,
+      createdPremiumAt,
+      serviceProfile,
+    };
+
+    const newSubscription =
+      this.subscriptionsRepository.createSubscriptionRepository(
+        subscriptionToCreate,
+      );
+    return await this.subscriptionsRepository.saveSubscriptionRepository(
+      newSubscription,
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subscription`;
-  }
+  // async createSubscriptionService(subscriptionData: CreateSubscriptionDto) {
+  //   const paymentDate = new Date();
 
-  update(id: number, updateSubscription) {
-    return `This action updates a #${id} subscription`;
-  }
+  //   const expirationDate = new Date();
+  //   expirationDate.setMonth(expirationDate.getMonth() + 1);
 
-  remove(id: number) {
-    return `This action removes a #${id} subscription`;
-  }
+  //   const subscriptionToCreate = {
+  //     ...subscriptionData,
+  //     paymentDate,
+  //     expirationDate: expirationDate,
+  //     status: 'pending',
+  //   };
+
+  //   return await this.subscriptionsRepository.createSubscriptionRepository(
+  //     subscriptionToCreate,
+  //   );
+  // }
 }

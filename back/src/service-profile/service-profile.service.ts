@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { ServiceProfileRepository } from './service-profile.repository';
@@ -15,6 +16,8 @@ import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfi
 import { UserRole } from 'src/enums/UserRole.enum';
 import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
 import { UpdateServiceProfileDto } from 'src/DTO/serviceProfileDtos/updateServiceProfile.dto';
+import { MailService } from 'src/mail/mail.service';
+import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
 
 @Injectable()
 export class ServiceProfileService {
@@ -22,6 +25,8 @@ export class ServiceProfileService {
     private readonly serviceProfileRepository: ServiceProfileRepository,
     private readonly categoriesRepository: CategoriesRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly mailService: MailService,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   // OBTENER TODOS LOS PERFILES EXISTENTES
@@ -72,10 +77,26 @@ export class ServiceProfileService {
 
   // CREAR UN PERFIL
   async createServiceProfileService(
-    serviceProfile: CreateServiceProfileDto,
+    serviceProfileData: CreateServiceProfileDto,
     userOfToken: IJwtPayload,
   ): Promise<ServiceProfile> {
-    const category: string = serviceProfile.category;
+    const existingProfile =
+      await this.serviceProfileRepository.getServiceProfileByUserIdRepository(
+        userOfToken.id,
+      );
+    if (existingProfile) {
+      throw new BadRequestException(
+        'Este usuario ya tiene un perfil de servicio.',
+      );
+    }
+
+    if (userOfToken.role === UserRole.PROVIDER) {
+      throw new BadRequestException(
+        `El usuario ya cuenta con un perfil de servicio`,
+      );
+    }
+
+    const category: string = serviceProfileData.category;
     if (!category) {
       throw new BadRequestException(`La categoría debe ser añadida`);
     }
@@ -86,12 +107,6 @@ export class ServiceProfileService {
     if (!foundCategory) {
       throw new NotFoundException(
         `La categoría ${category} no ha sido asignada`,
-      );
-    }
-
-    if (userOfToken.role === UserRole.PROVIDER) {
-      throw new BadRequestException(
-        `El usuario ya cuenta con un perfil de servicio`,
       );
     }
 
@@ -109,14 +124,35 @@ export class ServiceProfileService {
 
     const createdProfile: ServiceProfileToSaveDto =
       this.serviceProfileRepository.createServiceProfileRepository({
-        ...serviceProfile,
+        ...serviceProfileData,
         category: foundCategory,
         user: user,
       });
 
-    return await this.serviceProfileRepository.saveServiceProfileRepository(
-      createdProfile,
+    await this.mailService.sendProviderPendingEmail(
+      user.email,
+      user.name,
+      category,
     );
+
+    const savedServiceProfile: ServiceProfile =
+      await this.serviceProfileRepository.saveServiceProfileRepository(
+        createdProfile,
+      );
+
+    // Crear la suscripción para el servicio
+
+    const createdSubsucription =
+      await this.subscriptionsService.createFreeSubscriptionService(
+        savedServiceProfile,
+      );
+
+    if (!createdSubsucription)
+      throw new InternalServerErrorException(
+        `La suscripción no pudo ser creada`,
+      );
+
+    return savedServiceProfile;
   }
 
   // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO
@@ -138,6 +174,12 @@ export class ServiceProfileService {
     }
 
     serviceProfile.status = ServiceProfileStatus.ACTIVE;
+
+    await this.mailService.sendProviderApprovedEmail(
+      serviceProfile.user.email,
+      serviceProfile.user.name,
+      serviceProfile.category.name,
+    );
 
     return this.serviceProfileRepository.saveServiceProfileRepository(
       serviceProfile,
@@ -163,6 +205,12 @@ export class ServiceProfileService {
     }
 
     serviceProfile.status = ServiceProfileStatus.REJECTED;
+
+    await this.mailService.sendProviderRejectedEmail(
+      serviceProfile.user.email,
+      serviceProfile.user.name,
+      serviceProfile.category.name,
+    );
 
     return this.serviceProfileRepository.saveServiceProfileRepository(
       serviceProfile,

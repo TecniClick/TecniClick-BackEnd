@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Proveedor Recibida</title>
+    <style type="text/css">
+        /* Estilos base consistentes con tu marca */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f7f7f7;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header {
+            background-color: #2563eb;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            max-width: 180px;
+            height: auto;
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            margin: 20px 0 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        h2 {
+            color: #2563eb;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        
+        p {
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .status-box {
+            background-color: #fff8e6;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .status-title {
+            font-weight: 600;
+            color: #ff9800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-title svg {
+            margin-right: 10px;
+        }
+        
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2563eb;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+            margin: 15px 0;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .content {
+                padding: 20px;
+            }
+            .button {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="header">
+            <img src="https://ejemplo.com/logo-tecniclick.png" alt="TecniClick Logo" class="logo">
+            <h1>Solicitud de Proveedor Recibida</h1>
+        </div>
+        
+        <!-- Contenido -->
+        <div class="content">
+            <h2>Hola {{name}},</h2>
+            
+            <p>Hemos recibido tu solicitud para convertirte en proveedor de servicios en TecniClick. ¡Gracias por tu interés en unirte a nuestra plataforma!</p>
+            
+            <div class="status-box">
+                <div class="status-title">
+                    <!-- Icono de reloj (puedes reemplazar con imagen) -->
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    ESTADO ACTUAL: EN REVISIÓN
+                </div>
+                <p>Tu perfil de proveedor está siendo revisado por nuestro equipo. Este proceso puede tardar hasta 48 horas hábiles.</p>
+                <p>Recibirás una notificación por correo electrónico una vez que tu solicitud haya sido aprobada.</p>
+            </div>
+            
+            <p><strong>Detalles de tu solicitud:</strong></p>
+            <ul>
+                <li><strong>Categoría:</strong> {{category}}</li>
+                <li><strong>Fecha de solicitud:</strong> {{requestDate}}</li>
+            </ul>
+            
+            <p>Mientras tanto, puedes actualizar tu información de perfil si lo necesitas.</p>
+            
+            <a href="{{profileLink}}" class="button">Ver mi perfil</a>
+            
+            <p>Si tienes alguna pregunta sobre el proceso, no dudes en contactar a nuestro equipo de soporte.</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 TecniClick. Todos los derechos reservados.</p>
+            <p>
+                <a href="https://tecniclick.com" style="color: #2563eb; text-decoration: none;">Visita nuestro sitio web</a> | 
+                <a href="mailto:soporte@tecniclick.com" style="color: #2563eb; text-decoration: none;">Contacto</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

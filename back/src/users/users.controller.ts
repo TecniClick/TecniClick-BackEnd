@@ -14,7 +14,6 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
-import { DeletedUserResponseDto } from 'src/DTO/userDtos/deletedUserResponse.dto';
 import { CreateAdminDto } from 'src/DTO/userDtos/createAdmin.dto';
 import { UpdateUserDto } from 'src/DTO/userDtos/updateUser.dto';
 import { UpdatePasswordDto } from 'src/DTO/userDtos/updatePassword.dto';
@@ -22,13 +21,14 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { UserRole } from 'src/enums/UserRole.enum';
 import { RolesGuard } from 'src/Auth/guards/roles.guard';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
+import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Get ALL Type of Users
+  // OBTENER TODOS LOS USUARIOS
   @Get()
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
@@ -109,6 +109,7 @@ export class UsersController {
 
   // OBTENER USUARIO POR ID
   @Get(':id')
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getUserByIdController(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UsersResponseDto> {
@@ -127,29 +128,30 @@ export class UsersController {
 
   //  MODIFICAR CONTRASEÑA POR ID DE USUARIO
   @Patch('update/password/:id')
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   updatePasswordController(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatedData: UpdatePasswordDto,
-  ): Promise<UsersResponseDto> {
+  ): Promise<ResponseOfUserDto> {
     return this.usersService.updatePasswordService(id, updatedData);
   }
 
   // ELIMINAR LÓGICAMENTE A UN USUARIO POR ID
   @Patch('softDelete/:id')
-  softDeleteController(
-    @Param('id') id: string,
-  ): Promise<DeletedUserResponseDto> {
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  softDeleteController(@Param('id') id: string): Promise<ResponseOfUserDto> {
     return this.usersService.softDeleteService(id);
   }
 
-  // Eliminar un usuario de la base de datos
+  // ELIMINAR UN USUARIO DE LA BASE DE DATOS
   @Delete(':id')
   @ApiBearerAuth()
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   deleteUserController(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<DeletedUserResponseDto> {
+  ): Promise<ResponseOfUserDto> {
     return this.usersService.deleteUserService(id);
   }
 }
