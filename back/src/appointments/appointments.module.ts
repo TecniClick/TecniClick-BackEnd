@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Appointment } from 'src/entities/appointment.entity';
 import { UsersModule } from 'src/users/users.module';
 import { ServiceProfileModule } from 'src/service-profile/service-profile.module';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Appointment]),
     UsersModule,
     ServiceProfileModule,
+    MailModule
   ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService, AppointmentsRepository],
