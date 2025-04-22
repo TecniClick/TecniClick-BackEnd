@@ -24,39 +24,38 @@ export class OrdersRepository {
   async createPaymentIntentRepository(
     subscriptionData: CreatePaymentDto,
     currency: string = 'usd',
+    subscriptionId: string,
   ) {
     return await this.stripe.paymentIntents.create({
       amount: subscriptionData.amount,
       currency,
       payment_method_types: ['card'],
       payment_method: subscriptionData.id,
+      metadata: {
+        subscriptionId,
+      },
       // confirm: true,
     });
   }
 
-  // constructStripeEvent(
-  //   payload: Buffer,
-  //   signature: string,
-  //   endpointSecret: string,
-  // ): Stripe.Event {
-  //   return this.stripe.webhooks.constructEvent(
-  //     payload,
-  //     signature,
-  //     endpointSecret,
-  //   );
-  // }
+  constructStripeEvent(
+    payload: Buffer,
+    signature: string,
+    endpointSecret: string,
+  ): Stripe.Event {
+    return this.stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      endpointSecret,
+    );
+  }
 
-  // async handlePaymentSucceeded(orderData: Partial<Order>) {
-  //   await this.ordersRepository.save(orderData);
-  // }
+  async handlePaymentSucceeded(orderData: Partial<Order>) {
+    await this.ordersRepository.save(orderData);
+  }
 
-  // async handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
-  //   const paymentIntentId = paymentIntent.id;
-
-  //   // ⚡ Opcional:
-  //   // Puedes guardar un registro de que el intento de pago falló,
-  //   // o enviarle una notificación al usuario si quieres.
-
-  //   console.warn(`PaymentIntent ${paymentIntentId} failed.`);
-  // }
+  handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
+    const paymentIntentId = paymentIntent.id;
+    console.warn(`PaymentIntent ${paymentIntentId} failed.`);
+  }
 }

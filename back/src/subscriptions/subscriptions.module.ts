@@ -19,6 +19,6 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
     SubscriptionsRepository,
     ServiceProfileRepository,
   ],
-  exports: [SubscriptionsService],
+  exports: [SubscriptionsService, SubscriptionsRepository],
 })
 export class SubscriptionsModule {}

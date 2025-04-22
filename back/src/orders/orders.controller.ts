@@ -10,6 +10,8 @@ import { OrdersService } from './orders.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { CreatePaymentDto } from 'src/DTO/ordersDtos/createPayment.dto';
 import { Request } from 'express';
+import { GetUser } from 'src/decorators/getUser.decorator';
+import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 
 @ApiTags('Endpoints de Ordenes de Pago')
 @Controller('orders')
@@ -20,20 +22,23 @@ export class OrdersController {
   @ApiBody({ type: CreatePaymentDto })
   async createPaymentIntentController(
     @Body() suscriptionData: CreatePaymentDto,
+    @GetUser() userOfToken: IJwtPayload,
   ) {
-    const paymentIntent =
-      await this.ordersService.createPaymentIntentService(suscriptionData);
+    const paymentIntent = await this.ordersService.createPaymentIntentService(
+      suscriptionData,
+      userOfToken,
+    );
     return {
       clientSecret: paymentIntent.client_secret,
     };
   }
 
-  // @Post('webhook')
-  // async handleStripeWebhookController(
-  //   @Req() request: Request,
-  //   @Headers('stripe-signature') signature: string,
-  // ) {
-  //   const body = (request as RawBodyRequest<Request>).rawBody;
-  //   return await this.ordersService.handleStripeWebhookService(body, signature);
-  // }
+  @Post('webhook')
+  async handleStripeWebhookController(
+    @Req() request: Request,
+    @Headers('stripe-signature') signature: string,
+  ) {
+    const body = (request as RawBodyRequest<Request>).rawBody;
+    return await this.ordersService.handleStripeWebhookService(body, signature);
+  }
 }

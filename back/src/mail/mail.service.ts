@@ -130,16 +130,16 @@ export class MailService {
     providerName: string,
     providerService: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-confirmation.hbs'
+      'appointment-confirmation.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       userName,
@@ -151,11 +151,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: userEmail,
@@ -163,7 +163,7 @@ export class MailService {
       html,
     });
   }
-  
+
   async sendAppointmentNotificationToProvider(
     providerEmail: string,
     providerName: string,
@@ -171,16 +171,16 @@ export class MailService {
     userPhone: string,
     serviceTitle: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-provider-notification.hbs'
+      'appointment-provider-notification.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       providerName,
@@ -193,11 +193,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: providerEmail,
@@ -205,5 +205,4 @@ export class MailService {
       html,
     });
   }
-  
 }
