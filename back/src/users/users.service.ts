@@ -15,10 +15,14 @@ import { UpdateUserDto } from 'src/DTO/userDtos/updateUser.dto';
 import { UserRole } from 'src/enums/UserRole.enum';
 import { UpdatePasswordDto } from 'src/DTO/userDtos/updatePassword.dto';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly mailService: MailService
+  ) {}
 
   // Get ALL Type of Users
   async getAllUsersService(): Promise<UsersResponseDto[]> {
@@ -221,6 +225,17 @@ export class UsersService {
 
     const softDeletedUser: User =
       await this.usersRepository.saveAUserRepository(entity);
+
+      // Enviar notificación por correo
+  try {
+    await this.mailService.sendAccountDeactivatedEmail(
+      entity.email,
+      entity.name,
+    );
+  } catch (error) {
+    console.error('Error al enviar correo de desactivación:', error);
+    // No lanzamos error para no interrumpir el flujo principal
+  }
 
     return {
       message: `Usuario con ${id} eliminado lógicamente`,
