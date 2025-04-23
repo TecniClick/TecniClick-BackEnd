@@ -103,6 +103,11 @@ export class AppointmentsService {
     return this.appointmentsRepository.getAllAppointmentsRepository();
   }
 
+  //OBTENER TODOS MIS APPOINTMENTS
+  async getMyAppointments(userId: string): Promise<Appointment[]>{
+    return this.appointmentsRepository.getMyAppointmentsRepository(userId)
+  }
+
   // OBTENER UNA CITA BY ID
   async getAppointmentByIdService(id: string): Promise<Appointment> {
     const foundAppointment: Appointment =
