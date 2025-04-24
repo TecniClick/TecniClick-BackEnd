@@ -104,9 +104,14 @@ export class AppointmentsService {
     return this.appointmentsRepository.getAllAppointmentsRepository();
   }
 
-  //OBTENER TODOS MIS APPOINTMENTS
+  //OBTENER TODOS MIS APPOINTMENTS COMO USER
   async getMyAppointments(userId: string): Promise<Appointment[]> {
     return this.appointmentsRepository.getMyAppointmentsRepository(userId);
+  }
+
+  //OBTENER TODOS MIS APPOINTMENTS COMO PROVIDER
+  async getMyProviderAppointmentsService(userId: string): Promise<Appointment[]>{
+    return this.appointmentsRepository.getAppointmentsByProviderId(userId)
   }
 
   // OBTENER UNA CITA BY ID
