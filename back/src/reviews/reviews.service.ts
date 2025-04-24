@@ -20,7 +20,7 @@ export class ReviewsService {
     private readonly reviewsRepository: ReviewsRepository,
     private readonly appointmentRepository: AppointmentsRepository,
     private readonly serviceProfileRepository: ServiceProfileRepository,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   async createAReviewService(
@@ -133,19 +133,19 @@ export class ReviewsService {
     const softDeletedReview: Review =
       await this.reviewsRepository.createAReviewRepository(entity);
 
-      try {
-        await this.mailService.sendReviewDeletedEmail(
-          entity.user.email,
-          entity.user.name,
-          entity.serviceProfile.serviceTitle,
-          entity.rating,
-          entity.comment,
-          entity.createdAt
-        );
-      } catch (error) {
-        console.error('Error al enviar correo de notificación:', error);
-        // Puedes decidir si quieres lanzar el error o continuar
-      }
+    try {
+      await this.mailService.sendReviewDeletedEmail(
+        entity.user.email,
+        entity.user.name,
+        entity.serviceProfile.serviceTitle,
+        entity.rating,
+        entity.comment,
+        entity.createdAt,
+      );
+    } catch (error) {
+      console.error('Error al enviar correo de notificación:', error);
+      // Puedes decidir si quieres lanzar el error o continuar
+    }
 
     return {
       message: `Review con ${id} eliminado lógicamente`,

@@ -104,7 +104,7 @@ export class AuthService {
       id: string;
       name: string;
       email: string;
-      imgUrl: string;
+      // imgUrl: string;
       role: UserRole;
       hasServiceProfile: boolean;
     };
@@ -126,7 +126,7 @@ export class AuthService {
         id: user.id,
         name: user.name,
         email: user.email,
-        imgUrl: user.imgUrl,
+        // imgUrl: user.imgUrl,
         role: user.role,
         hasServiceProfile,
       },

@@ -128,7 +128,6 @@ export class MailService {
     return template(context);
   }
 
-
   //envio de correo al usuario al realizar un appointment
   async sendAppointmentConfirmation(
     userEmail: string,
@@ -136,16 +135,16 @@ export class MailService {
     providerName: string,
     providerService: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-confirmation.hbs'
+      'appointment-confirmation.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       userName,
@@ -157,11 +156,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: userEmail,
@@ -169,7 +168,7 @@ export class MailService {
       html,
     });
   }
-  
+
   // CREACION DE APPT NOTIFICACION PROVEEDOR DE SERVICIO
   async sendAppointmentNotificationToProvider(
     providerEmail: string,
@@ -178,16 +177,16 @@ export class MailService {
     userPhone: string,
     serviceTitle: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-provider-notification.hbs'
+      'appointment-provider-notification.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       providerName,
@@ -200,11 +199,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: providerEmail,
@@ -212,12 +211,9 @@ export class MailService {
       html,
     });
   }
-  
+
   //ENVIO DE CORREO AL DESACTIVACION DE CUENTA LOGICAMENTE
-  async sendAccountDeactivatedEmail(
-    email: string,
-    name: string,
-  ) {
+  async sendAccountDeactivatedEmail(email: string, name: string) {
     const html = this.compileTemplate('account-deactivated.hbs', {
       name,
       deactivationDate: new Date().toLocaleDateString('es-ES', {
@@ -226,7 +222,7 @@ export class MailService {
         day: 'numeric',
       }),
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick - Soporte" <${process.env.MAIL_FROM}>`,
       to: email,
@@ -242,16 +238,16 @@ export class MailService {
     serviceTitle: string,
     rating: number,
     comment: string,
-    createdAt: Date
+    createdAt: Date,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'review-deleted.hbs'
+      'review-deleted.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       userName,
@@ -263,15 +259,15 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
-      })
+        minute: '2-digit',
+      }),
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick - Soporte" <${process.env.MAIL_FROM}>`,
       to: email,
       subject: 'Notificación: Tu reseña ha sido eliminada',
-      html
+      html,
     });
   }
 }

@@ -29,9 +29,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       phone: 0, // Valor temporal, el usuario deberá actualizarlo
       address: 'Dirección no especificada', // Valor temporal
       password: '', // No necesaria para OAuth
-      imgUrl:
-        photos?.[0]?.value ||
-        'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
+      // imgUrl:
+      //   photos?.[0]?.value ||
+      //   'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
       role: UserRole.CUSTOMER, // Rol por defecto
     };
 
@@ -49,12 +49,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         user = await this.usersRepository.updateUserRepository(user.id, user);
       } else {
         // Actualizar imagen si es necesario
-        if (!user.imgUrl && userData.imgUrl) {
-          user.imgUrl = userData.imgUrl;
-          user = await this.usersRepository.updateUserRepository(user.id, {
-            imgUrl: user.imgUrl,
-          });
-        }
+        // if (!user.imgUrl && userData.imgUrl) {
+        //   user.imgUrl = userData.imgUrl;
+        //   user = await this.usersRepository.updateUserRepository(user.id, {
+        //     imgUrl: user.imgUrl,
+        //   });
+        // }
       }
 
       done(null, user);

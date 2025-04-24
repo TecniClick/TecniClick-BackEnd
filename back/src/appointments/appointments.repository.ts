@@ -28,17 +28,17 @@ export class AppointmentsRepository {
   // OBTENER TODAS LAS CITAS
   async getAllAppointmentsRepository(): Promise<Appointment[]> {
     return await this.appointmentsRepository.find({
-      relations: ['users']
+      relations: ['users'],
     });
   }
 
   //OBTENER TODOS MIS APPTS
-  async getMyAppointmentsRepository(userId: string): Promise<Appointment[]>{
+  async getMyAppointmentsRepository(userId: string): Promise<Appointment[]> {
     return this.appointmentsRepository.find({
-      where: {users: {id: userId}},
+      where: { users: { id: userId } },
       relations: ['users'],
-      order: {date: 'ASC'}
-    })
+      order: { date: 'ASC' },
+    });
   }
 
   // OBTENER UNA CITA BY ID

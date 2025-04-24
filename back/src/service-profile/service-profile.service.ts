@@ -34,6 +34,11 @@ export class ServiceProfileService {
     return await this.serviceProfileRepository.getAllServiceProfileRepository();
   }
 
+  // OBTENER PERFILES ACTIVOS (solo admin)
+  async getActiveServiceProfilesService(): Promise<ServiceProfile[]> {
+    return await this.serviceProfileRepository.getActiveServiceProfilesRepository();
+  }
+
   // OBTENER PERFILES PENDIENTES (solo admin)
   async getPendingServiceProfilesService(): Promise<ServiceProfile[]> {
     return await this.serviceProfileRepository.getPendingServiceProfilesRepository();
@@ -80,6 +85,12 @@ export class ServiceProfileService {
     serviceProfileData: CreateServiceProfileDto,
     userOfToken: IJwtPayload,
   ): Promise<ServiceProfile> {
+    if (!serviceProfileData.profilePicture) {
+      throw new BadRequestException(
+        'Una foto de perfil es requeridad para ser proveedor de servicios.',
+      );
+    }
+
     const existingProfile =
       await this.serviceProfileRepository.getServiceProfileByUserIdRepository(
         userOfToken.id,
@@ -155,7 +166,7 @@ export class ServiceProfileService {
     return savedServiceProfile;
   }
 
-  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO (PENDIENTE O RECHAZADO)
   async updateServiceProfileStatusActiveService(id: string) {
     const serviceProfile: ServiceProfile =
       await this.serviceProfileRepository.getServiceProfileByIdRepository(id);
@@ -166,10 +177,10 @@ export class ServiceProfileService {
       );
     }
 
-    // Validamos que el status actual es "pendiente" antes de actualizarlo
-    if (serviceProfile.status !== ServiceProfileStatus.PENDING) {
+    // Validamos que el status actual no es "active" antes de actualizarlo
+    if (serviceProfile.status === ServiceProfileStatus.ACTIVE) {
       throw new BadRequestException(
-        'Solo perfiles pendientes pueden ser activados',
+        'Solo perfiles pendientes o rechazados pueden ser activados',
       );
     }
 

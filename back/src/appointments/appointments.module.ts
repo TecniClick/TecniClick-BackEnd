@@ -13,7 +13,7 @@ import { MailModule } from 'src/mail/mail.module';
     TypeOrmModule.forFeature([Appointment]),
     UsersModule,
     ServiceProfileModule,
-    MailModule
+    MailModule,
   ],
   controllers: [AppointmentsController],
   providers: [AppointmentsService, AppointmentsRepository],
