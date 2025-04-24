@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServiceProfile } from './serviceProfile.entity';
+import { MediaType } from 'src/enums/mediaType.enum';
 
 @Entity({ name: 'media' })
 export class Media {
@@ -14,6 +15,13 @@ export class Media {
 
   @Column({ type: 'varchar', nullable: false })
   imgUrl: string;
+
+  @Column({
+    type: 'enum',
+    enum: MediaType,
+    default: MediaType.GALLERY,
+  })
+  type: MediaType;
 
   @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.images)
   @JoinColumn({ name: 'serviceProfile_id' })

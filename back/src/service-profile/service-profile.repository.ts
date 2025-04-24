@@ -13,7 +13,23 @@ export class ServiceProfileRepository {
 
   // OBTENER TODOS LOS PERFILES EXISTENTES
   async getAllServiceProfileRepository(): Promise<ServiceProfile[]> {
-    return await this.serviceProfileRepository.find();
+    return await this.serviceProfileRepository.find({
+      where: {
+        deletedAt: null,
+      },
+    });
+  }
+
+  // OBTENER PERFILES ACTIVOS (solo admin)
+  async getActiveServiceProfilesRepository(): Promise<ServiceProfile[]> {
+    return this.serviceProfileRepository
+      .createQueryBuilder('serviceProfile')
+      .leftJoinAndSelect('serviceProfile.user', 'user')
+      .leftJoinAndSelect('serviceProfile.category', 'category')
+      .where('serviceProfile.status = :status', { status: 'active' })
+      .andWhere('serviceProfile.deletedAt IS NULL')
+      .orderBy('serviceProfile.createdAt', 'ASC') // ordena del más viejo al más nuevo ('DESC' para orden inverso)
+      .getMany();
   }
 
   // OBTENER PERFILES PENDIENTES (solo admin)

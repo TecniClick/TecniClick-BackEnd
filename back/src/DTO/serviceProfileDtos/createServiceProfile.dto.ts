@@ -41,6 +41,13 @@ export class CreateServiceProfileDto {
   phone: string;
 
   @ApiProperty({
+    example:
+      'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
+    description: 'Foto de perfil',
+  })
+  profilePicture: string;
+
+  @ApiProperty({
     example: 'Electricidad',
     description: 'Categoría del servicio',
   })

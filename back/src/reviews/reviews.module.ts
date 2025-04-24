@@ -11,7 +11,10 @@ import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { MailModule } from 'src/mail/mail.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Review, Appointment, ServiceProfile]), MailModule],
+  imports: [
+    TypeOrmModule.forFeature([Review, Appointment, ServiceProfile]),
+    MailModule,
+  ],
   controllers: [ReviewsController],
   providers: [
     ReviewsService,

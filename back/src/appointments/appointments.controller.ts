@@ -53,8 +53,8 @@ export class AppointmentsController {
   @Get('myAppointments')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  getMyappointmentsController(@GetUser() user: IJwtPayload){
-    return this.appointmentsService.getMyAppointments(user.id)
+  getMyappointmentsController(@GetUser() user: IJwtPayload) {
+    return this.appointmentsService.getMyAppointments(user.id);
   }
 
   // OBTENER UNA CITA BY ID

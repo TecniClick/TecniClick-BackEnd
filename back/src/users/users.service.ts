@@ -21,7 +21,7 @@ import { MailService } from 'src/mail/mail.service';
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   // Get ALL Type of Users
@@ -226,16 +226,16 @@ export class UsersService {
     const softDeletedUser: User =
       await this.usersRepository.saveAUserRepository(entity);
 
-      // Enviar notificación por correo
-  try {
-    await this.mailService.sendAccountDeactivatedEmail(
-      entity.email,
-      entity.name,
-    );
-  } catch (error) {
-    console.error('Error al enviar correo de desactivación:', error);
-    // No lanzamos error para no interrumpir el flujo principal
-  }
+    // Enviar notificación por correo
+    try {
+      await this.mailService.sendAccountDeactivatedEmail(
+        entity.email,
+        entity.name,
+      );
+    } catch (error) {
+      console.error('Error al enviar correo de desactivación:', error);
+      // No lanzamos error para no interrumpir el flujo principal
+    }
 
     return {
       message: `Usuario con ${id} eliminado lógicamente`,

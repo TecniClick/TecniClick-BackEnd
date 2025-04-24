@@ -24,7 +24,7 @@ export class AppointmentsService {
     private readonly appointmentsRepository: AppointmentsRepository,
     private readonly usersRepository: UsersRepository,
     private readonly serviceProfileRepository: ServiceProfileRepository,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
   ) {}
 
   // CREAR UNA CITA
@@ -45,7 +45,6 @@ export class AppointmentsService {
         `No se puede crear una cita con un perfil de servicio no activado`,
       );
 
-
     const appointmentToCreate: AppointmentToSaveDto = {
       date: new Date(createAppointment.date),
       additionalNotes: createAppointment.additionalNotes,
@@ -63,35 +62,37 @@ export class AppointmentsService {
         appointmentToCreate,
       );
 
-     try {
-    // Enviar correo al cliente (solo si tiene email)
-    if (user.email) {
-      await this.mailService.sendAppointmentConfirmation(
-        user.email,
-        user.name,
-        provider.userName,
-        provider.serviceTitle,
-        appointmentToCreate.date,
-        createAppointment.additionalNotes,
-      );
-    }
+    try {
+      // Enviar correo al cliente (solo si tiene email)
+      if (user.email) {
+        await this.mailService.sendAppointmentConfirmation(
+          user.email,
+          user.name,
+          provider.userName,
+          provider.serviceTitle,
+          appointmentToCreate.date,
+          createAppointment.additionalNotes,
+        );
+      }
 
-    // Enviar correo al proveedor (solo si tiene email)
-    if (provider.user?.email) {
-      await this.mailService.sendAppointmentNotificationToProvider(
-        provider.user.email, 
-        provider.userName,
-        user.name,
-        user.phone.toString(),
-        provider.serviceTitle,
-        appointmentToCreate.date,
-        createAppointment.additionalNotes,
+      // Enviar correo al proveedor (solo si tiene email)
+      if (provider.user?.email) {
+        await this.mailService.sendAppointmentNotificationToProvider(
+          provider.user.email,
+          provider.userName,
+          user.name,
+          user.phone.toString(),
+          provider.serviceTitle,
+          appointmentToCreate.date,
+          createAppointment.additionalNotes,
+        );
+      }
+    } catch (error) {
+      console.error('Error al enviar correos:', error);
+      throw new InternalServerErrorException(
+        'Error al enviar notificaciones por correo',
       );
     }
-  } catch (error) {
-    console.error('Error al enviar correos:', error);
-    throw new InternalServerErrorException('Error al enviar notificaciones por correo');
-  }
 
     return await this.appointmentsRepository.saveAppointmentRepository(
       savedAppointment,
@@ -104,8 +105,8 @@ export class AppointmentsService {
   }
 
   //OBTENER TODOS MIS APPOINTMENTS
-  async getMyAppointments(userId: string): Promise<Appointment[]>{
-    return this.appointmentsRepository.getMyAppointmentsRepository(userId)
+  async getMyAppointments(userId: string): Promise<Appointment[]> {
+    return this.appointmentsRepository.getMyAppointmentsRepository(userId);
   }
 
   // OBTENER UNA CITA BY ID

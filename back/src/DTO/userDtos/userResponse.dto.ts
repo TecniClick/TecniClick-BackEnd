@@ -15,8 +15,6 @@ export class UsersResponseDto {
 
   role: UserRole;
 
-  imgUrl: string;
-
   createdAt: Date;
 
   updatedAt: Date;
