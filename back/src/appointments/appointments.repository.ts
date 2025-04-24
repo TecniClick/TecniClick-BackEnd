@@ -32,6 +32,17 @@ export class AppointmentsRepository {
     });
   }
 
+  //OBTENER LAS CITAS CON ID DE PROVEEDOR
+  async getAppointmentsByProviderId(userId: string){
+    return this.appointmentsRepository.createQueryBuilder('appointment')
+    .innerJoin('appointment.provider', 'provider')
+    .innerJoin('provider.user', 'user', 'user.id = :userId', { userId })
+    .leftJoinAndSelect('appointment.users', 'client') 
+    .leftJoinAndSelect('client.interests', 'interests') 
+    .orderBy('appointment.date', 'ASC')
+    .getMany();
+  }
+
   //OBTENER TODOS MIS APPTS
   async getMyAppointmentsRepository(userId: string): Promise<Appointment[]> {
     return this.appointmentsRepository.find({
