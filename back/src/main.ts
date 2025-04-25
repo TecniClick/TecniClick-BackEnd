@@ -4,6 +4,8 @@ import { loggerGlobal } from './middleware/logger.middleware';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
+import { UsersService } from './users/users.service';
+import { MailService } from './mail/mail.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,6 +18,13 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
+  setInterval(async () => {
+    const users = await this.UsersService.getAllUsersEmailsRepository();
+    users.forEach(user => {
+      this.MailService.sendNewsletter(user.email, user.name)
+        .catch(e => console.error(`Error con ${user.email}:`, e.message));
+    });
+  }, 5 * 60 * 1000);
   const swaggerConfig = new DocumentBuilder()
     .setTitle('PF TECNICLICK')
     .setDescription('Documentación API para proyecto final Henry, TECNICLICK')

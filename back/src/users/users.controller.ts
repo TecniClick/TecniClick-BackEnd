@@ -22,11 +22,14 @@ import { UserRole } from 'src/enums/UserRole.enum';
 import { RolesGuard } from 'src/Auth/guards/roles.guard';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService,
+    private readonly mailService: MailService
+  ) {}
 
   // OBTENER TODOS LOS USUARIOS
   @Get()
@@ -37,6 +40,24 @@ export class UsersController {
   getAllUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllUsersService();
   }
+
+  //ENvIO DE NEWSLETTER
+  @Get('newsletter')
+    async sendNewsLetterToAll(){
+        const users = await this.usersService.getAllUsersEmails()
+
+        users.forEach(user => {
+            this.mailService.sendNewsletter(user.email, user.name)
+                .catch(error => console.error(`Error enviando a ${user.email}:`, error))
+        });
+
+        return {
+            success: true, 
+            message: 'Newsletter en proceso de envío a todos los usuarios',
+            usersCount: users.length
+        }
+    }
+
 
   // Get ALL Active Users
   @Get('active')
