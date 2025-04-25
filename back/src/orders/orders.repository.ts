@@ -5,7 +5,7 @@ import { Order } from 'src/entities/orders.entity';
 import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 import { ConfigService } from '@nestjs/config';
-import { OrderStatus } from 'src/enums/orderStatus.enum';
+import { CreateOrderDto } from 'src/DTO/ordersDtos/createOrder.dto';
 
 @Injectable()
 export class OrdersRepository {
@@ -21,6 +21,15 @@ export class OrdersRepository {
     });
   }
 
+  // OBTENER TODAS LAS ÓRDENES EXISTENTES
+  async getAllOrdersRepository(): Promise<Order[]> {
+    return await this.ordersRepository.find();
+  }
+
+  //CREAR UNA ORDEN
+  async createOrderRepository(order: CreateOrderDto): Promise<Order> {
+    return await this.ordersRepository.save(order);
+  }
   async createPaymentIntentRepository(
     subscriptionData: CreatePaymentDto,
     currency: string = 'usd',
@@ -57,5 +66,12 @@ export class OrdersRepository {
   handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     const paymentIntentId = paymentIntent.id;
     console.warn(`PaymentIntent ${paymentIntentId} failed.`);
+  }
+
+  // OBTENER ORDEN POR ID
+  async getOrderByIdRepository(id: string): Promise<Order> {
+    return await this.ordersRepository.findOne({
+      where: { id },
+    });
   }
 }

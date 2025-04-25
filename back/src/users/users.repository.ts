@@ -26,6 +26,15 @@ export class UsersRepository {
     });
   }
 
+  //GET ALL USERS EMAILS
+  async getAllUsersEmailsRepository(): Promise<{email: string, name: string}[]> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .select(['user.email', 'user.name'])
+      .where('user.email IS NOT NULL')
+      .getRawMany(); 
+  }
+
   //Get All Inactive Users
   async getAllInactiveUsersRepository(): Promise<UsersResponseDto[]> {
     return await this.usersRepository.find({
