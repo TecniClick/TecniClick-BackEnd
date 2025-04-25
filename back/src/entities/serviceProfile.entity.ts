@@ -17,6 +17,8 @@ import { Review } from './reviews.entity';
 import { Subscriptions } from './subcriptions.entity';
 import { Order } from './orders.entity';
 import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsUrl } from 'class-validator';
 
 @Entity({
   name: 'service_profiles',
@@ -65,6 +67,17 @@ export class ServiceProfile {
     default: ServiceProfileStatus.PENDING,
   })
   status: ServiceProfileStatus;
+
+  @ApiProperty({
+    description: 'Imagen de perfil del usuario',
+    example: 'https://example.com/images/headphones.jpg',
+  })
+  @Column({
+    type: 'text',
+    nullable: false,
+  })
+  @IsUrl()
+  profilePicture: string;
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -49,6 +49,22 @@ export class AppointmentsController {
     return this.appointmentsService.getAllAppointmentsService();
   }
 
+  //OBTENER APPTS DEL USUARIO CON INICIO DE SESION
+  @Get('myAppointments')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  getMyappointmentsController(@GetUser() user: IJwtPayload) {
+    return this.appointmentsService.getMyAppointments(user.id);
+  }
+
+  // OBTENER CITAS DEL PROVEEDOR CON USERID
+  @Get('providerappt')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async getMyProviderAppointments(@GetUser() user: {id: string}){
+    return this.appointmentsService.getMyProviderAppointmentsService(user.id)
+  }
+
   // OBTENER UNA CITA BY ID
   @Get(':id')
   getAppointmentByIdController(@Param('id') id: string): Promise<Appointment> {

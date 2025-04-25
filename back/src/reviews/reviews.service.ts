@@ -12,6 +12,7 @@ import { AppointmentStatus } from 'src/enums/AppointmentStatus.enum';
 import { ReviewToCreateDto } from 'src/DTO/reviewDtos/reviewToCreate.dto';
 import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
 import { Review } from 'src/entities/reviews.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class ReviewsService {
@@ -19,6 +20,7 @@ export class ReviewsService {
     private readonly reviewsRepository: ReviewsRepository,
     private readonly appointmentRepository: AppointmentsRepository,
     private readonly serviceProfileRepository: ServiceProfileRepository,
+    private readonly mailService: MailService,
   ) {}
 
   async createAReviewService(
@@ -130,6 +132,20 @@ export class ReviewsService {
 
     const softDeletedReview: Review =
       await this.reviewsRepository.createAReviewRepository(entity);
+
+    try {
+      await this.mailService.sendReviewDeletedEmail(
+        entity.user.email,
+        entity.user.name,
+        entity.serviceProfile.serviceTitle,
+        entity.rating,
+        entity.comment,
+        entity.createdAt,
+      );
+    } catch (error) {
+      console.error('Error al enviar correo de notificación:', error);
+      // Puedes decidir si quieres lanzar el error o continuar
+    }
 
     return {
       message: `Review con ${id} eliminado lógicamente`,

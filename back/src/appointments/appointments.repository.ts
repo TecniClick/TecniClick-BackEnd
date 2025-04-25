@@ -1,10 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppointmentToSaveDto } from 'src/DTO/apptDtos/appointmentToCreate.dto';
-import { CreateAppointmentDto } from 'src/DTO/apptDtos/CreateAppointment.dto';
 import { Appointment } from 'src/entities/appointment.entity';
-import { ServiceProfile } from 'src/entities/serviceProfile.entity';
-import { User } from 'src/entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
@@ -30,7 +27,29 @@ export class AppointmentsRepository {
 
   // OBTENER TODAS LAS CITAS
   async getAllAppointmentsRepository(): Promise<Appointment[]> {
-    return await this.appointmentsRepository.find();
+    return await this.appointmentsRepository.find({
+      relations: ['users'],
+    });
+  }
+
+  //OBTENER LAS CITAS CON ID DE PROVEEDOR
+  async getAppointmentsByProviderId(userId: string){
+    return this.appointmentsRepository.createQueryBuilder('appointment')
+    .innerJoin('appointment.provider', 'provider')
+    .innerJoin('provider.user', 'user', 'user.id = :userId', { userId })
+    .leftJoinAndSelect('appointment.users', 'client') 
+    .leftJoinAndSelect('client.interests', 'interests') 
+    .orderBy('appointment.date', 'ASC')
+    .getMany();
+  }
+
+  //OBTENER TODOS MIS APPTS
+  async getMyAppointmentsRepository(userId: string): Promise<Appointment[]> {
+    return this.appointmentsRepository.find({
+      where: { users: { id: userId } },
+      relations: ['users'],
+      order: { date: 'ASC' },
+    });
   }
 
   // OBTENER UNA CITA BY ID

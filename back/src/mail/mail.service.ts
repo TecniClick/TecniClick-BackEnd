@@ -20,6 +20,7 @@ export class MailService {
     });
   }
 
+  //Envio de correo al crear usuario
   async sendWelcomeEmail(to: string, name: string) {
     const templatePath = path.join(
       process.cwd(), // Raíz del proyecto
@@ -40,6 +41,7 @@ export class MailService {
     });
   }
 
+  //envio de correo al crear perfil de servicio
   async sendProviderPendingEmail(
     email: string,
     name: string,
@@ -72,6 +74,7 @@ export class MailService {
     });
   }
 
+  //Envio de correo al aprobarse perfil de servicio
   async sendProviderApprovedEmail(
     email: string,
     name: string,
@@ -95,6 +98,7 @@ export class MailService {
     });
   }
 
+  //Envio de correo al rechazar la creacion de perfil de servicio
   async sendProviderRejectedEmail(
     email: string,
     name: string,
@@ -124,22 +128,23 @@ export class MailService {
     return template(context);
   }
 
+  //envio de correo al usuario al realizar un appointment
   async sendAppointmentConfirmation(
     userEmail: string,
     userName: string,
     providerName: string,
     providerService: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-confirmation.hbs'
+      'appointment-confirmation.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       userName,
@@ -151,11 +156,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: userEmail,
@@ -163,7 +168,8 @@ export class MailService {
       html,
     });
   }
-  
+
+  // CREACION DE APPT NOTIFICACION PROVEEDOR DE SERVICIO
   async sendAppointmentNotificationToProvider(
     providerEmail: string,
     providerName: string,
@@ -171,16 +177,16 @@ export class MailService {
     userPhone: string,
     serviceTitle: string,
     appointmentDate: Date,
-    additionalNotes?: string
+    additionalNotes?: string,
   ) {
     const templatePath = path.join(
       process.cwd(),
       'src',
       'mail',
       'templates',
-      'appointment-provider-notification.hbs'
+      'appointment-provider-notification.hbs',
     );
-  
+
     const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
     const html = template({
       providerName,
@@ -193,11 +199,11 @@ export class MailService {
         month: 'long',
         day: 'numeric',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
       }),
-      additionalNotes: additionalNotes || 'Ninguna'
+      additionalNotes: additionalNotes || 'Ninguna',
     });
-  
+
     await this.transporter.sendMail({
       from: `"TecniClick" <${process.env.MAIL_FROM}>`,
       to: providerEmail,
@@ -205,5 +211,63 @@ export class MailService {
       html,
     });
   }
-  
+
+  //ENVIO DE CORREO AL DESACTIVACION DE CUENTA LOGICAMENTE
+  async sendAccountDeactivatedEmail(email: string, name: string) {
+    const html = this.compileTemplate('account-deactivated.hbs', {
+      name,
+      deactivationDate: new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+    });
+
+    await this.transporter.sendMail({
+      from: `"TecniClick - Soporte" <${process.env.MAIL_FROM}>`,
+      to: email,
+      subject: 'Notificación importante: Tu cuenta ha sido desactivada',
+      html,
+    });
+  }
+
+  //EMAIL PARA ELIMINACION DE REVIEW
+  async sendReviewDeletedEmail(
+    email: string,
+    userName: string,
+    serviceTitle: string,
+    rating: number,
+    comment: string,
+    createdAt: Date,
+  ) {
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'mail',
+      'templates',
+      'review-deleted.hbs',
+    );
+
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({
+      userName,
+      serviceTitle,
+      rating,
+      comment,
+      createdAt: createdAt.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    });
+
+    await this.transporter.sendMail({
+      from: `"TecniClick - Soporte" <${process.env.MAIL_FROM}>`,
+      to: email,
+      subject: 'Notificación: Tu reseña ha sido eliminada',
+      html,
+    });
+  }
 }

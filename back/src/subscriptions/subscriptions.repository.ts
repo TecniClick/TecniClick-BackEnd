@@ -17,4 +17,11 @@ export class SubscriptionsRepository {
   async saveSubscriptionRepository(newSubscription: Subscriptions) {
     return await this.subscriptionsRepository.save(newSubscription);
   }
+
+  async getSubscriptionByUserIdRepository(userId: string) {
+    return await this.subscriptionsRepository.findOne({
+      where: { serviceProfile: { user: { id: userId } } },
+      relations: ['serviceProfile', 'serviceProfile.user'],
+    });
+  }
 }

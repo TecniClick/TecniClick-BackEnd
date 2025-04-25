@@ -38,6 +38,16 @@ export class ServiceProfileController {
     return this.serviceProfileService.getAllServiceProfileService();
   }
 
+  // OBTENER PERFILES ACTIVOS (solo admin)
+  @Get('active')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  getActivegServiceProfilesController(): Promise<ServiceProfile[]> {
+    return this.serviceProfileService.getActiveServiceProfilesService();
+  }
+
   // OBTENER PERFILES PENDIENTES (solo admin)
   @Get('pending')
   @ApiBearerAuth()
@@ -83,7 +93,7 @@ export class ServiceProfileController {
     );
   }
 
-  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO
+  // MODIFICAR EL ESTADO DE UN PERFIL POR ID A ACTIVO (PENDIENTE O RECHAZADO)
   @Patch('status-active/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)

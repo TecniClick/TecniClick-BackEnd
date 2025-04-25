@@ -116,19 +116,6 @@ export class User {
   role: UserRole;
 
   @ApiProperty({
-    description: 'Imagen de perfil del usuario',
-    example: 'https://example.com/images/headphones.jpg',
-  })
-  @Column({
-    type: 'text',
-    default:
-      'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
-  })
-  @IsOptional()
-  @IsUrl()
-  imgUrl: string;
-
-  @ApiProperty({
     description: 'Fecha de creación del usuario',
   })
   @CreateDateColumn({
