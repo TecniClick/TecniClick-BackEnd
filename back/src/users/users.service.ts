@@ -29,6 +29,12 @@ export class UsersService {
     return await this.usersRepository.getAllUsersRepository();
   }
 
+  //GET ALL USERS EMAILS
+  async getAllUsersEmails(): Promise<{email: string, name: string}[]> {
+     return this.usersRepository.getAllUsersEmailsRepository()
+  }
+  
+
   //Get All Active Users
   async getAllActiveUsersService(): Promise<UsersResponseDto[]> {
     return this.usersRepository.getAllActiveUsersRepository();

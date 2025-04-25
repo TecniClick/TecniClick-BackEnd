@@ -270,4 +270,33 @@ export class MailService {
       html,
     });
   }
+
+  async sendPromotionalEmail(to: string, name: string) {
+    const templatePath = path.join(__dirname, 'templates', 'promotion.hbs');
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    
+    await this.transporter.sendMail({
+      from: `"TecniClick Promociones" <${process.env.MAIL_FROM}>`,
+      to,
+      subject: '¡Oferta especial para ti!',
+      html: template({ name }),
+    });
+  }
+
+  async sendNewsletter(to: string, name: string) {
+    const html = `
+    <div style="font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h2 style="color: #4CAF50;">¡Hola ${name}!</h2>
+      <p>Estamos mejorando TecniClick para ti. ¡Gracias por ser parte de nuestra comunidad!</p>
+      <p style="font-size: 12px; color: #888;">Enviado automáticamente.</p>
+    </div>
+    `;
+
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to,
+      subject: '¡Estamos trabajando para ti!',
+      html,
+    });
+  }
 }

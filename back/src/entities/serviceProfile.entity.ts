@@ -74,7 +74,7 @@ export class ServiceProfile {
   })
   @Column({
     type: 'text',
-    nullable: false,
+    nullable: true,
   })
   @IsUrl()
   profilePicture: string;
