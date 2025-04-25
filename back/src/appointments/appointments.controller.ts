@@ -61,8 +61,8 @@ export class AppointmentsController {
   @Get('providerappt')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
-  async getMyProviderAppointments(@GetUser() user: {id: string}){
-    return this.appointmentsService.getMyProviderAppointmentsService(user.id)
+  async getMyProviderAppointments(@GetUser() user: { id: string }) {
+    return this.appointmentsService.getMyProviderAppointmentsService(user.id);
   }
 
   // OBTENER UNA CITA BY ID

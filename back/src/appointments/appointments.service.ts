@@ -110,8 +110,10 @@ export class AppointmentsService {
   }
 
   //OBTENER TODOS MIS APPOINTMENTS COMO PROVIDER
-  async getMyProviderAppointmentsService(userId: string): Promise<Appointment[]>{
-    return this.appointmentsRepository.getAppointmentsByProviderId(userId)
+  async getMyProviderAppointmentsService(
+    userId: string,
+  ): Promise<Appointment[]> {
+    return this.appointmentsRepository.getAppointmentsByProviderId(userId);
   }
 
   // OBTENER UNA CITA BY ID
