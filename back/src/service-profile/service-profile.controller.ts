@@ -122,7 +122,7 @@ export class ServiceProfileController {
   }
 
   //  MODIFICAR PERFIL POR ID (ID De Perfil)
-  @Patch('udate/:id')
+  @Patch('update/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.PROVIDER)

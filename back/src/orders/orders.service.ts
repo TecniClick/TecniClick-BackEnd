@@ -12,6 +12,8 @@ import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { SubscriptionsRepository } from 'src/subscriptions/subscriptions.repository';
 import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
+import { Order } from 'src/entities/orders.entity';
+import { CreateOrderDto } from 'src/DTO/ordersDtos/createOrder.dto';
 
 @Injectable()
 export class OrdersService {
@@ -20,6 +22,16 @@ export class OrdersService {
     private readonly configService: ConfigService,
     private readonly subscriptionsRepository: SubscriptionsRepository,
   ) {}
+
+  // OBTENER TODAS LAS ÓRDENES EXISTENTES
+  async getAllOrdersService() {
+    return await this.ordersRepository.getAllOrdersRepository();
+  }
+
+  // CREAR UNA ORDEN
+  async createOrderService(order: CreateOrderDto): Promise<Order> {
+    return await this.ordersRepository.createOrderRepository(order);
+  }
 
   async createPaymentIntentService(
     suscriptionData: CreatePaymentDto,
@@ -127,5 +139,15 @@ export class OrdersService {
     }
 
     return { received: true };
+  }
+
+  // OBTENER ORDEN POR ID
+  async getOrderByIdService(id: string) {
+    const order: Order = await this.ordersRepository.getOrderByIdRepository(id);
+
+    if (!order) {
+      throw new NotFoundException(`Orden con id ${id} no fue encontrada`);
+    }
+    return order;
   }
 }

@@ -21,6 +21,7 @@ export class CategoriesController {
   getAllCategoriesController(): Promise<Categories[]> {
     return this.categoriesService.getAllCategoriesService();
   }
+
   // CREAR UNA CATEGORÍA
   @Post('create')
   @ApiOperation({ summary: 'Crear una nueva categoría' })

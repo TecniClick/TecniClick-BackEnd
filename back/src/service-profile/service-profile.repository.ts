@@ -65,7 +65,7 @@ export class ServiceProfileRepository {
   async getServiceProfileByIdRepository(id: string): Promise<ServiceProfile> {
     return await this.serviceProfileRepository.findOne({
       where: { id },
-      relations: ['user', 'reviews'],
+      relations: ['user', 'reviews', 'subscription'],
     });
   }
 

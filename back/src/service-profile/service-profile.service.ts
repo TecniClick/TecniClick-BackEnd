@@ -287,7 +287,7 @@ export class ServiceProfileService {
       await this.serviceProfileRepository.getServiceProfileByIdRepository(id);
 
     if (!serviceProfile) {
-      throw new NotFoundException(`User with id ${id} was not found`);
+      throw new NotFoundException(`El usuario con id ${id} no fue encontrado`);
     }
     return serviceProfile;
   }

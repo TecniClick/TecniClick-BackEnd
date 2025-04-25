@@ -117,7 +117,7 @@ export class UsersController {
   }
 
   //  MODIFICAR USUARIO POR ID
-  @Patch(':id')
+  @Patch('update/:id')
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   updateUserController(
     @Param('id', ParseUUIDPipe) id: string,
@@ -144,7 +144,7 @@ export class UsersController {
   }
 
   // ELIMINAR UN USUARIO DE LA BASE DE DATOS
-  @Delete(':id')
+  @Delete('delete/:id')
   @ApiBearerAuth()
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
