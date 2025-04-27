@@ -41,24 +41,6 @@ export class UsersController {
     return this.usersService.getAllUsersService();
   }
 
-  //ENvIO DE NEWSLETTER
-  @Get('newsletter')
-    async sendNewsLetterToAll(){
-        const users = await this.usersService.getAllUsersEmails()
-
-        users.forEach(user => {
-            this.mailService.sendNewsletter(user.email, user.name)
-                .catch(error => console.error(`Error enviando a ${user.email}:`, error))
-        });
-
-        return {
-            success: true, 
-            message: 'Newsletter en proceso de envío a todos los usuarios',
-            usersCount: users.length
-        }
-    }
-
-
   // Get ALL Active Users
   @Get('active')
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
