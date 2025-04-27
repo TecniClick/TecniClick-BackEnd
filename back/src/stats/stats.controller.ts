@@ -5,16 +5,15 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Endpoints de Stats')
 @Controller('stats')
 export class StatsController {
-    constructor(private readonly statsService: StatsService){}
+  constructor(private readonly statsService: StatsService) {}
 
-    @Get('summary')
-    getSummary(){
-        return this.statsService.getSummaryStats()
-    }
+  @Get('summary')
+  getSummary() {
+    return this.statsService.getSummaryStats();
+  }
 
-    @Get('servicesdistribution')
-    getServiceDistribution(){
-        return this.statsService.getServicesByCategory()
-    }
+  @Get('servicesdistribution')
+  getServiceDistribution() {
+    return this.statsService.getServicesByCategory();
+  }
 }
-

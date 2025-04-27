@@ -30,10 +30,9 @@ export class UsersService {
   }
 
   //GET ALL USERS EMAILS
-  async getAllUsersEmails(): Promise<{email: string, name: string}[]> {
-     return this.usersRepository.getAllUsersEmailsRepository()
+  async getAllUsersEmails(): Promise<{ email: string; name: string }[]> {
+    return this.usersRepository.getAllUsersEmailsRepository();
   }
-  
 
   //Get All Active Users
   async getAllActiveUsersService(): Promise<UsersResponseDto[]> {
@@ -144,6 +143,24 @@ export class UsersService {
       message: 'Administrador registrado con éxito.',
       admin: createdAdmin,
     };
+  }
+
+  //CAMBIAR UN USUARIO A ADMINISTRADOR POR ID
+  async upgradeToAdminsService(id: string): Promise<UsersResponseDto> {
+    const user: User = await this.usersRepository.getUserByIdRepository(id);
+
+    if (!user) {
+      throw new NotFoundException(`Usuario con id ${id} no fue encontrado`);
+    }
+
+    if (user.role == UserRole.ADMIN)
+      throw new ConflictException(
+        `El usuario que quieres convertir en administrador ya cuenta con esos permisos`,
+      );
+
+    user.role = UserRole.ADMIN;
+
+    return await this.usersRepository.saveAUserRepository(user);
   }
 
   // OBTENER USUARIO POR ID

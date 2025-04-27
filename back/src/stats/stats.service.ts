@@ -7,31 +7,33 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class StatsService {
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-        @InjectRepository(ServiceProfile)
-        private serviceProfileRepository: Repository<ServiceProfile>,
-        @InjectRepository(Appointment)
-        private appointmentRepository: Repository<Appointment>
-    ){}
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(ServiceProfile)
+    private serviceProfileRepository: Repository<ServiceProfile>,
+    @InjectRepository(Appointment)
+    private appointmentRepository: Repository<Appointment>,
+  ) {}
 
-    async getSummaryStats(){
-        return {
-            totalUsers: await this.userRepository.count(),
-            activeUsers: await this.userRepository.count({where: {deletedAt: null}}),
-            totalServices: await this.serviceProfileRepository.count(),
-            pendingAppointments: await this.appointmentRepository.count()
-        }
-    }
+  async getSummaryStats() {
+    return {
+      totalUsers: await this.userRepository.count(),
+      activeUsers: await this.userRepository.count({
+        where: { deletedAt: null },
+      }),
+      totalServices: await this.serviceProfileRepository.count(),
+      pendingAppointments: await this.appointmentRepository.count(),
+    };
+  }
 
-    async getServicesByCategory(){
-        return this.serviceProfileRepository
-            .createQueryBuilder('service')
-            .select('category.name', 'category')
-            .addSelect('COUNT(*)', 'count')
-            .leftJoin('service.category', 'category')
-            .groupBy('category.name')
-            .getRawMany();
-    }
+  async getServicesByCategory() {
+    return this.serviceProfileRepository
+      .createQueryBuilder('service')
+      .select('category.name', 'category')
+      .addSelect('COUNT(*)', 'count')
+      .leftJoin('service.category', 'category')
+      .groupBy('category.name')
+      .getRawMany();
+  }
 }
