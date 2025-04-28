@@ -66,7 +66,7 @@ export class OrdersController {
     @Headers('stripe-signature') signature: string,
   ) {
     console.log('Se comenzó a ejecutar el controller de webhook');
-    const body = (request as RawBodyRequest<Request>).rawBody;
+    const body = request.body as Buffer;
     return await this.ordersService.handleStripeWebhookService(body, signature);
   }
 
