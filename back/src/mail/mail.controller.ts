@@ -3,6 +3,4 @@ import { MailService } from './mail.service';
 import { UsersService } from 'src/users/users.service';
 
 @Controller('mail')
-export class MailController {
-
-}
+export class MailController {}
