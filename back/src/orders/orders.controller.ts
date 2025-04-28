@@ -8,15 +8,17 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreatePaymentDto } from 'src/DTO/ordersDtos/createPayment.dto';
 import { Request } from 'express';
 import { GetUser } from 'src/decorators/getUser.decorator';
 import { IJwtPayload } from 'src/interfaces/jwtPlayload.interface';
 import { Order } from 'src/entities/orders.entity';
 import { CreateOrderDto } from 'src/DTO/ordersDtos/createOrder.dto';
+import { AuthGuard } from 'src/Auth/guards/auth.guard';
 
 @ApiTags('Endpoints de Ordenes de Pago')
 @Controller('orders')
@@ -43,6 +45,8 @@ export class OrdersController {
 
   @Post('create-intent')
   @ApiBody({ type: CreatePaymentDto })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   async createPaymentIntentController(
     @Body() suscriptionData: CreatePaymentDto,
     @GetUser() userOfToken: IJwtPayload,
