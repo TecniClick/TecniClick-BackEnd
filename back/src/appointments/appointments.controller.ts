@@ -95,8 +95,7 @@ export class AppointmentsController {
   // CAMBIAR EL ESTADO A COMPLETADO
   @Patch('complete/:id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.PROVIDER)
+  @UseGuards(AuthGuard)
   completeAppointmentController(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Appointment> {
@@ -106,8 +105,7 @@ export class AppointmentsController {
   // CAMBIAR EL ESTADO A CANCELADO
   @Patch('cancel/:id')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.PROVIDER)
+  @UseGuards(AuthGuard)
   cancelAppointmentController(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Appointment> {

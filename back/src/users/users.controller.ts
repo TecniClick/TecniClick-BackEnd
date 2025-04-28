@@ -27,8 +27,9 @@ import { MailService } from 'src/mail/mail.service';
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService,
-    private readonly mailService: MailService
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly mailService: MailService,
   ) {}
 
   // OBTENER TODOS LOS USUARIOS
@@ -40,24 +41,6 @@ export class UsersController {
   getAllUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllUsersService();
   }
-
-  //ENvIO DE NEWSLETTER
-  @Get('newsletter')
-    async sendNewsLetterToAll(){
-        const users = await this.usersService.getAllUsersEmails()
-
-        users.forEach(user => {
-            this.mailService.sendNewsletter(user.email, user.name)
-                .catch(error => console.error(`Error enviando a ${user.email}:`, error))
-        });
-
-        return {
-            success: true, 
-            message: 'Newsletter en proceso de envío a todos los usuarios',
-            usersCount: users.length
-        }
-    }
-
 
   // Get ALL Active Users
   @Get('active')
@@ -126,6 +109,18 @@ export class UsersController {
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   createAdminsController(@Body() admin: CreateAdminDto) {
     return this.usersService.createAdminsService(admin);
+  }
+
+  //CAMBIAR UN USUARIO A ADMINISTRADOR POR ID
+  @Patch('upgrade-admin/:id')
+  @ApiBearerAuth()
+  @Roles(UserRole.SUPERADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
+  upgradeToAdminsController(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UsersResponseDto> {
+    return this.usersService.upgradeToAdminsService(id);
   }
 
   // OBTENER USUARIO POR ID

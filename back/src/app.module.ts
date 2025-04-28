@@ -15,6 +15,7 @@ import { OrdersModule } from './orders/orders.module';
 import { MediaModule } from './media/media.module';
 import { AppointmentsModule } from './appointments/appointments.module';
 import { MailModule } from './mail/mail.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { MailModule } from './mail/mail.module';
     MediaModule,
     AppointmentsModule,
     MailModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
