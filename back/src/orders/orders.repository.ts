@@ -43,7 +43,7 @@ export class OrdersRepository {
       metadata: {
         subscriptionId,
       },
-      // confirm: true,
+      confirm: true,
     });
   }
 
