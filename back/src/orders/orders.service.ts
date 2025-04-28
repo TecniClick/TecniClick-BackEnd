@@ -55,6 +55,8 @@ export class OrdersService {
   }
 
   async handleStripeWebhookService(payload: Buffer, signature: string) {
+    console.log('Se comenzó a ejecutar el servicio de webhook');
+
     const endpointSecret = this.configService.get<string>(
       'STRIPE_WEBHOOK_SECRET',
     );
@@ -67,15 +69,20 @@ export class OrdersService {
         endpointSecret,
       );
     } catch (err) {
+      console.error('Error validando el webhook de Stripe:', err.message);
       throw new BadRequestException(`Webhook Error: ${err.message}`);
     }
 
-    // Procesar el evento
-    switch (event.type) {
-      case 'payment_intent.succeeded':
+    try {
+      if (event.type === 'payment_intent.succeeded') {
         const paymentIntent = event.data.object as Stripe.PaymentIntent;
 
         const subscriptionId = paymentIntent.metadata.subscriptionId;
+
+        if (!subscriptionId) {
+          console.error('No viene subscriptionId en metadata');
+          return { received: true }; // Respondemos igual para que Stripe no repita
+        }
 
         const subscription =
           await this.subscriptionsRepository.getSubscriptionByUserIdRepository(
@@ -83,59 +90,50 @@ export class OrdersService {
           );
 
         if (!subscription) {
-          throw new NotFoundException(
-            'Suscripción no encontrada para actualizar.',
-          );
+          console.error('No se encontró la suscripción');
+          return { received: true };
         }
 
-        //Modularizar esta lógica en suscriptions
-        // Obtener la fecha actual
         const now = new Date();
+        let newExpirationDate =
+          subscription.expirationDate && subscription.expirationDate > now
+            ? new Date(subscription.expirationDate)
+            : now;
 
-        // Calcular la nueva fecha de expiración
-        let newExpirationDate: Date;
+        newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
 
-        if (subscription.expirationDate && subscription.expirationDate > now) {
-          // Si la suscripción aún no ha expirado, extender un mes desde expirationDate actual
-          newExpirationDate = new Date(subscription.expirationDate);
-          newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
-        } else {
-          // Si ya expiró o no existe expirationDate, contar un mes desde hoy
-          newExpirationDate = new Date();
-          newExpirationDate.setMonth(newExpirationDate.getMonth() + 1);
-        }
-
-        // Actualizar la suscripción
         subscription.subscriptionType = SubscriptionsType.PREMIUM;
         subscription.status = SubscriptionStatus.ACTIVE;
         subscription.paymentDate = now;
         subscription.expirationDate = newExpirationDate;
 
-        // Si nunca antes fue Premium, marcar la fecha
         if (!subscription.createdPremiumAt) {
           subscription.createdPremiumAt = now;
         }
 
-        const OrderData = {
+        const orderData = {
           amount: paymentIntent.amount,
           paymentIntentId: paymentIntent.id,
           status: OrderStatus.SUCCEEDED,
           subscription,
         };
 
-        await this.ordersRepository.handlePaymentSucceeded(OrderData);
-
+        await this.ordersRepository.handlePaymentSucceeded(orderData);
         await this.subscriptionsRepository.saveSubscriptionRepository(
           subscription,
         );
 
-        break;
-      case 'payment_intent.payment_failed':
+        console.log('Suscripción actualizada a PREMIUM correctamente.');
+      } else if (event.type === 'payment_intent.payment_failed') {
         const failedIntent = event.data.object as Stripe.PaymentIntent;
         this.ordersRepository.handlePaymentFailed(failedIntent);
-        break;
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.warn('⚠️ Pago fallido manejado.');
+      } else {
+        console.log(`ℹEvento no manejado: ${event.type}`);
+      }
+    } catch (error) {
+      console.error('Error procesando el evento:', error.message);
+      // Siempre respondemos para que Stripe no lo intente reintentar
     }
 
     return { received: true };
