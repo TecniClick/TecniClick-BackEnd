@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Appointment } from 'src/entities/appointment.entity';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { AppointmentStatus } from 'src/enums/AppointmentStatus.enum';
+import { ServiceProfileStatus } from 'src/enums/serviceProfileStatus.enum';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class StatsService {
@@ -17,13 +19,55 @@ export class StatsService {
   ) {}
 
   async getSummaryStats() {
+    const [
+      totalUsers,
+      activeUsers,
+      totalServices,
+      pendingAppointments,
+      inactiveUsers,
+      activeServices,
+      pendingServices,
+      rejectedServices,
+      totalAppointments
+    ] = await Promise.all([
+      // Métricas de usuarios
+      this.userRepository.count(),
+      this.userRepository.count({ where: { deletedAt: null }}),
+      this.userRepository.count({ where: { deletedAt: Not(IsNull()) }}),
+      
+      // Métricas de servicios
+      this.serviceProfileRepository.count(),
+      this.serviceProfileRepository.count({ where: {status: ServiceProfileStatus.ACTIVE}}),
+      this.serviceProfileRepository.count({ where: { status: ServiceProfileStatus.PENDING }}),
+      this.serviceProfileRepository.count({ where: { status: ServiceProfileStatus.REJECTED }}),
+      
+      // Métricas de citas
+      this.appointmentRepository.count(),
+      this.appointmentRepository.count({
+        where: {
+          appointmentStatus: AppointmentStatus.PENDING
+        }
+      })
+    ]);
+  
     return {
-      totalUsers: await this.userRepository.count(),
-      activeUsers: await this.userRepository.count({
-        where: { deletedAt: null },
-      }),
-      totalServices: await this.serviceProfileRepository.count(),
-      pendingAppointments: await this.appointmentRepository.count(),
+      // Usuarios
+      totalUsers,
+      activeUsers,
+      inactiveUsers,
+      
+      // Servicios
+      totalServices,
+      activeServices,
+      pendingServices,
+      rejectedServices,
+      approvalRate: totalServices > 0 
+        ? Math.round((activeServices / totalServices) * 100)
+        : 0,
+      
+      // Citas
+      totalAppointments,
+      pendingAppointments
     };
   }
 
