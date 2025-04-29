@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { User } from 'src/entities/user.entity';
 import { UserRole } from 'src/enums/UserRole.enum';
-import { InsertResult, IsNull, Not, Repository } from 'typeorm';
+import { InsertResult, IsNull, Not, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UsersRepository {
@@ -146,5 +146,12 @@ export class UsersRepository {
   // Eliminar un usuario de la base de datos
   async deleteUserRepository(id: string) {
     await this.usersRepository.delete(id);
+  }
+
+  async reactivateUserRepository(id: string): Promise<UpdateResult> {
+    return this.usersRepository.update(
+      { id, deletedAt: Not(IsNull()) }, 
+      { deletedAt: null }
+    );
   }
 }
