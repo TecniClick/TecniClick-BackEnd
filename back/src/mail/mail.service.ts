@@ -270,4 +270,44 @@ export class MailService {
       html,
     });
   }
+
+  //ENVIO DE CORREO AL REGISTRARSE CON GOOGLE
+  async sendGoogleWelcomeEmail(to: string, name: string) {
+    const html = this.compileTemplate('google-welcome.hbs', {
+        name,
+        registrationDate: new Date().toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+    });
+
+    await this.transporter.sendMail({
+        from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+        to,
+        subject: '¡Bienvenido a TecniClick (Registro con Google)',
+        html,
+    });
+  }
+
+  //CORREO PARA REACTIVAR USUARIO
+  async sendAccountReactivatedEmail(email: string, name: string) {
+    const html = this.compileTemplate('account-reactivated.hbs', {
+        name,
+        reactivationDate: new Date().toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+    });
+
+    await this.transporter.sendMail({
+        from: `"TecniClick - Soporte" <${process.env.MAIL_FROM}>`,
+        to: email,
+        subject: 'Tu cuenta ha sido reactivada',
+        html,
+    });
+  }
 }
