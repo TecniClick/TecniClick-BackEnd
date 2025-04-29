@@ -16,6 +16,7 @@ import { UserRole } from 'src/enums/UserRole.enum';
 import { UpdatePasswordDto } from 'src/DTO/userDtos/updatePassword.dto';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 import { MailService } from 'src/mail/mail.service';
+import { IsNull, Not } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -282,4 +283,13 @@ export class UsersService {
       user: userToDelete,
     };
   }
+
+  async reactivateUserService(id: string): Promise<void> {
+    const updateResult = await this.usersRepository.reactivateUserRepository(id);
+    
+    if (updateResult.affected === 0) {
+      throw new NotFoundException('Usuario no encontrado o ya está activo');
+    }
+  }
 }
+
