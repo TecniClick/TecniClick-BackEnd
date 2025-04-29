@@ -23,6 +23,7 @@ export class UsersRepository {
         { role: UserRole.CUSTOMER, deletedAt: IsNull() },
         { role: UserRole.PROVIDER, deletedAt: IsNull() },
       ],
+      relations: ['serviceProfile']
     });
   }
 
