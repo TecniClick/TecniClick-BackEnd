@@ -46,16 +46,27 @@ export class MediaRepository {
     });
   }
 
-  async deleteImageRepository(publicId: string): Promise<void> {
+  async deleteImageRepository(
+    publicId: string,
+    resourceType: 'image' | 'video' | 'raw',
+  ): Promise<void> {
     return new Promise((resolve, reject) => {
       Cloudinary.uploader.destroy(
         publicId,
-        { resource_type: 'auto' },
+        { resource_type: resourceType },
         (error, result) => {
           if (error) return reject(error);
-          resolve();
+  
+          if (result.result === 'ok') {
+            console.log(`✅ Imagen eliminada correctamente de Cloudinary: ${publicId}`);
+            return resolve();
+          } else {
+            console.error(`❌ Error al eliminar en Cloudinary: ${result.result}`);
+            return reject(new Error(`Error al eliminar en Cloudinary: ${result.result}`));
+          }
         },
       );
     });
   }
+  
 }
