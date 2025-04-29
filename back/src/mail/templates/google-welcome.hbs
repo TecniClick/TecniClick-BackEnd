@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido a TecniClick</title>
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .header {
+            background-color: #2563eb;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .logo {
+            max-width: 180px;
+            height: auto;
+        }
+        .header h1 {
+            color: #ffffff;
+            margin: 20px 0 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .content {
+            padding: 30px;
+        }
+        h2 {
+            color: #2563eb;
+            font-size: 20px;
+            margin-top: 0;
+        }
+        .highlight-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <img src="https://ejemplo.com/logo-tecniclick.png" alt="TecniClick Logo" class="logo">
+            <h1>¡Bienvenido a TecniClick!</h1>
+        </div>
+        
+        <div class="content">
+            <h2>Hola {{name}},</h2>
+            
+            <p>Has completado tu registro con éxito mediante Google.</p>
+            
+            <div class="highlight-box">
+                <p><strong>Recuerda:</strong> Para iniciar sesión en el futuro deberás usar el mismo método de autenticación (Google).</p>
+            </div>
+            
+            <p>Tu cuenta está lista para usar. Si necesitas ayuda, contacta a nuestro equipo de soporte.</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 TecniClick. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>
