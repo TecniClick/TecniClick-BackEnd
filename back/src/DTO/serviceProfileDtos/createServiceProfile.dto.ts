@@ -45,6 +45,7 @@ export class CreateServiceProfileDto {
       'https://www.shutterstock.com/image-vector/default-avatar-profile-social-media-600nw-1920331226.jpg',
     description: 'Foto de perfil',
   })
+  @IsEmpty() //No quitar
   profilePicture: string;
 
   @ApiProperty({

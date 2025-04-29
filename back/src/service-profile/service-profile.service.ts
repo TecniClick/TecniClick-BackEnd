@@ -85,9 +85,9 @@ export class ServiceProfileService {
     serviceProfileData: CreateServiceProfileDto,
     userOfToken: IJwtPayload,
   ): Promise<ServiceProfile> {
-    if (!serviceProfileData.profilePicture) {
+    if (serviceProfileData.profilePicture) {
       throw new BadRequestException(
-        'Una foto de perfil es requeridad para ser proveedor de servicios.',
+        'No se puede agregar una foto de perfil a través de esta solicitud.',
       );
     }
 
