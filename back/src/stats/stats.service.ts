@@ -87,4 +87,30 @@ export class StatsService {
       .groupBy('category.name')
       .getRawMany();
   }
+
+  async getUsersByRole() {
+    const rolesData = await this.userRepository
+      .createQueryBuilder('user')
+      .select('user.role', 'role')
+      .addSelect('COUNT(*)', 'count')
+      .where('user.role IN (:...roles)', { roles: ['customer', 'provider'] })
+      .andWhere('user.deletedAt IS NULL')
+      .groupBy('user.role')
+      .getRawMany();
+
+    const result = {
+      clients: 0,
+      providers: 0
+    };
+
+    rolesData.forEach(item => {
+      if (item.role === 'customer') {
+        result.clients = parseInt(item.count);
+      } else if (item.role === 'provider') {
+        result.providers = parseInt(item.count);
+      }
+    });
+
+    return result;
+  }
 }
