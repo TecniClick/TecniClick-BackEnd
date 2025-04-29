@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { StatsService } from './stats.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/Auth/guards/auth.guard';
 
 @ApiTags('Endpoints de Stats')
 @Controller('stats')
@@ -16,5 +17,11 @@ export class StatsController {
   @ApiOperation({ summary: 'Distribución de servicios por categoría' })
   getServiceDistribution() {
     return this.statsService.getServicesByCategory();
+  }
+
+  @Get('usersbyrole')
+  @UseGuards(AuthGuard)
+  async getUsersByRole() {
+    return this.statsService.getUsersByRole();
   }
 }
