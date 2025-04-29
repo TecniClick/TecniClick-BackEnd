@@ -94,7 +94,7 @@ export class OrdersService {
         }
 
         const subscription =
-          await this.subscriptionsRepository.getSubscriptionByUserIdRepository(
+          await this.subscriptionsRepository.getSubscriptionByIdRepository(
             subscriptionId,
           );
 
@@ -127,18 +127,27 @@ export class OrdersService {
           subscription,
         };
 
-        await this.ordersRepository.handlePaymentSucceeded(orderData);
-        await this.subscriptionsRepository.saveSubscriptionRepository(
-          subscription,
-        );
+        const order =
+          await this.ordersRepository.handlePaymentSucceeded(orderData);
+        if (!order) {
+          console.log('No se pudo crear la órden');
+        }
+
+        const newSubscription =
+          await this.subscriptionsRepository.saveSubscriptionRepository(
+            subscription,
+          );
+        if (!newSubscription) {
+          console.log('No se pudo guardar la nueva suscripción');
+        }
 
         console.log('Suscripción actualizada a PREMIUM correctamente.');
       } else if (event.type === 'payment_intent.payment_failed') {
         const failedIntent = event.data.object as Stripe.PaymentIntent;
         this.ordersRepository.handlePaymentFailed(failedIntent);
-        console.warn('⚠️ Pago fallido manejado.');
+        console.warn('Pago fallido manejado.');
       } else {
-        console.log(`ℹEvento no manejado: ${event.type}`);
+        console.log(`Evento no manejado: ${event.type}`);
       }
     } catch (error) {
       console.error('Error procesando el evento:', error.message);

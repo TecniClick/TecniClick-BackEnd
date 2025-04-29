@@ -59,8 +59,8 @@ export class OrdersRepository {
     );
   }
 
-  async handlePaymentSucceeded(orderData: Partial<Order>) {
-    await this.ordersRepository.save(orderData);
+  async handlePaymentSucceeded(orderData: Partial<Order>): Promise<Order> {
+    return await this.ordersRepository.save(orderData);
   }
 
   handlePaymentFailed(paymentIntent: Stripe.PaymentIntent) {
