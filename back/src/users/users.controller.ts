@@ -170,4 +170,16 @@ export class UsersController {
   ): Promise<ResponseOfUserDto> {
     return this.usersService.deleteUserService(id);
   }
+
+  //REACTIVAR USUARIO ELIMINADO LOGICAMENTE
+  @Patch('reactivate/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async reactivateUserController(
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<{ message: string }> {
+    await this.usersService.reactivateUserService(id);
+    return { message: 'Usuario reactivado exitosamente' };
+  }
 }
