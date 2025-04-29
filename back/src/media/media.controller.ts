@@ -13,11 +13,12 @@ import {
   MaxFileSizeValidator,
   FileTypeValidator,
   Query,
+  UploadedFiles,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MediaType } from 'src/enums/mediaType.enum';
 
 @Controller('media')
@@ -97,82 +98,36 @@ export class MediaController {
   // CARGA DE FOTOS O DOCUMENTOS
   @Post('upload/:serviceProfileId')
   @UseGuards(AuthGuard)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FilesInterceptor('files', 20))
   @ApiBearerAuth()
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
+        files: {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'binary',
+          },
         },
       },
     },
   })
-  uploadMediaController(
+  async uploadMediaController(
     @Param('serviceProfileId') id: string,
     @Query('type') type: MediaType,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({
-            maxSize: 5000000,
-            message: 'El archivo es demasiado pesado',
-          }),
-          new FileTypeValidator({
-            fileType:
-              /^(image\/(jpeg|png|webp)|application\/pdf|video\/(mp4|mov|avi))$/,
-          }),
-        ],
-      }),
-    )
-    file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
   ) {
-    return this.mediaService.uploadMediaService(id, file, type);
+    return this.mediaService.uploadMediaService(id, files, type);
   }
 
-  // @ApiBearerAuth()
-  // @Patch('foto/:userId')
-  // @UseGuards(AuthGuard)
-  // @UseInterceptors(FileInterceptor('file'))
-  // @ApiConsumes('multipart/form-data')
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       file: {
-  //         type: 'string',
-  //         format: 'binary',
-  //       },
-  //     },
-  //   },
-  // })
-  // updateUserProfilePController(
-  //   @Param('userId') id: string,
-  //   @UploadedFile(
-  //     new ParseFilePipe({
-  //       validators: [
-  //         new MaxFileSizeValidator({
-  //           maxSize: 200000,
-  //           message: 'La imagen es demasiado pesada',
-  //         }),
-  //         new FileTypeValidator({
-  //           fileType: /(jpg|jpeg|png|webp)$/,
-  //         }),
-  //       ],
-  //     }),
-  //   )
-  //   file: Express.Multer.File,
-  // ) {
-  //   return this.mediaService.updateUserProfileService(id, file);
-  // }
-
-  // @Delete('profileImage/:id')
-  // @UseGuards(AuthGuard)
-  // @ApiBearerAuth()
-  // deleteUserProfilePictureController(@Param('id') id: string) {
-  //   return this.mediaService.deleteUserPofileService(id);
-  // }
+  // ELIMINAR FOTO O DOCUMENTO POR ID DE MEDIA
+  @Delete('delete-picture/:mediaId')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  deleteProfilePictureController(@Param('mediaId') id: string) {
+    return this.mediaService.deleteProfilePictureService(id);
+  }
 }

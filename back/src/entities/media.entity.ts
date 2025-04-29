@@ -23,6 +23,12 @@ export class Media {
   })
   type: MediaType;
 
+  @Column({ type: 'varchar', nullable: false })
+  publicId: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  resourceType: 'image' | 'video' | 'raw';
+
   @ManyToOne(() => ServiceProfile, (serviceProfile) => serviceProfile.images)
   @JoinColumn({ name: 'serviceProfile_id' })
   serviceProfile: ServiceProfile;

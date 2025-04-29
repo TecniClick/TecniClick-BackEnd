@@ -28,46 +28,53 @@ export class StatsService {
       activeServices,
       pendingServices,
       rejectedServices,
-      totalAppointments
+      totalAppointments,
     ] = await Promise.all([
       // Métricas de usuarios
       this.userRepository.count(),
-      this.userRepository.count({ where: { deletedAt: null }}),
-      this.userRepository.count({ where: { deletedAt: Not(IsNull()) }}),
-      
+      this.userRepository.count({ where: { deletedAt: null } }),
+      this.userRepository.count({ where: { deletedAt: Not(IsNull()) } }),
+
       // Métricas de servicios
       this.serviceProfileRepository.count(),
-      this.serviceProfileRepository.count({ where: {status: ServiceProfileStatus.ACTIVE}}),
-      this.serviceProfileRepository.count({ where: { status: ServiceProfileStatus.PENDING }}),
-      this.serviceProfileRepository.count({ where: { status: ServiceProfileStatus.REJECTED }}),
-      
+      this.serviceProfileRepository.count({
+        where: { status: ServiceProfileStatus.ACTIVE },
+      }),
+      this.serviceProfileRepository.count({
+        where: { status: ServiceProfileStatus.PENDING },
+      }),
+      this.serviceProfileRepository.count({
+        where: { status: ServiceProfileStatus.REJECTED },
+      }),
+
       // Métricas de citas
       this.appointmentRepository.count(),
       this.appointmentRepository.count({
         where: {
-          appointmentStatus: AppointmentStatus.PENDING
-        }
-      })
+          appointmentStatus: AppointmentStatus.PENDING,
+        },
+      }),
     ]);
-  
+
     return {
       // Usuarios
       totalUsers,
       activeUsers,
       inactiveUsers,
-      
+
       // Servicios
       totalServices,
       activeServices,
       pendingServices,
       rejectedServices,
-      approvalRate: totalServices > 0 
-        ? Math.round((activeServices / totalServices) * 100)
-        : 0,
-      
+      approvalRate:
+        totalServices > 0
+          ? Math.round((activeServices / totalServices) * 100)
+          : 0,
+
       // Citas
       totalAppointments,
-      pendingAppointments
+      pendingAppointments,
     };
   }
 
