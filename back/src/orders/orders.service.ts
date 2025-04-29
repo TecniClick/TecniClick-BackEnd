@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { OrdersRepository } from './orders.repository';
 import { CreatePaymentDto } from 'src/DTO/ordersDtos/createPayment.dto';
@@ -60,6 +61,14 @@ export class OrdersService {
     const endpointSecret = this.configService.get<string>(
       'STRIPE_WEBHOOK_SECRET',
     );
+
+    if (!endpointSecret) {
+      console.error(
+        'Stripe Webhook Secret no definido en variables de entorno.',
+      );
+      throw new InternalServerErrorException('Stripe Webhook Secret missing.');
+    }
+
     let event: Stripe.Event;
 
     try {
