@@ -26,10 +26,13 @@ export class ServiceProfileRepository {
       .createQueryBuilder('serviceProfile')
       .leftJoinAndSelect('serviceProfile.user', 'user')
       .leftJoinAndSelect('serviceProfile.category', 'category')
+      .leftJoinAndSelect('serviceProfile.reviews', 'reviews')
+      .leftJoinAndSelect('reviews.user', 'reviewUser') 
       .where('serviceProfile.status = :status', { status: 'active' })
       .andWhere('serviceProfile.deletedAt IS NULL')
-      .orderBy('serviceProfile.createdAt', 'ASC') // ordena del más viejo al más nuevo ('DESC' para orden inverso)
-      .getMany();
+      .orderBy('serviceProfile.createdAt', 'ASC')
+      .addOrderBy('reviews.createdAt', 'DESC') 
+      .getMany(); // mejora en relaciones
   }
 
   // OBTENER PERFILES PENDIENTES (solo admin)
