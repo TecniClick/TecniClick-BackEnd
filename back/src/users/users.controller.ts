@@ -37,14 +37,14 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
-  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   getAllUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllUsersService();
   }
 
   // Get ALL Active Users
   @Get('active')
-  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   getAllActiveUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllActiveUsersService();
   }
@@ -125,7 +125,7 @@ export class UsersController {
 
   // OBTENER USUARIO POR ID
   @Get(':id')
-  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   getUserByIdController(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<UsersResponseDto> {
