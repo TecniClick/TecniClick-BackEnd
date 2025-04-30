@@ -144,8 +144,6 @@ export class OrdersService {
         } else {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
           const user = subscription.serviceProfile?.user;
-
-          if (user && user.email && user.name) {
             await this.mailService.sendPaymentSuccessEmail(
               user.email,
               user.name,
@@ -153,11 +151,6 @@ export class OrdersService {
               subscription.expirationDate,
             );
             console.log('Correo de confirmación de pago enviado al usuario.');
-          } else {
-            console.warn(
-              'No se pudo enviar correo: datos del usuario incompletos.',
-            );
-          }
         }
       } else if (event.type === 'payment_intent.payment_failed') {
         const failedIntent = event.data.object as Stripe.PaymentIntent;
