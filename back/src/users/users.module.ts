@@ -8,7 +8,11 @@ import { MailModule } from 'src/mail/mail.module';
 import { ServiceProfileModule } from 'src/service-profile/service-profile.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), MailModule,  forwardRef(() => ServiceProfileModule)],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    MailModule,
+    forwardRef(() => ServiceProfileModule),
+  ],
   controllers: [UsersController],
   providers: [UsersService, UsersRepository],
   exports: [UsersRepository],

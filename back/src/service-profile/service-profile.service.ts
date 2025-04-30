@@ -151,18 +151,6 @@ export class ServiceProfileService {
         createdProfile,
       );
 
-    // Crear la suscripción para el servicio
-
-    const createdSubsucription =
-      await this.subscriptionsService.createFreeSubscriptionService(
-        savedServiceProfile,
-      );
-
-    if (!createdSubsucription)
-      throw new InternalServerErrorException(
-        `La suscripción no pudo ser creada`,
-      );
-
     return savedServiceProfile;
   }
 
