@@ -348,4 +348,46 @@ export class MailService {
       html,
     });
   }
+
+  //ENVIO DE CORREO AL CREAR REVIEW
+  async sendReviewSubmittedEmail(
+    providerEmail: string,
+    providerName: string,
+    userName: string,
+    serviceTitle: string,
+    rating: number,
+    comment: string
+  ) {
+    const templatePath = path.join(
+      process.cwd(),
+      'src',
+      'mail',
+      'templates',
+      'review-submitted.hbs'
+    );
+  
+    const template = handlebars.compile(fs.readFileSync(templatePath, 'utf8'));
+    const html = template({
+      providerName,
+      userName,
+      serviceTitle,
+      rating,
+      comment,
+      reviewDate: new Date().toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }),
+      ratingStars: '★'.repeat(rating) + '☆'.repeat(5 - rating) // Ejemplo: ★★★★☆
+    });
+  
+    await this.transporter.sendMail({
+      from: `"TecniClick" <${process.env.MAIL_FROM}>`,
+      to: providerEmail,
+      subject: `Nueva reseña recibida para ${serviceTitle}`,
+      html
+    });
+  }
 }
