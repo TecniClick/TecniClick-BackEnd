@@ -172,7 +172,7 @@ export class UsersService {
     user.role = UserRole.ADMIN;
     const updatedUser = await this.usersRepository.saveAUserRepository(user);
     
-    return updatedUser;
+    return updatedUser
   }
 
   // OBTENER USUARIO POR ID
