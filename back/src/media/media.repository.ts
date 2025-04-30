@@ -56,17 +56,22 @@ export class MediaRepository {
         { resource_type: resourceType },
         (error, result) => {
           if (error) return reject(error);
-  
+
           if (result.result === 'ok') {
-            console.log(`✅ Imagen eliminada correctamente de Cloudinary: ${publicId}`);
+            console.log(
+              `✅ Imagen eliminada correctamente de Cloudinary: ${publicId}`,
+            );
             return resolve();
           } else {
-            console.error(`❌ Error al eliminar en Cloudinary: ${result.result}`);
-            return reject(new Error(`Error al eliminar en Cloudinary: ${result.result}`));
+            console.error(
+              `❌ Error al eliminar en Cloudinary: ${result.result}`,
+            );
+            return reject(
+              new Error(`Error al eliminar en Cloudinary: ${result.result}`),
+            );
           }
         },
       );
     });
   }
-  
 }

@@ -291,4 +291,18 @@ export class ServiceProfileService {
     }
     return serviceProfile;
   }
+
+  // ELIMINACIÓN DEFINITIVA DE UN PERFIL POR ID
+  async deleteServiceProfileByIdService(id: string) {
+    const serviceProfile =
+      await this.serviceProfileRepository.getServiceProfileByIdRepository(id);
+
+    if (!serviceProfile) {
+      throw new NotFoundException(`El perfil con id ${id} no fue encontrado`);
+    }
+
+    return await this.serviceProfileRepository.deleteServiceProfileByIdRepository(
+      id,
+    );
+  }
 }

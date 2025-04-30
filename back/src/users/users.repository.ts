@@ -23,7 +23,7 @@ export class UsersRepository {
         { role: UserRole.CUSTOMER, deletedAt: IsNull() },
         { role: UserRole.PROVIDER, deletedAt: IsNull() },
       ],
-      relations: ['serviceProfile']
+      relations: ['serviceProfile'],
     });
   }
 
@@ -150,8 +150,8 @@ export class UsersRepository {
 
   async reactivateUserRepository(id: string): Promise<UpdateResult> {
     return this.usersRepository.update(
-      { id, deletedAt: Not(IsNull()) }, 
-      { deletedAt: null }
+      { id, deletedAt: Not(IsNull()) },
+      { deletedAt: null },
     );
   }
 }

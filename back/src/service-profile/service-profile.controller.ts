@@ -142,4 +142,15 @@ export class ServiceProfileController {
   getServiceProfileByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.serviceProfileService.getServiceProfileByIdService(id);
   }
+
+  // ELIMINAR DEFINITIVAMENTE UN PERFIL POR ID
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async deleteServiceProfileByIdController(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return await this.serviceProfileService.deleteServiceProfileByIdService(id);
+  }
 }
