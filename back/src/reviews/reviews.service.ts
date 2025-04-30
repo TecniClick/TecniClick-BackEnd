@@ -53,6 +53,12 @@ export class ReviewsService {
       );
     }
 
+    if (createdReview.rating < 1 || createdReview.rating > 5) {
+      throw new BadRequestException(
+        'El valor de la calificación tiene que ser de 1 a 5',
+      );
+    }
+
     const reviewToCreate: ReviewToCreateDto = {
       rating: createdReview.rating,
       comment: createdReview.comment,
