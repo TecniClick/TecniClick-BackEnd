@@ -7,9 +7,10 @@ import {
   Param,
   ParseUUIDPipe,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Review } from 'src/entities/reviews.entity';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -65,8 +66,14 @@ export class ReviewsController {
   }
 
   // ELIMINAR LÓGICAMENTE A UN REVIEW POR ID
-  @Patch('softDelete/:id')
-  softDeleteController(@Param('id') id: string) {
-    return this.reviewsService.softDeleteService(id);
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Eliminar permanentemente un review' })
+  @ApiResponse({ status: 200, description: 'Review eliminado permanentemente' })
+  @ApiResponse({ status: 404, description: 'Review no encontrado' })
+  async hardDeleteController(@Param('id', ParseUUIDPipe) id: string) {
+    return this.reviewsService.hardDeleteService(id);
   }
 }
