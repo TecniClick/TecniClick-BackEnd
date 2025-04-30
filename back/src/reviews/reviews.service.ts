@@ -133,36 +133,34 @@ export class ReviewsService {
     return this.reviewsRepository.getAReviewByIdRepository(id);
   }
 
-  // ELIMINAR LÓGICAMENTE A UN USUARIO POR ID
-  async softDeleteService(id: string) {
-    const entity: Review =
-      await this.reviewsRepository.getAReviewByIdRepository(id);
-
-    if (!entity)
-      throw new NotFoundException(`Review con id ${id} no se pudo encontrar`);
-
-    entity.deletedAt = new Date();
-
-    const softDeletedReview: Review =
-      await this.reviewsRepository.createAReviewRepository(entity);
-
+  // ELIMINAR LÓGICAMENTE A UN REVIEW POR ID
+  async hardDeleteService(id: string) {
+    // Verificar si el review existe
+    const reviewExists = await this.reviewsRepository.getAReviewByIdRepository(id);
+    if (!reviewExists) {
+      throw new NotFoundException(`Review con id ${id} no encontrado`);
+    }
+  
+    // Eliminar permanentemente
+    await this.reviewsRepository.hardDeleteReviewRepository(id);
+  
+    // Enviar notificación por correo
     try {
       await this.mailService.sendReviewDeletedEmail(
-        entity.user.email,
-        entity.user.name,
-        entity.serviceProfile.serviceTitle,
-        entity.rating,
-        entity.comment,
-        entity.createdAt,
+        reviewExists.user.email,
+        reviewExists.user.name,
+        reviewExists.serviceProfile.serviceTitle,
+        reviewExists.rating,
+        reviewExists.comment,
+        reviewExists.createdAt
       );
     } catch (error) {
       console.error('Error al enviar correo de notificación:', error);
-      // Puedes decidir si quieres lanzar el error o continuar
+      // No lanzamos error para no interrumpir el flujo principal
     }
-
+  
     return {
-      message: `Review con ${id} eliminado lógicamente`,
-      review: softDeletedReview,
+      message: `Review con id ${id} eliminado permanentemente`
     };
   }
 }
