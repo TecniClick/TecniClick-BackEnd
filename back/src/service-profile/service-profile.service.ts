@@ -305,4 +305,8 @@ export class ServiceProfileService {
       id,
     );
   }
+
+  async reactivateProfile(profileId: string): Promise<void> {
+    await this.serviceProfileRepository.reactivateServiceProfile(profileId);
+  }
 }

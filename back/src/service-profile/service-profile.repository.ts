@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceProfileToSaveDto } from 'src/DTO/serviceProfileDtos/serviceProfileToSave.dto';
 import { ServiceProfile } from 'src/entities/serviceProfile.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class ServiceProfileRepository {
@@ -100,5 +100,18 @@ export class ServiceProfileRepository {
   ): Promise<{ message: string }> {
     await this.serviceProfileRepository.delete(id);
     return { message: `Perfil con id ${id} ha sido eliminado permanentemente` };
+  }
+
+  async reactivateServiceProfile(profileId: string): Promise<void> {
+    const updateResult = await this.serviceProfileRepository.update(
+      { id: profileId, deletedAt: Not(IsNull()) },
+      { deletedAt: null }
+    );
+
+    if (updateResult.affected === 0) {
+      throw new NotFoundException(
+        'Perfil de servicio no encontrado o ya está activo'
+      );
+    }
   }
 }
