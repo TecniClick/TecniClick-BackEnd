@@ -99,7 +99,14 @@ export class ServiceProfile {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToOne(() => Subscriptions, (subscription) => subscription.serviceProfile)
+  @OneToOne(
+    () => Subscriptions,
+    (subscription) => subscription.serviceProfile,
+    // {
+    //   cascade: true,
+    //   onDelete: 'CASCADE',
+    // },
+  )
   subscription: Subscriptions;
 
   @OneToMany(() => Appointment, (Appointment) => Appointment.provider)

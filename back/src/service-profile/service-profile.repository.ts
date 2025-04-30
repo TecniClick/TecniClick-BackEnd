@@ -27,11 +27,11 @@ export class ServiceProfileRepository {
       .leftJoinAndSelect('serviceProfile.user', 'user')
       .leftJoinAndSelect('serviceProfile.category', 'category')
       .leftJoinAndSelect('serviceProfile.reviews', 'reviews')
-      .leftJoinAndSelect('reviews.user', 'reviewUser') 
+      .leftJoinAndSelect('reviews.user', 'reviewUser')
       .where('serviceProfile.status = :status', { status: 'active' })
       .andWhere('serviceProfile.deletedAt IS NULL')
       .orderBy('serviceProfile.createdAt', 'ASC')
-      .addOrderBy('reviews.createdAt', 'DESC') 
+      .addOrderBy('reviews.createdAt', 'DESC')
       .getMany(); // mejora en relaciones
   }
 
@@ -47,7 +47,6 @@ export class ServiceProfileRepository {
       .getMany();
   }
 
-  //Actualizar cuando tengas la entidad de categorías (name por category)
   // OBTENER LISTA DE USUARIOS POR CATEGORÍA
   async getAllServiceProfilesByCategoryRepository(
     categoryId: string,
@@ -93,5 +92,13 @@ export class ServiceProfileRepository {
     serviceProfile: ServiceProfileToSaveDto,
   ): Promise<ServiceProfile> {
     return await this.serviceProfileRepository.save(serviceProfile);
+  }
+
+  // ELIMINAR DEFINITIVAMENTE UN PERFIL
+  async deleteServiceProfileByIdRepository(
+    id: string,
+  ): Promise<{ message: string }> {
+    await this.serviceProfileRepository.delete(id);
+    return { message: `Perfil con id ${id} ha sido eliminado permanentemente` };
   }
 }

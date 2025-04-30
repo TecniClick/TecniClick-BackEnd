@@ -5,10 +5,12 @@ import { UsersRepository } from '../../users/users.repository';
 import { UserRole } from 'src/enums/UserRole.enum';
 import { MailService } from 'src/mail/mail.service';
 
-
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly usersRepository: UsersRepository, private readonly mailService: MailService) {
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly mailService: MailService,
+  ) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,

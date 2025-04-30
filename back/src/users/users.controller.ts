@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { CreateAdminDto } from 'src/DTO/userDtos/createAdmin.dto';
@@ -23,6 +23,7 @@ import { RolesGuard } from 'src/Auth/guards/roles.guard';
 import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 import { MailService } from 'src/mail/mail.service';
+import { UpgradeToAdminDto } from 'src/DTO/userDtos/upgradeToAdmin.dto';
 
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
@@ -111,16 +112,17 @@ export class UsersController {
     return this.usersService.createAdminsService(admin);
   }
 
-  //CAMBIAR UN USUARIO A ADMINISTRADOR POR ID
-  @Patch('upgrade-admin/:id')
+  //CAMBIAR UN USUARIO A ADMINISTRADOR POR CORREO
+  @Patch('upgrade-admin')
+  @ApiBody({ type: UpgradeToAdminDto })
   @ApiBearerAuth()
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   upgradeToAdminsController(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Body('email') email: string,
   ): Promise<UsersResponseDto> {
-    return this.usersService.upgradeToAdminsService(id);
+    return this.usersService.upgradeToAdminsService(email);
   }
 
   // OBTENER USUARIO POR ID
@@ -177,7 +179,7 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   async reactivateUserController(
-    @Param('id', ParseUUIDPipe) id: string
+    @Param('id', ParseUUIDPipe) id: string,
   ): Promise<{ message: string }> {
     await this.usersService.reactivateUserService(id);
     return { message: 'Usuario reactivado exitosamente' };

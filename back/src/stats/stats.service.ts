@@ -100,10 +100,10 @@ export class StatsService {
 
     const result = {
       clients: 0,
-      providers: 0
+      providers: 0,
     };
 
-    rolesData.forEach(item => {
+    rolesData.forEach((item) => {
       if (item.role === 'customer') {
         result.clients = parseInt(item.count);
       } else if (item.role === 'provider') {

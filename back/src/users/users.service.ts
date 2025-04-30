@@ -146,18 +146,20 @@ export class UsersService {
     };
   }
 
-  //CAMBIAR UN USUARIO A ADMINISTRADOR POR ID
-  async upgradeToAdminsService(id: string): Promise<UsersResponseDto> {
-    const user: User = await this.usersRepository.getUserByIdRepository(id);
+  //CAMBIAR UN USUARIO A ADMINISTRADOR POR CORREO
+  async upgradeToAdminsService(email: string): Promise<UsersResponseDto> {
+    const user: User =
+      await this.usersRepository.getUserByEmailRepository(email);
 
     if (!user) {
-      throw new NotFoundException(`Usuario con id ${id} no fue encontrado`);
+      throw new NotFoundException(
+        `Usuario con correo ${email} no fue encontrado`,
+      );
     }
 
-    if (user.role == UserRole.ADMIN)
-      throw new ConflictException(
-        `El usuario que quieres convertir en administrador ya cuenta con esos permisos`,
-      );
+    if (user.role === UserRole.ADMIN) {
+      throw new ConflictException(`El usuario ya tiene rol de administrador`);
+    }
 
     user.role = UserRole.ADMIN;
 
@@ -285,11 +287,11 @@ export class UsersService {
   }
 
   async reactivateUserService(id: string): Promise<void> {
-    const updateResult = await this.usersRepository.reactivateUserRepository(id);
-    
+    const updateResult =
+      await this.usersRepository.reactivateUserRepository(id);
+
     if (updateResult.affected === 0) {
       throw new NotFoundException('Usuario no encontrado o ya está activo');
     }
   }
 }
-
