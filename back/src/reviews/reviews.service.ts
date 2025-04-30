@@ -156,7 +156,6 @@ export class ReviewsService {
       );
     } catch (error) {
       console.error('Error al enviar correo de notificación:', error);
-      // No lanzamos error para no interrumpir el flujo principal
     }
   
     return {

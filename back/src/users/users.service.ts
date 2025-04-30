@@ -165,14 +165,14 @@ export class UsersService {
       );
     }
 
-    if ([UserRole.ADMIN, UserRole.SUPERADMIN].includes(user.role)) {
-      throw new ConflictException(`El usuario ya tiene privilegios administrativos`);
+    if (![UserRole.CUSTOMER, UserRole.PROVIDER].includes(user.role)) {
+      throw new ConflictException('Solo usuarios customer o provider pueden ser promovidos');
     }
 
     user.role = UserRole.ADMIN;
     const updatedUser = await this.usersRepository.saveAUserRepository(user);
     
-    return updatedUser;
+    return updatedUser
   }
 
   // OBTENER USUARIO POR ID
