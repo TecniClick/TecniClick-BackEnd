@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { User } from 'src/entities/user.entity';
 import { UserRole } from 'src/enums/UserRole.enum';
-import { InsertResult, IsNull, Not, Repository, UpdateResult } from 'typeorm';
+import { ILike, InsertResult, IsNull, Not, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UsersRepository {
@@ -129,7 +129,11 @@ export class UsersRepository {
 
   // OBTENER USUARIO POR CORREO ELECTRÓNICO
   async getUserByEmailRepository(email: string): Promise<User> {
-    return await this.usersRepository.findOneBy({ email });
+    return await this.usersRepository.findOne({
+      where: {
+        email: ILike(email.trim())
+      }
+    });
   }
 
   // GUARDAR UN USUARIO EN LA BASE DE DATOS
