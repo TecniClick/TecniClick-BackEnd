@@ -148,11 +148,11 @@ export class UsersRepository {
     await this.usersRepository.delete(id);
   }
 
-  //REACTIVAR UN USUARIO 
+  //REACTIVAR UN USUARIO
   async reactivateUser(id: string): Promise<UpdateResult> {
     return this.usersRepository.update(
       { id, deletedAt: Not(IsNull()) },
-      { deletedAt: null }
+      { deletedAt: null },
     );
   }
 }

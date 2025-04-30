@@ -40,11 +40,12 @@ export class SubscriptionsController {
     return this.subscriptionsService.getSubscriptionByIdService(id);
   }
 
+  // CREAR SUBSCRIPCIÓN POR ID DE PERFIL DE SERVICIO
   @Post('create/:serviceProfileId')
-  async createSubscriptionController(
+  async createFreeSubscriptionController(
     @Param('serviceProfileId', ParseUUIDPipe) serviceProfileId: string,
   ) {
-    return await this.subscriptionsService.createSubscriptionService(
+    return await this.subscriptionsService.createFreeSubscriptionService(
       serviceProfileId,
     );
   }

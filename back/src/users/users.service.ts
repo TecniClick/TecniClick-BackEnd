@@ -26,8 +26,7 @@ export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly mailService: MailService,
-    private serviceProfileService: ServiceProfileService
-
+    private serviceProfileService: ServiceProfileService,
   ) {}
 
   // Get ALL Type of Users
@@ -305,13 +304,15 @@ export class UsersService {
     }
     let profileReactivated = false;
     if (user.serviceProfile?.id) {
-      await this.serviceProfileService.reactivateProfile(user.serviceProfile.id);
+      await this.serviceProfileService.reactivateProfile(
+        user.serviceProfile.id,
+      );
       profileReactivated = true;
     }
     await this.mailService.sendAccountReactivatedEmail(user.email, user.name);
     return {
       user,
-      profileReactivated
+      profileReactivated,
     };
   }
 }

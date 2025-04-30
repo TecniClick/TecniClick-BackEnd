@@ -105,12 +105,12 @@ export class ServiceProfileRepository {
   async reactivateServiceProfile(profileId: string): Promise<void> {
     const updateResult = await this.serviceProfileRepository.update(
       { id: profileId, deletedAt: Not(IsNull()) },
-      { deletedAt: null }
+      { deletedAt: null },
     );
 
     if (updateResult.affected === 0) {
       throw new NotFoundException(
-        'Perfil de servicio no encontrado o ya está activo'
+        'Perfil de servicio no encontrado o ya está activo',
       );
     }
   }
