@@ -88,12 +88,12 @@ export class ReviewsService {
 
     try {
       await this.mailService.sendReviewSubmittedEmail(
-        appointment.provider.user.email, 
-        appointment.provider.userName,   
-        appointment.users.name,          
+        appointment.provider.user.email,
+        appointment.provider.userName,
+        appointment.users.name,
         appointment.provider.serviceTitle,
         createdReview.rating,
-        createdReview.comment
+        createdReview.comment,
       );
     } catch (error) {
       console.error('Error al enviar correo de notificación:', error);

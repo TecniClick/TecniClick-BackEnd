@@ -144,13 +144,13 @@ export class OrdersService {
         } else {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
           const user = subscription.serviceProfile?.user;
-            await this.mailService.sendPaymentSuccessEmail(
-              user.email,
-              user.name,
-              subscription.paymentDate,
-              subscription.expirationDate,
-            );
-            console.log('Correo de confirmación de pago enviado al usuario.');
+          await this.mailService.sendPaymentSuccessEmail(
+            user.email,
+            user.name,
+            subscription.paymentDate,
+            subscription.expirationDate,
+          );
+          console.log('Correo de confirmación de pago enviado al usuario.');
         }
       } else if (event.type === 'payment_intent.payment_failed') {
         const failedIntent = event.data.object as Stripe.PaymentIntent;

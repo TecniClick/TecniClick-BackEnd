@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
 import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
@@ -41,16 +45,18 @@ export class SubscriptionsService {
     return subscription;
   }
 
-  async createSubscriptionService(serviceProfileId: string) {
-    const savedServiceProfile: ServiceProfile =
+  async createFreeSubscriptionService(serviceProfileId: string) {
+    const serviceProfile: ServiceProfile =
       await this.serviceProfileRepository.getServiceProfileByIdRepository(
         serviceProfileId,
       );
 
-    return this.createFreeSubscriptionService(savedServiceProfile);
-  }
+    if (!serviceProfile) {
+      throw new NotFoundException(
+        `Perfil de servicio con id ${serviceProfileId} no fue encontrado`,
+      );
+    }
 
-  async createFreeSubscriptionService(serviceProfile: ServiceProfile) {
     const subscriptionType = SubscriptionsType.FREE;
     const status = SubscriptionStatus.PENDING;
     const paymentDate = null;
@@ -70,9 +76,17 @@ export class SubscriptionsService {
       this.subscriptionsRepository.createSubscriptionRepository(
         subscriptionToCreate,
       );
-    return await this.subscriptionsRepository.saveSubscriptionRepository(
-      newSubscription,
-    );
+    const savedSuscription =
+      await this.subscriptionsRepository.saveSubscriptionRepository(
+        newSubscription,
+      );
+
+    if (!savedSuscription)
+      throw new InternalServerErrorException(
+        `La suscripción no pudo ser creada`,
+      );
+
+    return savedSuscription;
   }
 
   // async createSubscriptionService(subscriptionData: CreateSubscriptionDto) {
