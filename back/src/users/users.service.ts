@@ -16,13 +16,18 @@ import { UserRole } from 'src/enums/UserRole.enum';
 import { UpdatePasswordDto } from 'src/DTO/userDtos/updatePassword.dto';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 import { MailService } from 'src/mail/mail.service';
-import { IsNull, Not } from 'typeorm';
+import { IsNull, Not, UpdateResult } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ServiceProfileRepository } from 'src/service-profile/service-profile.repository';
+import { ServiceProfileService } from 'src/service-profile/service-profile.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly mailService: MailService,
+    private serviceProfileService: ServiceProfileService
+
   ) {}
 
   // Get ALL Type of Users
@@ -286,12 +291,27 @@ export class UsersService {
     };
   }
 
-  async reactivateUserService(id: string): Promise<void> {
-    const updateResult =
-      await this.usersRepository.reactivateUserRepository(id);
-
+  async reactivateUserService(id: string): Promise<{
+    user: User;
+    profileReactivated: boolean;
+  }> {
+    const updateResult = await this.usersRepository.reactivateUser(id);
     if (updateResult.affected === 0) {
       throw new NotFoundException('Usuario no encontrado o ya está activo');
     }
+    const user = await this.usersRepository.getUserByIdRepository(id);
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    let profileReactivated = false;
+    if (user.serviceProfile?.id) {
+      await this.serviceProfileService.reactivateProfile(user.serviceProfile.id);
+      profileReactivated = true;
+    }
+    await this.mailService.sendAccountReactivatedEmail(user.email, user.name);
+    return {
+      user,
+      profileReactivated
+    };
   }
 }

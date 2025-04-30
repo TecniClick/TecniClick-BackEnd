@@ -25,6 +25,6 @@ import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
     CategoriesRepository,
     UsersRepository,
   ],
-  exports: [ServiceProfileRepository],
+  exports: [ServiceProfileRepository, ServiceProfileService],
 })
 export class ServiceProfileModule {}
