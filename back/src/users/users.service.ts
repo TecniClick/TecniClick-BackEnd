@@ -152,6 +152,10 @@ export class UsersService {
 
   //CAMBIAR UN USUARIO A ADMINISTRADOR POR CORREO
   async upgradeToAdminsService(email: string): Promise<UsersResponseDto> {
+    if (!email || !email.includes('@')) {
+      throw new BadRequestException('El email proporcionado no es válido');
+    }
+
     const user: User =
       await this.usersRepository.getUserByEmailRepository(email);
 
@@ -161,13 +165,14 @@ export class UsersService {
       );
     }
 
-    if (user.role === UserRole.ADMIN) {
-      throw new ConflictException(`El usuario ya tiene rol de administrador`);
+    if ([UserRole.ADMIN, UserRole.SUPERADMIN].includes(user.role)) {
+      throw new ConflictException(`El usuario ya tiene privilegios administrativos`);
     }
 
     user.role = UserRole.ADMIN;
-
-    return await this.usersRepository.saveAUserRepository(user);
+    const updatedUser = await this.usersRepository.saveAUserRepository(user);
+    
+    return updatedUser;
   }
 
   // OBTENER USUARIO POR ID
