@@ -290,29 +290,11 @@ export class UsersService {
     };
   }
 
-  async reactivateUserService(id: string): Promise<{
-    user: User;
-    profileReactivated: boolean;
-  }> {
+  async reactivateUserService(id: string): Promise<void> {
     const updateResult = await this.usersRepository.reactivateUser(id);
+    
     if (updateResult.affected === 0) {
       throw new NotFoundException('Usuario no encontrado o ya está activo');
     }
-    const user = await this.usersRepository.getUserByIdRepository(id);
-    if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
-    }
-    let profileReactivated = false;
-    if (user.serviceProfile?.id) {
-      await this.serviceProfileService.reactivateProfile(
-        user.serviceProfile.id,
-      );
-      profileReactivated = true;
-    }
-    await this.mailService.sendAccountReactivatedEmail(user.email, user.name);
-    return {
-      user,
-      profileReactivated,
-    };
   }
 }
