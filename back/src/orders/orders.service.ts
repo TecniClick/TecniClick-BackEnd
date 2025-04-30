@@ -15,6 +15,7 @@ import { SubscriptionsType } from 'src/enums/Subscriptions.enum';
 import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
 import { Order } from 'src/entities/orders.entity';
 import { CreateOrderDto } from 'src/DTO/ordersDtos/createOrder.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class OrdersService {
@@ -22,6 +23,7 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly configService: ConfigService,
     private readonly subscriptionsRepository: SubscriptionsRepository,
+    private readonly mailService: MailService,
   ) {}
 
   // OBTENER TODAS LAS ÓRDENES EXISTENTES
@@ -139,9 +141,24 @@ export class OrdersService {
           );
         if (!newSubscription) {
           console.log('No se pudo guardar la nueva suscripción');
-        }
+        } else {
+          console.log('Suscripción actualizada a PREMIUM correctamente.');
+          const user = subscription.serviceProfile?.user;
 
-        console.log('Suscripción actualizada a PREMIUM correctamente.');
+          if (user && user.email && user.name) {
+            await this.mailService.sendPaymentSuccessEmail(
+              user.email,
+              user.name,
+              subscription.paymentDate,
+              subscription.expirationDate,
+            );
+            console.log('Correo de confirmación de pago enviado al usuario.');
+          } else {
+            console.warn(
+              'No se pudo enviar correo: datos del usuario incompletos.',
+            );
+          }
+        }
       } else if (event.type === 'payment_intent.payment_failed') {
         const failedIntent = event.data.object as Stripe.PaymentIntent;
         this.ordersRepository.handlePaymentFailed(failedIntent);
