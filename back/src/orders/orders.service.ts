@@ -147,6 +147,7 @@ export class OrdersService {
         } else {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
 
+          // Aquí fue el cambio
           const user =
             await this.usersRepository.getUserByServiceProfileId(
               subscriptionId,
