@@ -11,7 +11,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreatePaymentDto } from 'src/DTO/ordersDtos/createPayment.dto';
 import { Request } from 'express';
 import { GetUser } from 'src/decorators/getUser.decorator';
@@ -27,6 +33,7 @@ export class OrdersController {
 
   // OBTENER TODAS LAS ÓRDENES EXISTENTES
   @Get()
+  @ApiOperation({ summary: 'Obtener todas las órdenes existentes' })
   // @ApiBearerAuth()
   // @Roles(UserRole.ADMIN)
   // @UseGuards(AuthGuard, RolesGuard)
@@ -44,6 +51,7 @@ export class OrdersController {
   }
 
   @Post('create-intent')
+  @ApiOperation({ summary: 'Crear intención de pago para una suscripción' })
   @ApiBody({ type: CreatePaymentDto })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -61,6 +69,7 @@ export class OrdersController {
   }
 
   @Post('webhook')
+  @ApiOperation({ summary: 'Webhook para recibir eventos de Stripe' })
   async handleStripeWebhookController(
     @Req() request: Request,
     @Headers('stripe-signature') signature: string,
@@ -72,6 +81,13 @@ export class OrdersController {
 
   // OBTENER ORDEN POR ID
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener orden por ID' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'UUID de la orden',
+    required: true,
+  })
   getOrderByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.ordersService.getOrderByIdService(id);
   }
