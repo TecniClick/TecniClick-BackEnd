@@ -62,7 +62,7 @@ export class ReviewsService {
     };
 
     const savedReview =
-      this.reviewsRepository.createAReviewRepository(reviewToCreate);
+      await this.reviewsRepository.createAReviewRepository(reviewToCreate);
 
     // Ajuste del rating en serviceProfile
     const serviceProfile =
