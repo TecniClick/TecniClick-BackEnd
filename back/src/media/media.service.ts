@@ -57,37 +57,50 @@ export class MediaService {
     files: Express.Multer.File[],
     type: MediaType,
   ) {
-    const profile = await this.serviceProfile.findOne({ where: { id: id } });
-    if (!profile)
+    const profile = await this.serviceProfile.findOne({ where: { id } });
+    if (!profile) {
       throw new NotFoundException(`Proveedor con Id ${id} no encontrado`);
+    }
 
+    const invalidFiles = files
+      .map((file) => {
+        if (file.size > 5000000) {
+          return {
+            originalname: file.originalname,
+            reason: 'Archivo demasiado pesado',
+          };
+        }
+
+        if (
+          !/^(image\/(jpeg|png|webp)|application\/pdf|video\/(mp4|mov|avi))$/.test(
+            file.mimetype,
+          )
+        ) {
+          return {
+            originalname: file.originalname,
+            reason: 'Formato de archivo no permitido',
+          };
+        }
+
+        return null;
+      })
+      .filter((item) => item !== null);
+
+    // ❌ Si hay archivos inválidos, abortar la carga
+    if (invalidFiles.length > 0) {
+      throw new BadRequestException({
+        message: 'Uno o más archivos son inválidos. No se cargó ninguno.',
+        invalidFiles,
+      });
+    }
+
+    // ✅ Si todos los archivos son válidos, ahora sí procesarlos
     const mediaEntities = [];
-    const ignoredFiles = [];
 
     for (const file of files) {
-      if (file.size > 5000000) {
-        ignoredFiles.push({
-          originalname: file.originalname,
-          reason: 'Archivo demasiado pesado',
-        });
-        continue;
-      }
-
-      if (
-        !/^(image\/(jpeg|png|webp)|application\/pdf|video\/(mp4|mov|avi))$/.test(
-          file.mimetype,
-        )
-      ) {
-        ignoredFiles.push({
-          originalname: file.originalname,
-          reason: 'Formato de archivo no permitido',
-        });
-        continue;
-      }
-
       const uploadedFile = await this.mediaRepository.uploadImage(file);
 
-      let resourceType: 'image' | 'video' | 'raw' = 'image'; // por defecto imagen
+      let resourceType: 'image' | 'video' | 'raw' = 'image';
       if (file.mimetype.startsWith('video/')) {
         resourceType = 'video';
       } else if (file.mimetype === 'application/pdf') {
@@ -105,24 +118,13 @@ export class MediaService {
       const savedMedia = await this.mediaEntity.save(media);
       if (savedMedia) {
         mediaEntities.push(savedMedia.id);
-      } else {
-        ignoredFiles.push(media.id);
       }
     }
 
-    // if (ignoredFiles.length > 0) {
-    //   throw new BadRequestException({
-    //     message: 'Algunos archivos no se pudieron procesar',
-    //     ignoredFiles,
-    //     uploadedFiles: mediaEntities,
-    //   });
-    // }
-
     return {
       message:
-        'La Media fue cargada con éxito. Estos son los id de los documentos:',
+        'La media fue cargada con éxito. Estos son los id de los documentos:',
       picturesId: mediaEntities,
-      ignoredFiles,
     };
   }
 
