@@ -147,7 +147,7 @@ export class ServiceProfileController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.PROVIDER)
+  @Roles(UserRole.ADMIN, UserRole.CUSTOMER)
   async deleteServiceProfileByIdController(
     @Param('id', ParseUUIDPipe) id: string,
   ) {

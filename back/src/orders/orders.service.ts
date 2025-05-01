@@ -109,11 +109,6 @@ export class OrdersService {
           return { received: true };
         }
 
-        if (!subscription.serviceProfile?.id) {
-          console.error('La suscripción no tiene perfil de servicio asociado');
-          return { received: true };
-        }
-
         const now = new Date();
         let newExpirationDate =
           subscription.expirationDate && subscription.expirationDate > now
