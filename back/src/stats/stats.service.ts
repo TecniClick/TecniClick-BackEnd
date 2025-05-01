@@ -31,9 +31,9 @@ export class StatsService {
     ] = await Promise.all([
       // Métricas de usuarios CORREGIDAS:
       this.userRepository.count(),
-      this.userRepository.count({ where: { deletedAt: IsNull() }}), 
+      this.userRepository.count({ where: { deletedAt: IsNull() } }),
       this.userRepository.count({ where: { deletedAt: Not(IsNull()) } }),
-  
+
       // Métricas de servicios CORREGIDAS (eliminamos totalServices):
       this.serviceProfileRepository.count({
         where: { status: ServiceProfileStatus.ACTIVE },
@@ -44,31 +44,36 @@ export class StatsService {
       this.serviceProfileRepository.count({
         where: { status: ServiceProfileStatus.REJECTED },
       }),
-  
+
       // Métricas de citas CORREGIDAS:
       this.appointmentRepository.count(),
       this.appointmentRepository.count({
         where: { appointmentStatus: AppointmentStatus.PENDING },
       }),
     ]);
-  
+
     return {
       // Usuarios
       totalUsers: activeUsers + inactiveUsers,
       activeUsers,
       inactiveUsers,
-  
+
       // Servicios
       activeServices,
       pendingServices,
       rejectedServices,
-      approvalRate: activeServices > 0 
-        ? Math.round((activeServices / (activeServices + pendingServices + rejectedServices)) * 100)
-        : 0,
-  
+      approvalRate:
+        activeServices > 0
+          ? Math.round(
+              (activeServices /
+                (activeServices + pendingServices + rejectedServices)) *
+                100,
+            )
+          : 0,
+
       // Citas
       totalAppointments,
-      pendingAppointments
+      pendingAppointments,
     };
   }
 
