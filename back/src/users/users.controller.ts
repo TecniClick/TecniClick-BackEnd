@@ -101,8 +101,8 @@ export class UsersController {
 
   //CARGA DE ADMINISTRADORES
   @Get('seeder')
-  addAdminsController(): Promise<string> {
-    return this.usersService.addAdminsService();
+  addUsersController(): Promise<string> {
+    return this.usersService.addUsersService();
   }
 
   //CREAR UN ADMINISTRADOR
