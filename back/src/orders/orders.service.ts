@@ -148,10 +148,14 @@ export class OrdersService {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
 
           // Aquí fue el cambio
-          const user =
-            await this.usersRepository.getUserByServiceProfileId(
-              subscriptionId,
+          const user = subscription.serviceProfile?.user;
+
+          if (!user) {
+            console.error(
+              'No se encontró el usuario relacionado a la suscripción',
             );
+            return { received: true };
+          }
 
           await this.mailService.sendPaymentSuccessEmail(
             user.email,

@@ -47,7 +47,10 @@ export class ReviewsRepository {
   }
 
   async getAReviewByIdRepository(id: string): Promise<Review> {
-    return await this.reviewRepository.findOneBy({ id });
+    return await this.reviewRepository.findOne({
+      where: { id },
+      relations: ['appointment', 'user', 'serviceProfile'],
+    });
   }
 
   async hardDeleteReviewRepository(id: string): Promise<void> {
