@@ -3,6 +3,6 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'Bienvenidos a TecniClick';
+    return 'Bienvenidos al Back-End de TecniClick';
   }
 }
