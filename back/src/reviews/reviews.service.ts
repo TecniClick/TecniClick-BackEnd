@@ -108,12 +108,6 @@ export class ReviewsService {
         serviceProfileId,
       );
 
-    if (!reviews || reviews.length === 0) {
-      throw new NotFoundException(
-        'No hay reviews para este perfil de servicio',
-      );
-    }
-
     return reviews;
   }
 
