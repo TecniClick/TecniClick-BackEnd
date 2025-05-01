@@ -143,6 +143,20 @@ export class UsersRepository {
     });
   }
 
+  // Obtener un usuario por el ID de su perfil de servicio
+  async getUserByServiceProfileId(
+    serviceProfileId: string,
+  ): Promise<User | null> {
+    return await this.usersRepository.findOne({
+      where: {
+        serviceProfile: {
+          id: serviceProfileId,
+        },
+      },
+      relations: ['serviceProfile'],
+    });
+  }
+
   // GUARDAR UN USUARIO EN LA BASE DE DATOS
   async saveAUserRepository(entity: Partial<User>): Promise<User> {
     return await this.usersRepository.save(entity);

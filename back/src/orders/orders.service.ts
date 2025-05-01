@@ -16,6 +16,7 @@ import { SubscriptionStatus } from 'src/enums/subscriptionStatus.enum';
 import { Order } from 'src/entities/orders.entity';
 import { CreateOrderDto } from 'src/DTO/ordersDtos/createOrder.dto';
 import { MailService } from 'src/mail/mail.service';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class OrdersService {
@@ -24,6 +25,7 @@ export class OrdersService {
     private readonly configService: ConfigService,
     private readonly subscriptionsRepository: SubscriptionsRepository,
     private readonly mailService: MailService,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
   // OBTENER TODAS LAS ÓRDENES EXISTENTES
@@ -36,6 +38,7 @@ export class OrdersService {
     return await this.ordersRepository.createOrderRepository(order);
   }
 
+  // SOLICITUD A STRIPE
   async createPaymentIntentService(
     suscriptionData: CreatePaymentDto,
     userOfToken: IJwtPayload,
@@ -57,6 +60,7 @@ export class OrdersService {
     );
   }
 
+  // WEBHOOK
   async handleStripeWebhookService(payload: Buffer, signature: string) {
     console.log('Se comenzó a ejecutar el servicio de webhook');
 
@@ -105,6 +109,11 @@ export class OrdersService {
           return { received: true };
         }
 
+        if (!subscription.serviceProfile?.id) {
+          console.error('La suscripción no tiene perfil de servicio asociado');
+          return { received: true };
+        }
+
         const now = new Date();
         let newExpirationDate =
           subscription.expirationDate && subscription.expirationDate > now
@@ -143,7 +152,11 @@ export class OrdersService {
           console.log('No se pudo guardar la nueva suscripción');
         } else {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
-          const user = subscription.serviceProfile?.user;
+
+          const user = await this.usersRepository.getUserByServiceProfileId(
+            subscription.serviceProfile.id,
+          );
+
           await this.mailService.sendPaymentSuccessEmail(
             user.email,
             user.name,
