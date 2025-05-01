@@ -17,6 +17,7 @@ export class ServiceProfileRepository {
       where: {
         deletedAt: null,
       },
+      relations: ['subscription'],
     });
   }
 
