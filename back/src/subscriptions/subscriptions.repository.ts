@@ -39,7 +39,7 @@ export class SubscriptionsRepository {
   async getSubscriptionByIdRepository(id: string): Promise<Subscriptions> {
     return await this.subscriptionsRepository.findOne({
       where: { id },
-      relations: ['orders'],
+      relations: ['orders', 'serviceProfile', 'serviceProfile.user'],
     });
   }
 

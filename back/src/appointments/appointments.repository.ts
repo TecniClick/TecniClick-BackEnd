@@ -57,7 +57,7 @@ export class AppointmentsRepository {
   async getAppointmentByIdRepository(id: string): Promise<Appointment> {
     return await this.appointmentsRepository.findOne({
       where: { id },
-      relations: ['users', 'provider', 'review'],
+      relations: ['users', 'provider', 'provider.user', 'review'],
     });
   }
 

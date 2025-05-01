@@ -136,9 +136,6 @@ export class ReviewsService {
       throw new NotFoundException(`Review con id ${id} no encontrado`);
     }
 
-    // Eliminar permanentemente
-    await this.reviewsRepository.hardDeleteReviewRepository(id);
-
     // Enviar notificación por correo
     try {
       await this.mailService.sendReviewDeletedEmail(
@@ -152,6 +149,9 @@ export class ReviewsService {
     } catch (error) {
       console.error('Error al enviar correo de notificación:', error);
     }
+
+    // Eliminar permanentemente
+    await this.reviewsRepository.hardDeleteReviewRepository(id);
 
     return {
       message: `Review con id ${id} eliminado permanentemente`,
