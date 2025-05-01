@@ -10,8 +10,16 @@ export class ReviewsRepository {
     private reviewRepository: Repository<Review>,
   ) {}
 
+  // async createAReviewRepository(createdReview) {
+  //   return await this.reviewRepository.save(createdReview);
+  // }
+
   async createAReviewRepository(createdReview) {
-    return await this.reviewRepository.save(createdReview);
+    const saved = await this.reviewRepository.save(createdReview);
+    return this.reviewRepository.findOne({
+      where: { id: saved.id },
+      relations: ['appointment', 'user', 'serviceProfile'],
+    });
   }
 
   async getReviewsByServiceProfileRepository(
