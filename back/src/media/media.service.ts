@@ -103,21 +103,26 @@ export class MediaService {
       });
 
       const savedMedia = await this.mediaEntity.save(media);
-      mediaEntities.push(savedMedia.id);
+      if (savedMedia) {
+        mediaEntities.push(savedMedia.id);
+      } else {
+        ignoredFiles.push(media.id);
+      }
     }
 
-    if (ignoredFiles.length > 0) {
-      throw new BadRequestException({
-        message: 'Algunos archivos no se pudieron procesar',
-        ignoredFiles,
-        uploadedFiles: mediaEntities,
-      });
-    }
+    // if (ignoredFiles.length > 0) {
+    //   throw new BadRequestException({
+    //     message: 'Algunos archivos no se pudieron procesar',
+    //     ignoredFiles,
+    //     uploadedFiles: mediaEntities,
+    //   });
+    // }
 
     return {
       message:
         'La Media fue cargada con éxito. Estos son los id de los documentos:',
       picturesId: mediaEntities,
+      ignoredFiles,
     };
   }
 

@@ -44,7 +44,7 @@ export class ReviewsRepository {
 
   async hardDeleteReviewRepository(id: string): Promise<void> {
     const deleteResult = await this.reviewRepository.delete({ id });
-    
+
     if (deleteResult.affected === 0) {
       throw new Error(`No se pudo eliminar el review con id ${id}`);
     }
