@@ -35,7 +35,22 @@ export class ReviewsController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Roles(UserRole.CUSTOMER)
+  @ApiOperation({ summary: 'Crear un review para una cita realizada' })
   @ApiBody({ type: Review })
+  @ApiResponse({
+    status: 201,
+    description: 'Review creado exitosamente',
+    type: Review,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'La cita ya tiene un review o no fue aceptada',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'No puedes calificar una cita ajena',
+  })
+  @ApiResponse({ status: 404, description: 'Cita no encontrada' })
   createAReviewController(
     @Param('appointmentId', ParseUUIDPipe) appointmentId: string,
     @GetUser() userOfToken: IJwtPayload,
@@ -50,6 +65,8 @@ export class ReviewsController {
 
   // Traer reviews por serviceProfileId
   @Get('/service-profile/:serviceProfileId')
+  @ApiOperation({ summary: 'Obtener reviews por ID del perfil de servicio' })
+  @ApiResponse({ status: 200, description: 'Lista de reviews', type: [Review] })
   getReviewsByServiceProfileController(
     @Param('serviceProfileId', ParseUUIDPipe) serviceProfileId: string,
   ) {
@@ -62,11 +79,26 @@ export class ReviewsController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @Get('/user')
+  @ApiOperation({
+    summary: 'Obtener reviews hechos por el usuario autenticado',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de reviews del usuario',
+    type: [Review],
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Este usuario no ha realizado reviews',
+  })
   getReviewsByUserController(@GetUser() userOfToken: IJwtPayload) {
     return this.reviewsService.getReviewsByUserService(userOfToken);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un review por su ID' })
+  @ApiResponse({ status: 200, description: 'Review encontrado', type: Review })
+  @ApiResponse({ status: 404, description: 'Review no encontrado' })
   getAReviewByIdController(@Param('id', ParseUUIDPipe) id: string) {
     return this.reviewsService.getAReviewByIdService(id);
   }

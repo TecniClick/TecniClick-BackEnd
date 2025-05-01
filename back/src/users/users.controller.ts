@@ -11,7 +11,14 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { CreateAdminDto } from 'src/DTO/userDtos/createAdmin.dto';
@@ -36,6 +43,9 @@ export class UsersController {
   // OBTENER TODOS LOS USUARIOS
   @Get()
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Obtener todos los usuarios (solo ADMIN)' })
+  @ApiResponse({ status: 200, description: 'Usuarios obtenidos exitosamente' })
+  @ApiResponse({ status: 403, description: 'Acceso denegado' })
   @Roles(UserRole.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
@@ -43,50 +53,64 @@ export class UsersController {
     return this.usersService.getAllUsersService();
   }
 
-  // Get ALL Active Users
+  // GET ALL ACTIVE USERS
   @Get('active')
+  @ApiOperation({ summary: 'Obtener todos los usuarios activos' })
+  @ApiResponse({ status: 200, description: 'Usuarios activos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   getAllActiveUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllActiveUsersService();
   }
 
-  // Get ALL Inactive Users
+  // GET ALL INACTIVE USERS
   @Get('inactive')
+  @ApiOperation({ summary: 'Obtener todos los usuarios inactivos' })
+  @ApiResponse({ status: 200, description: 'Usuarios inactivos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllInactiveUsersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllInactiveUsersService();
   }
 
-  // Get ALL Active CUSTUMERS
+  // GET ALL ACTIVE CUSTOMERS
   @Get('active/custumers')
+  @ApiOperation({ summary: 'Obtener todos los clientes activos' })
+  @ApiResponse({ status: 200, description: 'Clientes activos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllActiveCustumersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllActiveCustumersService();
   }
 
-  // Get ALL Inactive CUSTUMERS
+  // GET ALL INACTIVE CUSTOMERS
   @Get('inactive/custumers')
+  @ApiOperation({ summary: 'Obtener todos los clientes inactivos' })
+  @ApiResponse({ status: 200, description: 'Clientes inactivos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllInactiveCustumersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllInactiveCustumersService();
   }
 
-  // Get ALL Active PROVIDERS
+  // GET ALL ACTIVE PROVIDERS
   @Get('active/providers')
+  @ApiOperation({ summary: 'Obtener todos los proveedores activos' })
+  @ApiResponse({ status: 200, description: 'Proveedores activos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllActiveProvidersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllActiveProvidersService();
   }
 
-  // Get ALL Inactive PROVIDERS
+  // GET ALL INACTIVE PROVIDERS
   @Get('inactive/providers')
+  @ApiOperation({ summary: 'Obtener todos los proveedores inactivos' })
+  @ApiResponse({ status: 200, description: 'Proveedores inactivos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllInactiveProvidersController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllInactiveProvidersService();
   }
 
-  // Get ALL Active Admins
+  // GET ALL ACTIVE ADMINS
   @Get('active/admins')
+  @ApiOperation({ summary: 'Obtener todos los administradores activos' })
+  @ApiResponse({ status: 200, description: 'Admins activos obtenidos' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllActiveAdminsController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllActiveAdminsService();
@@ -94,6 +118,8 @@ export class UsersController {
 
   // Get ALL Inactive Admins
   @Get('inactive/admins')
+  @ApiOperation({ summary: 'Obtener administradores inactivos' })
+  @ApiResponse({ status: 200, description: 'Admins inactivos listados' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   getAllInactiveAdminsController(): Promise<UsersResponseDto[]> {
     return this.usersService.getAllInactiveAdminsService();
@@ -101,12 +127,20 @@ export class UsersController {
 
   //CARGA DE ADMINISTRADORES
   @Get('seeder')
+  @ApiOperation({ summary: 'Cargar administradores de prueba' })
+  @ApiResponse({ status: 200, description: 'Admins creados' })
   addUsersController(): Promise<string> {
     return this.usersService.addUsersService();
   }
 
   //CREAR UN ADMINISTRADOR
   @Post('create/admin')
+  @ApiOperation({ summary: 'Crear nuevo administrador' })
+  @ApiBody({ type: CreateAdminDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Administrador creado exitosamente',
+  })
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   createAdminsController(@Body() admin: CreateAdminDto) {
     return this.usersService.createAdminsService(admin);
@@ -114,8 +148,9 @@ export class UsersController {
 
   //CAMBIAR UN USUARIO A ADMINISTRADOR POR CORREO
   @Patch('upgrade-admin')
-  @ApiBody({ type: UpgradeToAdminDto })
+  @ApiOperation({ summary: 'Actualizar usuario a administrador por email' })
   @ApiBearerAuth()
+  @ApiBody({ type: UpgradeToAdminDto })
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
@@ -127,8 +162,9 @@ export class UsersController {
 
   // ELIMINAR LÓGICAMENTE A UN USUARIO POR EMAIL
   @Patch('softDelete/email')
-  @ApiBody({ type: UpgradeToAdminDto })
+  @ApiOperation({ summary: 'Eliminar lógicamente un usuario por email' })
   @ApiBearerAuth()
+  @ApiBody({ type: UpgradeToAdminDto })
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
@@ -140,6 +176,14 @@ export class UsersController {
 
   // OBTENER USUARIO POR ID
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener usuario por ID' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'UUID del usuario',
+    example: '1e7d79d5-c6b2-4b8b-a8cb-e6f5f23b5e4d',
+  })
+  @ApiResponse({ status: 200, description: 'Usuario encontrado exitosamente' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))
   getUserByIdController(
     @Param('id', ParseUUIDPipe) id: string,
@@ -149,6 +193,14 @@ export class UsersController {
 
   //  MODIFICAR USUARIO POR ID
   @Patch('update/:id')
+  @ApiOperation({ summary: 'Actualizar información del usuario' })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'UUID del usuario',
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiResponse({ status: 200, description: 'Usuario actualizado' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   updateUserController(
     @Param('id', ParseUUIDPipe) id: string,
@@ -159,6 +211,13 @@ export class UsersController {
 
   //  MODIFICAR CONTRASEÑA POR ID DE USUARIO
   @Patch('update/password/:id')
+  @ApiOperation({ summary: 'Actualizar contraseña del usuario' })
+  @ApiParam({ name: 'id', required: true, description: 'UUID del usuario' })
+  @ApiBody({ type: UpdatePasswordDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Contraseña actualizada correctamente',
+  })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   updatePasswordController(
     @Param('id', ParseUUIDPipe) id: string,
@@ -169,6 +228,9 @@ export class UsersController {
 
   // ELIMINAR LÓGICAMENTE A UN USUARIO POR ID
   @Patch('softDelete/:id')
+  @ApiOperation({ summary: 'Eliminar lógicamente por ID' })
+  @ApiParam({ name: 'id', required: true, description: 'UUID del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario eliminado lógicamente' })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   softDeleteController(@Param('id') id: string): Promise<ResponseOfUserDto> {
     return this.usersService.softDeleteService(id);
@@ -176,9 +238,15 @@ export class UsersController {
 
   // ELIMINAR UN USUARIO DE LA BASE DE DATOS
   @Delete('delete/:id')
+  @ApiOperation({ summary: 'Eliminar permanentemente un usuario' })
   @ApiBearerAuth()
   @Roles(UserRole.SUPERADMIN)
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiParam({ name: 'id', required: true, description: 'UUID del usuario' })
+  @ApiResponse({
+    status: 200,
+    description: 'Usuario eliminado de la base de datos',
+  })
   @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
   deleteUserController(
     @Param('id', ParseUUIDPipe) id: string,
@@ -188,8 +256,11 @@ export class UsersController {
 
   //REACTIVAR USUARIO ELIMINADO LOGICAMENTE
   @Patch('reactivate/:id')
+  @ApiOperation({ summary: 'Reactivar usuario previamente eliminado' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiParam({ name: 'id', required: true, description: 'UUID del usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario reactivado correctamente' })
   @Roles(UserRole.ADMIN)
   async reactivateUserController(
     @Param('id', ParseUUIDPipe) id: string,

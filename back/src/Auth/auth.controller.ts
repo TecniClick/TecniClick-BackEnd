@@ -12,7 +12,14 @@ import {
 import { AuthService } from './auth.service';
 import { LoginUserDto } from 'src/DTO/authDtos/LoginUser.dto';
 import { CreateUserDto } from 'src/DTO/authDtos/CreateUser.dto';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiConflictResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ExcludeFieldsInterceptor } from 'src/interceptors/excludeFields.interceptor';
 import { SignUpResponseDto } from 'src/DTO/authDtos/signUp.dto';
 import { SignInResponseDto } from 'src/DTO/authDtos/signIn.dto';
@@ -23,8 +30,17 @@ import { AuthGuard } from '@nestjs/passport';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  // Inicio de Sesión
+  // INICIO DE SESIÓN
   @Post('signIn')
+  @ApiOperation({ summary: 'Iniciar sesión de usuario' })
+  @ApiBody({ type: LoginUserDto })
+  @ApiOkResponse({
+    description: 'Usuario autenticado con éxito',
+    type: SignInResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Credenciales inválidas o usuario eliminado',
+  })
   @ApiBody({ type: LoginUserDto })
   async signInController(
     @Body() credentials: LoginUserDto,
@@ -33,9 +49,20 @@ export class AuthController {
     return await this.authService.signInService(email, password);
   }
 
-  // Creacion de usuario
+  // REGISTRO DE USUARIO
   @Post('signUp')
+  @ApiOperation({ summary: 'Registrar un nuevo usuario' })
   @ApiBody({ type: CreateUserDto })
+  @ApiOkResponse({
+    description: 'Usuario registrado exitosamente',
+    type: SignUpResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Contraseñas no coinciden o error de hasheo',
+  })
+  @ApiConflictResponse({
+    description: 'El correo electrónico ya está registrado',
+  })
   @UseInterceptors(
     ExcludeFieldsInterceptor(['password', 'confirmPassword', 'role']),
   )
@@ -45,7 +72,15 @@ export class AuthController {
     return await this.authService.signUpService(user);
   }
 
+  // CALLBACK DE GOOGLE
   @Get('google/callback')
+  @ApiOperation({ summary: 'Callback de autenticación con Google' })
+  @ApiOkResponse({
+    description: 'Autenticación con Google exitosa',
+  })
+  @ApiBadRequestResponse({
+    description: 'No se pudo autenticar con Google',
+  })
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req, @Res() res) {
     if (!req.user) {
@@ -66,7 +101,9 @@ export class AuthController {
     };
   }
 
+  // REDIRECCIÓN A GOOGLE
   @Get('google')
+  @ApiOperation({ summary: 'Redirige al usuario a Google para autenticación' })
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 }
