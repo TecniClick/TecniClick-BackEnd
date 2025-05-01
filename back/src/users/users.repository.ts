@@ -116,7 +116,7 @@ export class UsersRepository {
   }
 
   //CARGA DE SUPERADMINISTRADORES
-  async addAdminsRepository(user: Partial<User>): Promise<InsertResult> {
+  async addUsersRepository(user: Partial<User>): Promise<InsertResult> {
     return await this.usersRepository
       .createQueryBuilder()
       .insert()

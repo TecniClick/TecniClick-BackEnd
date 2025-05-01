@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { data } from '../utils/listOfAdmins';
+import { data } from '../utils/listOfUsers';
 import { User } from 'src/entities/user.entity';
 import { UsersResponseDto } from 'src/DTO/userDtos/userResponse.dto';
 import { CreateAdminDto } from 'src/DTO/userDtos/createAdmin.dto';
@@ -80,7 +80,7 @@ export class UsersService {
   }
 
   //CARGA DE ADMINISTRADORES
-  async addAdminsService(): Promise<string> {
+  async addUsersService(): Promise<string> {
     //Verificar duplicados dentro de la data a cargar.
     const usersEmails: Set<string> = new Set();
     for (const element of data as CreateAdminDto[]) {
@@ -111,10 +111,10 @@ export class UsersService {
       element.password = hashedPassword;
 
       //Añade el usuario
-      await this.usersRepository.addAdminsRepository(element);
+      await this.usersRepository.addUsersRepository(element);
     }
 
-    return 'Los Administradores fueron agregados con éxito';
+    return 'Los Usuarios fueron agregados con éxito';
   }
 
   //CREAR UN ADMINISTRADOR
