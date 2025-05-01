@@ -62,7 +62,7 @@ export class ReviewsService {
     };
 
     const savedReview =
-      this.reviewsRepository.createAReviewRepository(reviewToCreate);
+      await this.reviewsRepository.createAReviewRepository(reviewToCreate);
 
     // Ajuste del rating en serviceProfile
     const serviceProfile =
@@ -136,14 +136,15 @@ export class ReviewsService {
   // ELIMINAR LÓGICAMENTE A UN REVIEW POR ID
   async hardDeleteService(id: string) {
     // Verificar si el review existe
-    const reviewExists = await this.reviewsRepository.getAReviewByIdRepository(id);
+    const reviewExists =
+      await this.reviewsRepository.getAReviewByIdRepository(id);
     if (!reviewExists) {
       throw new NotFoundException(`Review con id ${id} no encontrado`);
     }
-  
+
     // Eliminar permanentemente
     await this.reviewsRepository.hardDeleteReviewRepository(id);
-  
+
     // Enviar notificación por correo
     try {
       await this.mailService.sendReviewDeletedEmail(
@@ -152,14 +153,14 @@ export class ReviewsService {
         reviewExists.serviceProfile.serviceTitle,
         reviewExists.rating,
         reviewExists.comment,
-        reviewExists.createdAt
+        reviewExists.createdAt,
       );
     } catch (error) {
       console.error('Error al enviar correo de notificación:', error);
     }
-  
+
     return {
-      message: `Review con id ${id} eliminado permanentemente`
+      message: `Review con id ${id} eliminado permanentemente`,
     };
   }
 }
