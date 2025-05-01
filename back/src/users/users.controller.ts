@@ -125,6 +125,19 @@ export class UsersController {
     return this.usersService.upgradeToAdminsService(email);
   }
 
+  // ELIMINAR LÓGICAMENTE A UN USUARIO POR EMAIL
+  @Patch('softDelete/email')
+  @ApiBody({ type: UpgradeToAdminDto })
+  @ApiBearerAuth()
+  @Roles(UserRole.SUPERADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
+  @UseInterceptors(ExcludeFieldsInterceptor(['password', 'role']))
+  async softDeleteByEmailController(
+    @Body('email') email: string,
+  ): Promise<ResponseOfUserDto> {
+    return this.usersService.softDeleteByEmailService(email);
+  }
+
   // OBTENER USUARIO POR ID
   @Get(':id')
   @UseInterceptors(ExcludeFieldsInterceptor(['password']))

@@ -177,6 +177,39 @@ export class UsersService {
     return updatedUser;
   }
 
+  // ELIMINAR LÓGICAMENTE A UN USUARIO POR EMAIL
+  async softDeleteByEmailService(email: string): Promise<ResponseOfUserDto> {
+    if (!email || !email.includes('@')) {
+      throw new BadRequestException('El email proporcionado no es válido');
+    }
+
+    const user: User =
+      await this.usersRepository.getUserByEmailRepository(email);
+
+    if (!user) {
+      throw new NotFoundException(
+        `Usuario con correo ${email} no fue encontrado`,
+      );
+    }
+
+    user.deletedAt = new Date();
+
+    const softDeletedUser =
+      await this.usersRepository.saveAUserRepository(user);
+
+    // Notificación por email (opcional)
+    try {
+      await this.mailService.sendAccountDeactivatedEmail(user.email, user.name);
+    } catch (error) {
+      console.error('Error al enviar correo de desactivación:', error);
+    }
+
+    return {
+      message: `Usuario con correo ${email} eliminado lógicamente`,
+      user: softDeletedUser,
+    };
+  }
+
   // OBTENER USUARIO POR ID
   async getUserByIdService(id: string): Promise<UsersResponseDto> {
     const user: User = await this.usersRepository.getUserByIdRepository(id);

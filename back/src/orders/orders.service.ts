@@ -144,7 +144,7 @@ export class OrdersService {
         } else {
           console.log('Suscripción actualizada a PREMIUM correctamente.');
           const user = subscription.serviceProfile?.user;
-          
+
           await this.mailService.sendPaymentSuccessEmail(
             user.email,
             user.name,
