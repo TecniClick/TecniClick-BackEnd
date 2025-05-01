@@ -166,13 +166,15 @@ export class UsersService {
     }
 
     if (![UserRole.CUSTOMER, UserRole.PROVIDER].includes(user.role)) {
-      throw new ConflictException('Solo usuarios customer o provider pueden ser promovidos');
+      throw new ConflictException(
+        'Solo usuarios customer o provider pueden ser promovidos',
+      );
     }
 
     user.role = UserRole.ADMIN;
     const updatedUser = await this.usersRepository.saveAUserRepository(user);
-    
-    return updatedUser
+
+    return updatedUser;
   }
 
   // OBTENER USUARIO POR ID
@@ -297,7 +299,7 @@ export class UsersService {
 
   async reactivateUserService(id: string): Promise<void> {
     const updateResult = await this.usersRepository.reactivateUser(id);
-    
+
     if (updateResult.affected === 0) {
       throw new NotFoundException('Usuario no encontrado o ya está activo');
     }
