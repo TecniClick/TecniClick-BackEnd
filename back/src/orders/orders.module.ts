@@ -7,10 +7,17 @@ import { Order } from 'src/entities/orders.entity';
 import { SubscriptionsRepository } from 'src/subscriptions/subscriptions.repository';
 import { Subscriptions } from 'src/entities/subcriptions.entity';
 import { MailModule } from 'src/mail/mail.module';
+import { User } from 'src/entities/user.entity';
+import { UsersRepository } from 'src/users/users.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, Subscriptions]), MailModule],
+  imports: [TypeOrmModule.forFeature([Order, Subscriptions, User]), MailModule],
   controllers: [OrdersController],
-  providers: [OrdersService, OrdersRepository, SubscriptionsRepository],
+  providers: [
+    OrdersService,
+    OrdersRepository,
+    SubscriptionsRepository,
+    UsersRepository,
+  ],
 })
 export class OrdersModule {}
