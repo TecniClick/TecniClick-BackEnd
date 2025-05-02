@@ -91,7 +91,7 @@ export class AuthController {
 
     const encodedUser = encodeURIComponent(JSON.stringify(result.user));
     res.redirect(
-      `http://localhost:3001/auth-success?token=${result.token}&user=${encodedUser}`,
+      `https://tecniclickfrontend.vercel.app/auth-success?token=${result.token}&user=${encodedUser}`,
     );
 
     return {
