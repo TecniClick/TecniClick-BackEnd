@@ -31,6 +31,7 @@ import { AuthGuard } from 'src/Auth/guards/auth.guard';
 import { ResponseOfUserDto } from 'src/DTO/userDtos/responseOfUser.dto';
 import { MailService } from 'src/mail/mail.service';
 import { UpgradeToAdminDto } from 'src/DTO/userDtos/upgradeToAdmin.dto';
+import { User } from 'src/entities/user.entity';
 
 @ApiTags('Endpoints de usuarios')
 @Controller('users')
@@ -267,5 +268,22 @@ export class UsersController {
   ): Promise<{ message: string }> {
     await this.usersService.reactivateUserService(id);
     return { message: 'Usuario reactivado exitosamente' };
+  }
+
+  //BUSCAR UN USUARIO POR SU EMAIL
+  @Get('email/:email')
+  @ApiOperation({summary: 'Obtener un usuario por su email'})
+  @ApiResponse({
+    status: 200,
+    description: 'usuario encontrado',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'usuario no encontrado'
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  getUserByEmailController(@Param('email') email: string): Promise<User>{
+    return this.usersService.getUserByEmailService(email)
   }
 }
