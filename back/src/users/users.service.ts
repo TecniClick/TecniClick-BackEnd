@@ -337,4 +337,19 @@ export class UsersService {
       throw new NotFoundException('Usuario no encontrado o ya está activo');
     }
   }
+
+  //OBTENER UN USUARIO POR SU EMAIL
+  async getUserByEmailService(email: string): Promise<User> {
+    if (!email || !email.includes('@')) {
+      throw new NotFoundException('El email proporcionado no es válido');
+    }
+
+    const user = await this.usersRepository.getUserByEmailRepository(email);
+    
+    if (!user) {
+      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
+    }
+
+    return user;
+  }
 }
